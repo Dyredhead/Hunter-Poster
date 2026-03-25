@@ -6,4 +6,6 @@ A social media website for Hunter College students. (A CSCI 39548 Project by Dan
 ## Tooling
 * Programing Language: [Typescript](https://www.typescriptlang.org/)
 * JavaScript Runtime: [Bun](https://bun.com/)
+* JavaScript Framework: [React](https://react.dev/)
+* CSS Framework: [TailwindCSS](https://tailwindcss.com/)
 * Database: [PostgreSQL](https://www.postgresql.org/)
