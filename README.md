@@ -4,10 +4,9 @@
 ## Quick Start
 
 From a fresh install, do the following:
-1. `make install`
-2. `make build`
-3. In terminal 1: `make dev-backend`
-4. In terminal 2: `make dev-frontend`
+1. `make setup`
+2. In terminal 1: `make dev-backend`
+3. In terminal 2: `make dev-frontend`
 
 
 
