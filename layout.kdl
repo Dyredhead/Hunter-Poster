@@ -1,0 +1,50 @@
+layout {
+	tab name="Hunter Poster" {
+		pane split_direction="vertical" {
+			pane {
+				name "Frontend"
+				size "33%"
+				cwd "./frontend"
+				command "make"
+				args "start"
+				start_suspended true		
+			}
+			pane {
+				name "Backend Server"
+				size "33%"		
+				cwd "./backend"
+				command "make"
+				args "start"
+				start_suspended true
+			}
+			pane {
+				name "Backend DB"
+				size "33%"	
+				cwd "./backend"	
+				// command "docker"
+				command "echo"
+				// args "logs" "gainzdb" "--follow"
+				args "not implemented yet"
+				// start_suspended true
+			}
+			
+		}
+
+		pane {
+			size 2
+			borderless true
+			plugin location="zellij:status-bar"
+		}
+		
+		// floating_panes {
+			// pane {
+				// name "Docker Build"
+				// cwd "./backend"
+				// command "make"
+				// args "start"
+				// start_suspended true
+			// }
+		// }
+	}
+}
+

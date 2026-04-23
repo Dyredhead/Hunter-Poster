@@ -1,11 +1,25 @@
-# Hunter-Poster
-A social media website for Hunter College students. (A CSCI 39548 Project by Daniel Yentin &amp; Kevin Liu)
+# Hunter Poster
+---
 
-### [Project Proposal](https://docs.google.com/document/d/1-bGMM85A4tf1WP5zPsZNw9lwL16PFySS94k4_oALA9M/edit?usp=sharing)
+## Quick Start
 
-## Tooling
-* Programing Language: [Typescript](https://www.typescriptlang.org/)
-* JavaScript Runtime: [Node.js](https://nodejs.org/en)
-* JavaScript Framework: [React](https://react.dev/)
-* CSS Framework: [TailwindCSS](https://tailwindcss.com/)
-* Database: [PostgreSQL](https://www.postgresql.org/)
+From a fresh install, do the following:
+1. `make install`
+2. `make build`
+3. In terminal 1: `make dev-backend`
+4. In terminal 2: `make dev-frontend`
+
+
+
+### Folder Structure:
+- **shared**:
+  - **contracts**: Contains all API contracts
+- **backend**:
+  - **database**: Contains all database files
+  - **middleware**: Contains all middleware
+  - **repositories**: Contains all files which interface between the server and database
+  - **routes**: Contains implementations for all API contracts 
+- **frontend**:
+  - **api**: Contains implementations for all API contracts
+  - **assets**: Contains reusable assets (pngs, svgs, etc.)
+  - **components**: Contains reusable UI components (Navbar, etc.)
