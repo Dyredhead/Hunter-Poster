@@ -9,7 +9,6 @@ From a fresh install, do the following:
 3. In terminal 2: `make dev-frontend`
 
 
-
 ### Folder Structure:
 - **shared**:
   - **contracts**: Contains all API contracts
