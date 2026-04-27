@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { API_MOUNT as _API_MOUNT } from './index.js';
-const API_MOUNT = _API_MOUNT + '/login';
+import { API_MOUNT as PARENT_API_MOUNT } from './index.js';
+const API_MOUNT = `${PARENT_API_MOUNT}/login`;
 
 const loginSchema = z.object({
   email: z.email(),

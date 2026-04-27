@@ -17,16 +17,17 @@ layout {
 				args "start"
 				start_suspended true
 			}
-			pane {
-				name "Backend DB"
-				size "33%"	
-				cwd "./backend"	
+			
+			// pane {
+				// name "Backend DB"
+				// size "33%"	
+				// cwd "./backend"	
 				// command "docker"
-				command "echo"
+				// command "echo"
 				// args "logs" "gainzdb" "--follow"
-				args "not implemented yet"
+				// args "not implemented yet"
 				// start_suspended true
-			}
+			// }
 			
 		}
 
