@@ -1,65 +1,79 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import "./NavBar.css";
 
-const NavItem = ({to, src, alt, description} :
-    {
-        to: string;
-        src: string;
-        alt: string;
-        description: string;
-    }
-) => {
+const NavItem = ({
+    to,
+    src,
+    alt,
+    // description,
+}: {
+    to: string;
+    src: string;
+    alt: string;
+    description: string;
+}) => {
+    // function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    //     console.log("Login link clicked");
+
+    //     // optional: prevent navigation if needed
+    //     event.preventDefault();
+    // }
+
     return (
-        <div className='flex-1'>
-            <Link to={to} className="flex flex-col items-center">
-                <img src={src} alt={alt}/>
-                <p className="text-xs font-bold">{description}</p>
-            </Link>
-        </div>
-    )
-}
+        <Link
+            to={to}
+            // onClick={handleClick}
+            className="flex w-full items-center justify-center flex-col"
+        >
+            <img src={src} alt={alt} className="test" />
+            {/* <p className="text-xs font-bold text-neutral-middle">{description}</p> */}
+        </Link>
+    );
+};
 
 export const NavBar = () => {
+    //TODO: make this generate dynamically to whatever the current user's username is.
+    // const username = "john";
     return (
         <div>
-            <Outlet/>
-            <div className="flex justify-around fixed bottom-0 w-full bg-white h-14 pt-2 pb-2">
+            <Outlet />
+            <div className="flex justify-around fixed bottom-0 w-full bg-black h-20">
                 <NavItem
-                    to="/profile/person"
-                    src="../../profile_icon.svg"
+                    to="profile/${username}"
+                    src="/src/assets/icons/navbar/profile.svg"
                     alt="profile button"
                     description="profile"
                 />
 
                 <NavItem
-                    to="/auth/login"
-                    src="../../chat_icon.svg"
+                    to="/chat"
+                    src="/src/assets/icons/navbar/chat.svg"
                     alt="chat button"
                     description="chat"
                 />
 
                 <NavItem
                     to="/home/for-you"
-                    src="../../home_icon.svg"
+                    src="/src/assets/icons/navbar/home.svg"
                     alt="home button"
                     description="home"
                 />
 
                 <NavItem
                     to="/notifications"
-                    src="../../notifs_icon.svg"
+                    src="/src/assets/icons/navbar/notifications.svg"
                     alt="notifications button"
                     description="notifications"
                 />
 
                 <NavItem
                     to="/post/create"
-                    src="../../post_icon.svg"
+                    src="/src/assets/icons/navbar/post.svg"
                     alt="create posts button"
                     description="post"
                 />
             </div>
         </div>
-        
-    )
-}
+    );
+};
