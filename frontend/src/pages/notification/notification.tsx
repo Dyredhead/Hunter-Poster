@@ -2,7 +2,7 @@ export default function page() {
   return (
     <main>
       <h1>Welcome</h1>
-      <p>This is the for you page.</p>
+      <p>This is the notification page.</p>
     </main>
   );
 }
