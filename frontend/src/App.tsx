@@ -26,7 +26,7 @@ export default function App() {
             <Route path="/auth/register" element={<pages.RegisterPage />} />
 
             <Route element={<NavBar />}>
-                <Route path="/home">
+                <Route path="/home" element={<pages.HomeLayout />}>
                     <Route path="for-you" element={<pages.ForYouPage />} />
                     <Route path="following" element={<pages.FollowingPage />} />
                 </Route>
