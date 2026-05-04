@@ -1,5 +1,5 @@
 # root Makefile
-.PHONY: setup install build start start-backend start-frontend  clean
+.PHONY: setup install build start start-database start-server start-frontend clean
 
 setup:
 	$(MAKE) clean
@@ -14,11 +14,15 @@ build:
 
 start:
 	@echo "Run in separate terminals:"
-	@echo "  make start-backend"
+	@echo "  make start-database"
+	@echo "  make start-server"
 	@echo "  make start-frontend"
 
-start-backend:
-	$(MAKE) -C backend start
+start-database:
+	$(MAKE) -C backend start-database
+
+start-server:
+	$(MAKE) -C backend start-server
 
 start-frontend:
 	$(MAKE) -C frontend start

@@ -5,30 +5,27 @@ layout {
 				name "Frontend"
 				size "33%"
 				cwd "./frontend"
-				command "make"
-				args "start"
-				start_suspended true		
+				command "bash"
+				args "-c" "make start"
+				start_suspended true
 			}
 			pane {
 				name "Backend Server"
-				size "33%"		
+				size "33%"
 				cwd "./backend"
-				command "make"
-				args "start"
+				command "bash"
+				args "-c" "make start-server"
 				start_suspended true
 			}
-			
-			// pane {
-				// name "Backend DB"
-				// size "33%"	
-				// cwd "./backend"	
-				// command "docker"
-				// command "echo"
-				// args "logs" "gainzdb" "--follow"
-				// args "not implemented yet"
-				// start_suspended true
-			// }
-			
+			pane {
+				name "Backend Database"
+				size "33%"
+				cwd "./backend"
+				command "bash"
+				args "-c" "make start-database"
+				start_suspended true
+			}
+
 		}
 
 		pane {
@@ -36,7 +33,7 @@ layout {
 			borderless true
 			plugin location="zellij:status-bar"
 		}
-		
+
 		// floating_panes {
 			// pane {
 				// name "Docker Build"

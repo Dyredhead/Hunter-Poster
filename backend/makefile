@@ -1,6 +1,9 @@
-.PHONY: start build clean
+.PHONY: start-database start-server build clean
 
-start:
+start-database:
+	docker compose up database
+
+start-server:
 	npm run dev
 
 build:
@@ -8,3 +11,4 @@ build:
 
 clean:
 	rm -rf dist
+	docker compose down -v
