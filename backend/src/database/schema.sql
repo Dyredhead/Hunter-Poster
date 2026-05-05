@@ -1,9 +1,5 @@
 -- This file is responsible to properly initiate the database and all types required for the app to function
--- Stores users, exercises, items, class types
--- !Database gainzdb is initially created during postgres initialization, no need to create a new one
--- Enter database to initialize it
---\c gainzdb;
---
+
 -- Gives functions for hashing and veryfying passwords within postgres
 CREATE EXTENSION pgcrypto;
 
