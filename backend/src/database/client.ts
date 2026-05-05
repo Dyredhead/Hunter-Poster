@@ -1,6 +1,7 @@
-// // backend/src/db/client.ts
-// import { Pool } from "pg";
+import { Pool } from "pg";
+import { env } from "../env.js";
 
-// export const db = new Pool({
-//     connectionString: process.env.DATABASE_URL,
-// });
+export const database = new Pool({
+    connectionString: env.database_url,
+});
+
