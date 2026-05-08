@@ -20,7 +20,7 @@ services:
     #* postgres container
     database:
         image: postgres:18
-        container_name: hunter-poster_database
+        container_name: hunter_poster-database
         env_file:
             - ./.env
         environment:
