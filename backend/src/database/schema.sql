@@ -17,5 +17,6 @@ CREATE TABLE
         username CITEXT NOT NULL UNIQUE,
         email CITEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
+        is_deleted BOOLEAN NOT NULL DEFAULT FALSE
     );
 
