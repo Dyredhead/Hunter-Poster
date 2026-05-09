@@ -26,7 +26,7 @@ const NavItem = ({
             // onClick={handleClick}
             className="flex w-full items-center justify-center flex-col"
         >
-            <img src={src} alt={alt} className="test" />
+            <img src={src} alt={alt} />
             {/* <p className="text-xs font-bold text-neutral-middle">{description}</p> */}
         </Link>
     );

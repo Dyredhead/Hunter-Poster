@@ -9,23 +9,20 @@ export class ApiError extends Error {
   }
 }
 
-type ApiFetchOptions<TBody> = {
-  method: string;
-  body?: TBody;
-  headers?: Record<string, string>;
-};
 
 export async function apiFetch<TResponse, TBody = unknown>(
   url: string,
-  options: ApiFetchOptions<TBody>
+  method: string,
+  body?: TBody,
+  headers?: Record<string, string>,
 ): Promise<TResponse> {
   const response = await fetch(url, {
-    method: options.method,
+    method: method,
     headers: {
       'Content-Type': 'application/json',
-      ...(options.headers ?? {}),
+      ...(headers ?? {}),
     },
-    body: options.body === undefined ? undefined : JSON.stringify(options.body),
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
 
   let json: unknown = null;
