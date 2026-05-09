@@ -20,7 +20,7 @@ services:
     #* postgres container
     database:
         image: postgres:18
-        container_name: hunter_poster-database
+        container_name: hunter_poster-postgres
         env_file:
             - ./.env
         environment:
@@ -34,17 +34,7 @@ services:
             - ./src/database/schema.sql:/docker-entrypoint-initdb.d/001_schema.sql:ro #postgres schema
             - ./src/database/seed.sql:/docker-entrypoint-initdb.d/002_seed.sql:ro #postgres seed data
         healthcheck:
-            test:
-                [
-                    "CMD",
-                    "pg_isready",
-                    "-h",
-                    "localhost",
-                    "-d",
-                    "${POSTGRES_DB}",
-                    "-U",
-                    "${POSTGRES_USER}",
-                ]
+            test: ["CMD", "pg_isready", "-d", "$DATABASE_URL"]
             interval: 5s
             timeout: 5s
             retries: 5
