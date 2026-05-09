@@ -39,6 +39,8 @@ services:
                     "CMD",
                     "pg_isready",
                     "-h",
+                    "localhost",
+                    "-d",
                     "${POSTGRES_DB}",
                     "-U",
                     "${POSTGRES_USER}",

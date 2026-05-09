@@ -1,3 +1,5 @@
+MAKEFLAGS += --no-print-directory
+
 # root Makefile
 .PHONY: zellij setup install build start start-database start-server start-frontend clean
 
@@ -8,6 +10,7 @@ setup:
 	$(MAKE) clean
 	$(MAKE) install
 	$(MAKE) build
+	@echo "FINISHED"
 
 install:
 	npm install
