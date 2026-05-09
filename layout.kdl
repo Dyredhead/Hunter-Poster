@@ -34,15 +34,14 @@ layout {
 			plugin location="zellij:status-bar"
 		}
 
-		// floating_panes {
-			// pane {
-				// name "Docker Build"
-				// cwd "./backend"
-				// command "make"
-				// args "start"
-				// start_suspended true
-			// }
-		// }
+		floating_panes {
+			pane {
+				name "SETUP"
+				command "bash"
+				args "-c" "make setup"
+				start_suspended true
+			}
+		}
 	}
 }
 

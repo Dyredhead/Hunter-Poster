@@ -1,5 +1,8 @@
 # root Makefile
-.PHONY: setup install build start start-database start-server start-frontend clean
+.PHONY: zellij setup install build start start-database start-server start-frontend clean
+
+zellij:
+	zellij -l layout.kdl
 
 setup:
 	$(MAKE) clean
