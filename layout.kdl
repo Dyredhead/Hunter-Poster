@@ -40,6 +40,7 @@ layout {
 				command "bash"
 				args "-c" "make setup"
 				start_suspended true
+				close_on_exit true
 			}
 		}
 	}
