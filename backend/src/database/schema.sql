@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS posts (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL REFERENCES users(id),
     post_type POST_TYPE NOT NULL
+    created_at TIMESTAMPZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS posts_text (
@@ -68,6 +69,16 @@ CREATE TABLE IF NOT EXISTS poll_options (
 
     CONSTRAINT poll_options_poll_id_position_unique
         UNIQUE (post_poll_id, position)
+);
+
+CREATE TABLE IF NOT EXISTS poll_votes (
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    poll_id UUID NOT NULL REFERENCES polls(id),
+    user_id UUID NOT NULL REFERENCES users(id),
+    position INTEGER NOT NULL REFERENCES poll_options(position)
+
+    CONSTRAINT poll_votes_poll_user_unique
+        UNIQUE (poll_id, user_id)
 );
 
 CREATE TABLE IF NOT EXISTS post_likes (
