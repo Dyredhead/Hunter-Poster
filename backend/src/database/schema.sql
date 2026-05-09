@@ -55,7 +55,6 @@ CREATE TABLE IF NOT EXISTS posts_text_and_image (
 CREATE TABLE IF NOT EXISTS polls (
     post_id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
     question TEXT NOT NULL,
-    closes_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS poll_options (
