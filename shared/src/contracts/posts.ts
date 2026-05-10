@@ -157,6 +157,6 @@ export type PostGetByForYouResponse = z.infer<typeof PostGetByForYouContract.res
 
 export type PostUpdateByIdParams = z.infer<typeof PostUpdateByIdContract.request.params>;
 export type PostUpdateByIdRequestBody = z.infer<typeof PostUpdateByIdContract.request.body>;
-export type PostUpdateByIdResponseBody = z.infer<typeof PostUpdateByIdContract.response>;
+export type PostUpdateByIdResponse = z.infer<typeof PostUpdateByIdContract.response>;
 
 export type PostDeleteById = z.infer<typeof PostDeleteByIdContract.request.params>;
