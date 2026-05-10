@@ -38,9 +38,9 @@ layout {
 			pane {
 				name "SETUP"
 				command "bash"
-				args "-c" "make setup"
-				start_suspended true
-				close_on_exit true
+				args "-lc" "sleep .5 && make setup; status=$?; if [ $status -eq 0 ]; then sleep .5 && zellij action close-pane --pane-id \"$ZELLIJ_PANE_ID\"; else exit $status; fi"
+				// start_suspended true
+				// close_on_exit true
 			}
 		}
 	}

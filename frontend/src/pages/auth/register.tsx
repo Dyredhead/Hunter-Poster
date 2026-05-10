@@ -7,6 +7,7 @@ import BigTitle from "@/components/BigTitle";
 import BigButton from "@/components/BigButton";
 import show from "@/assets/icons/show.svg";
 import hide from "@/assets/icons/hide.svg";
+import { register } from "@/api/auth/register";
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -22,6 +23,23 @@ export default function RegisterPage() {
             <BigTitle>Register</BigTitle>
             <form onSubmit={handleSubmit}>
                 <div className="form-field">
+                    <label className="form-field-label" htmlFor="username">
+                        Username
+                    </label>
+                    <div className="form-field-input-wrapper">
+                        <input
+                            id="username"
+                            className="form-field-input"
+                            type="text"
+                            placeholder="JohnDoe"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            autoComplete="username"
+                        />
+                    </div>
+                </div>
+
+                <div className="form-field">
                     <label className="form-field-label" htmlFor="email">
                         Email
                     </label>
@@ -35,23 +53,6 @@ export default function RegisterPage() {
                             onChange={(e) => setEmail(e.target.value)}
                             required
                             autoComplete="email"
-                        />
-                    </div>
-                </div>
-
-                <div className="form-field">
-                    <label className="form-field-label" htmlFor="username">
-                        Username
-                    </label>
-                    <div className="form-field-input-wrapper">
-                        <input
-                            id="username"
-                            className="form-field-input"
-                            type="text"
-                            placeholder="JohnDoe"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            autoComplete="username"
                         />
                     </div>
                 </div>
@@ -75,7 +76,9 @@ export default function RegisterPage() {
                             type="button"
                             className="form-password-toggle"
                             onClick={() => setShowPassword((v) => !v)}
-                            aria-label={showPassword ? "Hide password" : "Show password"}
+                            aria-label={
+                                showPassword ? "Hide password" : "Show password"
+                            }
                         >
                             {showPassword ? (
                                 <img src={show} alt="show" />
@@ -88,7 +91,11 @@ export default function RegisterPage() {
 
                 {error && <p className="form-error">{error}</p>}
 
-                <BigButton type="submit" className="form-submit-btn" disabled={loading}>
+                <BigButton
+                    type="submit"
+                    className="form-submit-btn"
+                    disabled={loading}
+                >
                     {loading ? "Registering..." : "Register"}
                 </BigButton>
             </form>
@@ -99,15 +106,22 @@ export default function RegisterPage() {
         e.preventDefault();
         setError("");
         setLoading(true);
-        try {
-            // await userCreate({ email, password });
-            await new Promise((f) => setTimeout(f, 500));
-            throw Error;
-            navigate("/auth/login");
-        } catch {
-            setError("Registration failed. Please try again.");
-        } finally {
-            setLoading(false);
+
+        const result = await register({
+            username: username,
+            email: email,
+            password: password,
+        });
+
+        await new Promise((f) => setTimeout(f, 500));
+
+        if (result.ok) {
+            navigate("/");
+        } else {
+            if (result.status === 401) {
+                setError("User already exists with that username or email");
+            }
         }
+        setLoading(false);
     }
 }

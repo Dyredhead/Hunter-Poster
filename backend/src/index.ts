@@ -1,17 +1,20 @@
 import express from "express";
 import cors from "cors";
 import { env } from "./env.js";
-// import healthRouter from './routes/health.ts';
-// import usersRouter from './routes/users.js';
-// import { usersContract } from '@my-app/shared';
+import morgan from "morgan";
+
+import loginRouter from "@/routes/auth/login.js";
+import registerRouter from "@/routes/auth/register.js";
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
+app.use(morgan("combined"));
 
-// app.use(healthRouter);
-// app.use(usersContract.mount, usersRouter);
+// Routes
+app.use(loginRouter);
+app.use(registerRouter);
 
 app.listen(env.express_port, () => {
     console.log(`Backend running at http://localhost:${env.express_port}`);

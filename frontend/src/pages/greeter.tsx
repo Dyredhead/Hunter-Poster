@@ -1,20 +1,27 @@
-import './greeter.css';
-import BigTitle from '@/components/BigTitle';
-import BigButton from '@/components/BigButton';
-import Screen from '@/components/Screen';
+import "./greeter.css";
+import BigTitle from "@/components/BigTitle";
+import BigButton from "@/components/BigButton";
+import Screen from "@/components/Screen";
+import { useNavigate } from "react-router-dom";
 
 export default function GreeterPage() {
-  return (
-    <Screen>
-      <BigTitle>
-        Hunter
-        <br />
-        Poster
-      </BigTitle>
-      <div className="greeter-actions">
-        <BigButton to="/auth/login">Login</BigButton>
-        <BigButton to="/auth/register">Register</BigButton>
-      </div>
-    </Screen>
-  );
+    const navigate = useNavigate();
+    const token = localStorage.getItem("token");
+    if (token) {
+        navigate("/home/for-you");
+    }
+
+    return (
+        <Screen>
+            <BigTitle>
+                Hunter
+                <br />
+                Poster
+            </BigTitle>
+            <div className="greeter-actions">
+                <BigButton to="/auth/login">Login</BigButton>
+                <BigButton to="/auth/register">Register</BigButton>
+            </div>
+        </Screen>
+    );
 }
