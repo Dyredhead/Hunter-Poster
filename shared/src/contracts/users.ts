@@ -1,19 +1,17 @@
 import { z } from "zod";
-import { API_MOUNT as _API_MOUNT } from "./index.js";
+import { API_MOUNT as _API_MOUNT } from "./api.js";
 const API_MOUNT = _API_MOUNT + "/users";
 
 const UserSchema = z.object({
     id: z.uuidv7(),
     username: z.string(),
     email: z.email(),
-    password_hash: z.string(),
-
 });
 
 const UserGetByIdContract = {
     method: "GET",
-    pattern: "/:id",
-    build: (id: number) => `API_MOUNT/${id}`,
+    backend_path: () => `${API_MOUNT}/:id`,
+    frontend_path: (id: number) => `${API_MOUNT}/${id}`,
 
     request: {
         params: z.object({
@@ -28,8 +26,8 @@ const UserGetByIdContract = {
 
 const UserCreateContract = {
     method: "POST",
-    pattern: "/",
-    build: () => API_MOUNT,
+    backend_path: () => `${API_MOUNT}`,
+    frontend_path: () => `${API_MOUNT}`,
 
     request: {
         body: z.object({

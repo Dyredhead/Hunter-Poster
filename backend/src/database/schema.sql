@@ -7,6 +7,7 @@ CREATE EXTENSION IF NOT EXISTS citext;
 -- Enums:
 -- CREATE TYPE enum_name AS ENUM ('variant 1', 'variant 2');
 CREATE TYPE post_type AS ENUM ('text', 'image', 'text_image', 'poll');
+CREATE TYPE poll_position AS ENUM ('1', '2', '3', '4');
 
 -- Structs:
 -- CREATE TYPE struct_name AS (field1 INTEGER, field2 TEXT);
@@ -33,7 +34,6 @@ CREATE TABLE IF NOT EXISTS posts (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL REFERENCES users(id),
     post_type POST_TYPE NOT NULL
-    created_at TIMESTAMPZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS posts_text (
@@ -54,17 +54,14 @@ CREATE TABLE IF NOT EXISTS posts_text_and_image (
 
 CREATE TABLE IF NOT EXISTS polls (
     post_id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
-    question TEXT NOT NULL,
+    question TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS poll_options (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     post_poll_id UUID NOT NULL REFERENCES polls(post_id) ON DELETE CASCADE,
-    position INTEGER NOT NULL,
-    option TEXT NOT NULL
-
-    CONSTRAINT poll_options_position_range
-        CHECK (position BETWEEN 1 AND 4),
+    position POLL_POSITION NOT NULL,
+    option TEXT NOT NULL,
 
     CONSTRAINT poll_options_poll_id_position_unique
         UNIQUE (post_poll_id, position)
@@ -72,9 +69,9 @@ CREATE TABLE IF NOT EXISTS poll_options (
 
 CREATE TABLE IF NOT EXISTS poll_votes (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
-    poll_id UUID NOT NULL REFERENCES polls(id),
+    poll_id UUID NOT NULL REFERENCES polls(post_id),
     user_id UUID NOT NULL REFERENCES users(id),
-    position INTEGER NOT NULL REFERENCES poll_options(position)
+    position POLL_POSITION NOT NULL,
 
     CONSTRAINT poll_votes_poll_user_unique
         UNIQUE (poll_id, user_id)

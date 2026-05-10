@@ -1,8 +1,14 @@
-// import { apiFetch } from "./client";
-// import { healthContract, type HealthResponse } from "@my-app/shared";
+// import { postContract, type PostRequest } from "@my-app/shared";
+// import { apiFetch } from "@/api/client";
 
-// export function getHealth(): Promise<HealthResponse> {
-//     return apiFetch<HealthResponse>(healthContract.path, {
-//         method: healthContract.method,
-//     });
+// export async function register(request: PostRequest): Promise<Response> {
+//     const body = postContract.routes.register.request.body.parse(request);
+
+//     const response = await apiFetch<PostRequest>(
+//         postContract.routes.register.frontend_path(),
+//         postContract.routes.register.method,
+//         body,
+//     );
+
+//     return response;
 // }

@@ -9,11 +9,14 @@
   "scripts": {
     "dev:backend": "npm run dev -w backend",
     "dev:frontend": "npm run dev -w frontend",
-    "build": "tsc -b shared backend frontend"
+    "build": "tsc -b shared backend frontend",
+    "knip": "knip"
   },
   "devDependencies": {
+    "@types/node": "^25.6.2",
     "eslint-config-prettier": "^10.1.8",
+    "knip": "^6.12.2",
     "prettier": "3.8.3",
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.3"
   }
 }
