@@ -37,39 +37,44 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 CREATE TABLE IF NOT EXISTS posts_text (
-    id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
     text TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS posts_image (
-    id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
     image_url TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS posts_text_and_image (
-    id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
     text TEXT NOT NULL,
     image_url TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS polls (
-    post_id UUID PRIMARY KEY REFERENCES posts(id) ON DELETE CASCADE,
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
+    closes_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     question TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS poll_options (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
-    post_poll_id UUID NOT NULL REFERENCES polls(post_id) ON DELETE CASCADE,
+    poll_id UUID NOT NULL REFERENCES polls(id) ON DELETE CASCADE,
     position POLL_POSITION NOT NULL,
     option TEXT NOT NULL,
 
     CONSTRAINT poll_options_poll_id_position_unique
-        UNIQUE (post_poll_id, position)
+        UNIQUE (poll_id, position)
 );
 
 CREATE TABLE IF NOT EXISTS poll_votes (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
-    poll_id UUID NOT NULL REFERENCES polls(post_id),
+    poll_id UUID NOT NULL REFERENCES polls(id),
     user_id UUID NOT NULL REFERENCES users(id),
     position POLL_POSITION NOT NULL,
 

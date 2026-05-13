@@ -1,52 +1,220 @@
-interface PostStats {
-    comments: number;
-    likes: number;
-    bookmarks: number;
+import { database } from "@/database/client.js";
+import { findUserById } from "./users.js";
+import { content_type } from "@my-app/shared";
+
+type PostsRow = {
+    id: string;
+    user_id: string;
+    post_type: string;
 }
 
-interface Post {
-    id: number;
-    created_by: string;
-    created_at: Date;
-    content: string;
-    stats: PostStats;
+type PostTextRow = {
+    id: string;
+    post_id: string;
+    text: string;
 }
 
-const fakePosts: Post[] = [
-    {
-        id: 1,
-        created_by: "alice",
-        created_at: new Date(),
-        content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin a sapien justo. Nunc ultrices ligula ut erat tristique, ut fringilla nisi malesuada. Aenean tincidunt nunc mauris, vitae varius nunc tincidunt at. Pellentesque ornare ultrices aliquam. Etiam auctor dictum ex vitae venenatis. Sed aliquet metus at tellus pellentesque aliquet. Donec nec augue eget risus interdum mattis in sagittis orci. Morbi at tortor tortor. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Etiam faucibus orci eros, ut semper augue luctus et. Donec id ligula in ex ullamcorper vestibulum. Aenean quis nibh eget nibh cursus imperdiet. Pellentesque lorem risus, auctor quis lobortis quis, dapibus vel augue. Donec vulputate quam eu dolor iaculis pellentesque.",
-        stats: {
-            comments: 100,
-            likes: 200,
-            bookmarks: 300,
-        },
-    },
-    {
-        id: 2,
-        created_by: "bob",
-        created_at: new Date(),
-        content:
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sed urna purus. Pellentesque sed vehicula mauris. Vivamus turpis turpis, tempor ut ex a, congue tempor orci. Ut sodales, ligula at vulputate sodales, tellus nisl dignissim justo, sed accumsan dolor nunc quis metus. Sed ut feugiat dolor, ac venenatis enim. Integer bibendum tempus venenatis. Nam tristique finibus erat, ut cursus odio elementum vitae. Proin porttitor est nec nisl bibendum, vitae faucibus ante semper. Nulla egestas congue tortor sit amet scelerisque. Ut vitae mi dignissim, ornare augue quis, semper arcu. Quisque magna nisl, pretium sit amet pulvinar eget, consectetur eu purus. Nam justo ipsum, malesuada quis ex ut, interdum aliquam dui. ",
-        stats: {
-            comments: 500,
-            likes: 600,
-            bookmarks: 700,
-        },
-    },
-];
+type PostImageRow = {
+    id: string;
+    post_id: string;
+    image_url: string;
+}
 
-export async function getPostsFollowing() {
-    return fakePosts;
+type PostTextImageRow = {
+    id: string;
+    post_id: string;
+    text: string;
+    image_url: string;
+}
+
+type PollsRow = {
+    id: string;
+    post_id: string;
+    closes_at: Date;
+    question: string;
+}
+
+type PollOptionsRow = {
+    id: string;
+    poll_id: string;
+    position: string;
+    option: string;
+}
+
+
+export async function getPostsFollowing(
+    following: string[]
+) {
+    const query = `
+        SELECT * FROM posts
+        WHERE user_id = ANY( $1 )
+    `;
+    const values = [following];
+
+    return (await database.query(query, values)).rows;
 }
 
 export async function getPostsForYou() {
-    return fakePosts;
+    return (await database.query('SELECT * FROM posts')).rows;
 }
 
-export async function getPostsById(id: number) {
-    return fakePosts.find((post) => post.id === id);
+export async function getPostsById(
+    id: string
+) {
+    const query =  `
+        SELECT * FROM posts
+        WHERE id = $1
+    `;
+    const values = [id];
+
+    const result = await database.query<PostsRow>(query, values)
+        .then((res) => res.rows);
+    
+    return result.find((post) => post.id === id) ?? null;
+}
+
+async function createPost(
+    user_id: string,
+    post_type: string,
+) {
+    // query for inserting into posts
+    const query = `
+        INSERT INTO posts(user_id, post_type) 
+        VALUES($1, $2) 
+        RETURNING *
+    `;
+    const values = [user_id, post_type];
+
+    return (await database.query<PostsRow>(query, values)).rows[0].id;
+}
+
+export async function createTextPost(
+    user_id: string, 
+    text: string
+) {
+    // create post and get id
+    const post_id = await createPost(user_id, content_type.text);
+
+    // query for inserting into posts_text
+    const query = `
+        INSERT INTO posts_text(post_id, text) 
+        VALUES($1, $2)
+    `;
+    const values = [post_id, text];
+
+    await database.query(query, values);
+}
+
+
+export async function createImagePost(
+    user_id: string, 
+    image_url: string
+) {
+    // create post and get id
+    const post_id = await createPost(user_id, content_type.image);
+
+    // query for inserting into posts_image
+    const query = `
+        INSERT INTO posts_image(post_id, image_url) 
+        VALUES($1, $2)
+    `;
+    const values = [post_id, image_url];
+
+    await database.query(query, values);
+}
+
+
+export async function createTextImagePost(
+    user_id: string, 
+    text: string,
+    image_url: string
+) {
+    // create post and get id
+    const post_id = await createPost(user_id, content_type.text_image);
+
+    // query for inserting into posts_text_and_image
+    const query = `
+        INSERT INTO posts_text_and_image(post_id, text, image_url) 
+        VALUES($1, $2, $3)
+    `;
+    const values = [post_id, text, image_url];
+
+    await database.query(query, values);
+}
+
+
+export async function createPollPost(
+    user_id: string, 
+    question: string,
+    poll_options: string[],
+    closes_at: Date
+) {
+    // create post and get id
+    const post_id = await createPost(user_id, content_type.poll);
+
+    // create poll and get id
+    const pollQuery = `
+        INSERT INTO polls(post_id, closes_at, question) 
+        VALUES($1, $2, $3) 
+        RETURNING *
+    `;
+    const pollValues = [post_id, closes_at, question];
+
+    const poll_id = (await database.query<PollsRow>(pollQuery, pollValues)).rows[0].id;
+
+    // creates poll options
+    const optionsQuery = `
+        INSERT INTO poll_options(poll_id, position, option) 
+        VALUES($1, $2, $3)
+    `;
+
+    let position = 0;
+    poll_options.forEach(async (option) => {
+        position++;
+        const optionValues = [poll_id, position.toString(), option]
+
+        if (position === poll_options.length)
+            await database.query(optionsQuery, optionValues);
+        else database.query(optionsQuery, optionValues);
+    });
+}
+
+export async function deletePost(
+    id: string
+) {
+    const query = `
+        DELETE 
+        FROM posts 
+        WHERE id = $1
+    `;
+    const values = [id];
+
+    await database.query(query, values);
+}
+
+export async function getPostLikesById(
+    post_id: string
+) {
+    const query = `
+        SELECT COUNT(*) 
+        FROM post_likes 
+        WHERE post_id = $1
+    `;
+    const values = [post_id];
+
+    return Number((await database.query<{count: string}>(query, values)).rows[0].count);
+}
+
+export async function checkPostLikedByUser(
+    user_id: string,
+    post_id: string
+) {
+    const query = `
+        SELECT * FROM post_likes
+        WHERE user_id = $1
+        AND post_id = $2
+    `;
+    const values = [user_id, post_id];
+
+    return (await database.query(query, values)).rowCount !== null;
 }

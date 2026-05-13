@@ -7,12 +7,12 @@ const TextSchema = z.object({
 });
 
 const ImageSchema = z.object({
-    Image_url: z.string(),
+    image_url: z.string(),
 });
 
 const TextImageSchema = z.object({
     content: z.string(),
-    Image_url: z.string(),
+    image_url: z.string(),
 });
 
 const PollSchema = z.object({
@@ -30,7 +30,7 @@ const ContentSchema = z.union([
     PollSchema,
 ]);
 
-const ContentUpdateSchema = z.union([TextSchema, ImageSchema, TextImageSchema]);
+// const ContentUpdateSchema = z.union([TextSchema, ImageSchema, TextImageSchema]);
 
 const PostSchema = z.object({
     id: z.uuidv7(),
@@ -42,14 +42,14 @@ const PostSchema = z.object({
     booksmarks: z.int().min(0),
 });
 
-const PostUpdateSchema = z.object({
-    content: ContentUpdateSchema,
-});
+// const PostUpdateSchema = z.object({
+//     content: ContentUpdateSchema,
+// });
 
 const PostGetByIdContract = {
     method: "GET",
-    pattern: "/:id",
-    build: (id: number) => `${API_MOUNT}/${id}`,
+    backend_path: () => `${API_MOUNT}/:id`,
+    frontend_path: (id: number) => `${API_MOUNT}/${id}`,
 
     request: {
         params: z.object({
@@ -64,8 +64,8 @@ const PostGetByIdContract = {
 
 const PostGetByFollowingContract = {
     method: "GET",
-    pattern: "/following",
-    build: () => `${API_MOUNT}/following`,
+    backend_path: () => `${API_MOUNT}/following`,
+    frontend_path: () => `${API_MOUNT}/following`,
 
     response: z.object({
         posts: z.array(PostSchema).max(10),
@@ -74,37 +74,51 @@ const PostGetByFollowingContract = {
 
 const PostGetByForYouContract = {
     method: "GET",
-    pattern: "/for-you",
-    build: () => `${API_MOUNT}/for-you`,
+    backend_path: () => `${API_MOUNT}/for-you`,
+    frontend_path: () => `${API_MOUNT}/for-you`,
 
     response: z.object({
         posts: z.array(PostSchema).max(10),
     }),
 };
 
-const PostUpdateByIdContract = {
-    method: "PUT",
-    pattern: "/:id",
-    build: (id: number) => `${API_MOUNT}/${id}`,
+// const PostUpdateByIdContract = {
+//     method: "PUT",
+//     pattern: "/:id",
+//     build: (id: number) => `${API_MOUNT}/${id}`,
+
+//     request: {
+//         params: z.object({
+//             id: z.int(),
+//         }),
+//         body: z.object({
+//             post: PostUpdateSchema,
+//         }),
+//     },
+
+//     response: z.object({
+//         post: PostSchema,
+//     }),
+// };
+
+const PostCreateContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/create`,
+    frontend_path: () => `${API_MOUNT}/create`,
 
     request: {
-        params: z.object({
-            id: z.int(),
-        }),
-        body: z.object({
-            post: PostUpdateSchema,
-        }),
+        body: ContentSchema,
     },
 
     response: z.object({
-        post: PostSchema,
+        status: 201 | 400,
     }),
-};
+}
 
 const PostDeleteByIdContract = {
     method: "DELETE",
-    pattern: ":id",
-    build: (id: number) => `${API_MOUNT}/${id}`,
+    backend_path: () => `${API_MOUNT}/:id`,
+    frontend_path: (id: number) => `${API_MOUNT}/${id}`,
 
     request: {
         params: z.object({
@@ -123,12 +137,23 @@ export const postsContract = {
         getById: PostGetByIdContract,
         getByFollowing: PostGetByFollowingContract,
         getByForYou: PostGetByForYouContract,
-        updateById: PostUpdateByIdContract,
+        //updateById: PostUpdateByIdContract,
+        create: PostCreateContract,
         delete: PostDeleteByIdContract,
     },
 } as const;
 
-export type Content = z.infer<typeof ContentSchema>;
+export enum content_type {
+    text = 'text',
+    image = 'image',
+    text_image = 'text_image',
+    poll = 'poll'
+}
+
+export type Content = {
+    contentType: content_type;
+    content: z.infer<typeof ContentSchema>;
+}
 
 export type PostGetByIdParams = z.infer<
     typeof PostGetByIdContract.request.params
@@ -142,16 +167,20 @@ export type PostGetByForYouResponse = z.infer<
     typeof PostGetByForYouContract.response
 >;
 
-export type PostUpdateByIdParams = z.infer<
-    typeof PostUpdateByIdContract.request.params
->;
-export type PostUpdateByIdRequestBody = z.infer<
-    typeof PostUpdateByIdContract.request.body
->;
-export type PostUpdateByIdResponseBody = z.infer<
-    typeof PostUpdateByIdContract.response
+// export type PostUpdateByIdParams = z.infer<
+//     typeof PostUpdateByIdContract.request.params
+// >;
+// export type PostUpdateByIdRequestBody = z.infer<
+//     typeof PostUpdateByIdContract.request.body
+// >;
+// export type PostUpdateByIdResponseBody = z.infer<
+//     typeof PostUpdateByIdContract.response
+//>;
+
+export type PostDeleteByIdParams = z.infer<
+    typeof PostDeleteByIdContract.request.params
 >;
 
-export type PostDeleteById = z.infer<
-    typeof PostDeleteByIdContract.request.params
+export type PostCreateRequest = z.infer<
+    typeof PostCreateContract.request.body
 >;
