@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS user_follows (
     following_id UUID NOT NULL REFERENCES users(id),
 
     CONSTRAINT user_follows_pk PRIMARY KEY (follower_id, following_id),
-    CONSTRAINT user_follows_no_self_follow CHECK (follower_id <> following_id)
+    CONSTRAINT user_follows_no_self_follow CHECK (follower_id != following_id)
 );
 
 
@@ -85,7 +85,10 @@ CREATE TABLE IF NOT EXISTS poll_votes (
 CREATE TABLE IF NOT EXISTS post_likes (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     user_id UUID NOT NULL REFERENCES users(id),
-    post_id UUID NOT NULL REFERENCES posts(id)
+    post_id UUID NOT NULL REFERENCES posts(id),
+        
+    CONSTRAINT post_likes_user_post_unique
+        UNIQUE (user_id, post_id)
 );
 
 CREATE TABLE IF NOT EXISTS comments (

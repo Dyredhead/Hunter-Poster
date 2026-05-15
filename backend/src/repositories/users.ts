@@ -100,3 +100,29 @@ export async function findUserByEmail(id: string) {
 
     return result.find((user) => user.id === id) ?? null;
 }
+
+export async function getFollowing(id: string): Promise<string[]> {
+    return (
+        await database.query(
+            `
+        SELECT following_id
+        FROM user_follows
+        WHERE follower_id = $1
+        `,
+            [id],
+        )
+    ).rows.map((row) => row.following_id);
+}
+
+export async function getFollowers(id: string): Promise<string[]> {
+    return (
+        await database.query(
+            `
+        SELECT follower_id
+        FROM user_follows
+        WHERE following_id = $1
+        `,
+            [id],
+        )
+    ).rows.map((row) => row.follower_id);
+}

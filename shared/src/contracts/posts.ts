@@ -46,6 +46,32 @@ const PostSchema = z.object({
 //     content: ContentUpdateSchema,
 // });
 
+const PostLikeContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/like`,
+    frontend_path: () => `${API_MOUNT}/like`,
+
+    request: {
+        body: z.object({
+            post_id: z.uuidv7(),
+            user_id: z.uuidv7(),
+        }),
+    },
+};
+
+const PostUnLikeContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/unlike`,
+    frontend_path: () => `${API_MOUNT}/unlike`,
+
+    request: {
+        body: z.object({
+            post_id: z.uuidv7(),
+            user_id: z.uuidv7(),
+        }),
+    },
+};
+
 const PostGetByIdContract = {
     method: "GET",
     backend_path: () => `${API_MOUNT}/:id`,
@@ -113,7 +139,7 @@ const PostCreateContract = {
     response: z.object({
         status: 201 | 400,
     }),
-}
+};
 
 const PostDeleteByIdContract = {
     method: "DELETE",
@@ -131,7 +157,7 @@ const PostDeleteByIdContract = {
     }),
 };
 
-export const postsContract = {
+export const postContract = {
     mount: API_MOUNT,
     routes: {
         getById: PostGetByIdContract,
@@ -140,22 +166,24 @@ export const postsContract = {
         //updateById: PostUpdateByIdContract,
         create: PostCreateContract,
         delete: PostDeleteByIdContract,
+        like: PostLikeContract,
+        unlike: PostUnLikeContract,
     },
 } as const;
 
 export enum content_type {
-    text = 'text',
-    image = 'image',
-    text_image = 'text_image',
-    poll = 'poll'
+    text = "text",
+    image = "image",
+    text_image = "text_image",
+    poll = "poll",
 }
 
 export type Content = {
     contentType: content_type;
     content: z.infer<typeof ContentSchema>;
-}
+};
 
-export type PostGetByIdParams = z.infer<
+export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params
 >;
 export type PostGetByIdResponse = z.infer<typeof PostGetByIdContract.response>;
@@ -177,10 +205,11 @@ export type PostGetByForYouResponse = z.infer<
 //     typeof PostUpdateByIdContract.response
 //>;
 
+export type PostLikeRequest = z.infer<typeof PostLikeContract.request.body>;
+export type PostUnLikeRequest = z.infer<typeof PostUnLikeContract.request.body>;
+
 export type PostDeleteByIdParams = z.infer<
     typeof PostDeleteByIdContract.request.params
 >;
 
-export type PostCreateRequest = z.infer<
-    typeof PostCreateContract.request.body
->;
+export type PostCreateRequest = z.infer<typeof PostCreateContract.request.body>;
