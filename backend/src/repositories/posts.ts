@@ -1,11 +1,12 @@
 import { database } from "@/database/client.js";
 import { getFollowing } from "./users.js";
-import { content_type } from "@my-app/shared";
+import { content_type, poll_position_type } from "@my-app/shared";
 
 export type PostsRow = {
     id: string;
     user_id: string;
-    post_type: string;
+    post_type: content_type;
+    created_at: Date;
 };
 
 type PostTextRow = {
@@ -41,6 +42,13 @@ type PollOptionsRow = {
     option: string;
 };
 
+type PollVotesRow = {
+    id: string;
+    poll_id: string;
+    user_id: string;
+    position: poll_position_type;
+};
+
 export async function getPostsFollowing(id: string): Promise<PostsRow[]> {
     const following = await getFollowing(id);
 
@@ -71,6 +79,17 @@ export async function getPostsForYou(id: string): Promise<PostsRow[]> {
         .then((res) => res.rows);
 }
 
+export async function getPostAll(): Promise<PostsRow[]> {
+    return await database
+        .query<PostsRow>(
+            `
+            SELECT * FROM posts
+            ORDER BY id DESC
+        `,
+        )
+        .then((res) => res.rows);
+}
+
 export async function getPostsById(id: string) {
     const query = `
         SELECT * FROM posts
@@ -85,7 +104,94 @@ export async function getPostsById(id: string) {
     return result.find((post) => post.id === id) ?? null;
 }
 
-async function createPost(user_id: string, post_type: string) {
+export async function getTextPostByPostId(
+    post_id: string,
+): Promise<PostTextRow> {
+    const query = `
+        SELECT * FROM posts_text
+        WHERE post_id = $1
+    `;
+    const values = [post_id];
+
+    return (await database.query<PostTextRow>(query, values)).rows[0];
+}
+
+export async function getImagePostByPostId(
+    post_id: string,
+): Promise<PostImageRow> {
+    const query = `
+        SELECT * FROM posts_image
+        WHERE id = $1
+    `;
+    const values = [post_id];
+
+    return (await database.query<PostImageRow>(query, values)).rows[0];
+}
+
+export async function getTextImagePostByPostId(
+    post_id: string,
+): Promise<PostTextImageRow> {
+    const query = `
+        SELECT * FROM posts_text_and_image
+        WHERE post_id = $1
+    `;
+    const values = [post_id];
+
+    return (await database.query<PostTextImageRow>(query, values)).rows[0];
+}
+
+export async function getPollPostByPostId(post_id: string): Promise<PollsRow> {
+    const query = `
+        SELECT * FROM polls
+        WHERE post_id = $1
+    `;
+    const values = [post_id];
+
+    return (await database.query<PollsRow>(query, values)).rows[0];
+}
+
+export async function getPollOptionsByPollId(
+    poll_id: string,
+): Promise<Array<PollOptionsRow>> {
+    const query = `
+        SELECT * FROM poll_options
+        WHERE poll_id = $1
+    `;
+    const values = [poll_id];
+
+    return (await database.query<PollOptionsRow>(query, values)).rows;
+}
+
+export async function getPollVotesByPollId(
+    poll_id: string,
+    position: poll_position_type,
+): Promise<number> {
+    const query = `
+        SELECT COUNT(*) 
+        FROM poll_votes 
+        WHERE poll_id = $1 AND position = $2
+    `;
+    const values = [poll_id, position];
+
+    return Number((await database.query(query, values)).rows[0].count);
+}
+
+export async function getPollVoteByUserId(
+    poll_id: string,
+    user_id: string,
+): Promise<number> {
+    const query = `
+        SELECT * FROM pollVotes
+        WHERE poll_id = $1 AND user_id = $2
+    `;
+    const values = [poll_id, user_id];
+
+    const result = await database.query<PollVotesRow>(query, values);
+
+    return result.rows.length > 0 ? Number(result.rows[0].position) : 0;
+}
+
+async function createPost(user_id: string, post_type: content_type) {
     // query for inserting into posts
     const query = `
         INSERT INTO posts(user_id, post_type) 
@@ -147,7 +253,7 @@ export async function createPollPost(
     user_id: string,
     question: string,
     poll_options: string[],
-    closes_at: Date,
+    closes_at: string,
 ) {
     // create post and get id
     const post_id = await createPost(user_id, content_type.poll);
@@ -170,14 +276,14 @@ export async function createPollPost(
     `;
 
     let position = 0;
-    poll_options.forEach(async (option) => {
-        position++;
-        const optionValues = [poll_id, position.toString(), option];
+    await Promise.all(
+        poll_options.map(async (option) => {
+            position++;
+            const optionValues = [poll_id, position.toString(), option];
 
-        if (position === poll_options.length)
-            await database.query(optionsQuery, optionValues);
-        else database.query(optionsQuery, optionValues);
-    });
+            return database.query(optionsQuery, optionValues);
+        }),
+    );
 }
 
 export async function deletePost(id: string) {

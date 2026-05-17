@@ -3,27 +3,31 @@ import { API_MOUNT as _API_MOUNT } from "./api.js";
 const API_MOUNT = _API_MOUNT + "/posts";
 
 const TextSchema = z.object({
+    type: z.literal("text"),
     content: z.string(),
 });
 
 const ImageSchema = z.object({
+    type: z.literal("image"),
     image_url: z.string(),
 });
 
 const TextImageSchema = z.object({
+    type: z.literal("text_image"),
     content: z.string(),
     image_url: z.string(),
 });
 
 const PollSchema = z.object({
+    type: z.literal("poll"),
     question: z.string(),
     closes_at: z.iso.datetime(),
     options: z.array(z.string()).max(4),
     vote: z.int().min(0).max(4),
-    final_votes: z.array(z.int().min(0)).max(4).nullable(),
+    current_votes: z.array(z.int().min(0)).max(4),
 });
 
-const ContentSchema = z.union([
+export const ContentSchema = z.union([
     TextSchema,
     ImageSchema,
     TextImageSchema,
@@ -83,9 +87,10 @@ const PostGetByIdContract = {
         }),
     },
 
-    response: z.object({
+    response: {
         post: PostSchema,
-    }),
+        notFound: 404,
+    },
 };
 
 const PostGetByFollowingContract = {
@@ -136,9 +141,10 @@ const PostCreateContract = {
         body: ContentSchema,
     },
 
-    response: z.object({
-        status: 201 | 400,
-    }),
+    response: {
+        failed: 400,
+        post_created: 201,
+    },
 };
 
 const PostDeleteByIdContract = {
@@ -178,10 +184,16 @@ export enum content_type {
     poll = "poll",
 }
 
-export type Content = {
-    contentType: content_type;
-    content: z.infer<typeof ContentSchema>;
-};
+export enum poll_position_type {
+    _1 = "1",
+    _2 = "2",
+    _3 = "3",
+    _4 = "4",
+}
+
+export type Content = z.infer<typeof ContentSchema>;
+
+export type post_type = z.infer<typeof PostSchema>;
 
 export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params

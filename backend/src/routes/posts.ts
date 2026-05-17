@@ -1,26 +1,21 @@
 import { Router } from "express";
 import { postContract } from "@my-app/shared";
 import { createUser } from "@/repositories/users.js";
+import { optionalAuth, requireAuth } from "@/middleware/auth.js";
+import {
+    postCreateController,
+    postGetByFollowingController,
+    postGetByForYouController,
+    postGetByIdController,
+} from "./postControllers.js";
 
 const router = Router();
 
-router.post(postContract.routes.like.mount, async (req, res) => {
-    const body = registerContract.routes.register.request.body.parse(req.body);
-    await createUser(body.username, body.email, body.password).catch((err) => {
-        switch (err.type) {
-            case "EMAIL_TAKEN":
-                return res.status(401).json({
-                    error: "Unauthorized",
-                    message: "A user with that email already exists",
-                });
-            case "USERNAME_TAKEN":
-                return res.status(401).json({
-                    error: "Unauthorized",
-                    message: "A user with that username already exists",
-                });
-        }
-    });
-    return res.sendStatus(200);
-});
+const Post = postContract.routes;
+
+router.post(Post.create.backend_path(), requireAuth, postCreateController);
+router.get(Post.getByForYou.backend_path(), optionalAuth, postGetByForYouController);
+router.get(Post.getByFollowing.backend_path(), requireAuth, postGetByFollowingController);
+router.get(Post.getById.backend_path(), postGetByIdController);
 
 export default router;
