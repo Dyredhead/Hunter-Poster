@@ -61,10 +61,10 @@ export const postGetByIdController: RequestHandler = async (req, res) => {
 
 export const postGetByForYouController: RequestHandler = async (req, res) => {
     let result: PostsRow[];
-    if (!req.auth) {
-        result = await getPostAll();
-    } else {
+    if (req.auth !== undefined) {
         result = await getPostsForYou(req.auth.sub);
+    } else {
+        result = await getPostAll();
     }
 
     const formattedRes = await Promise.all(
@@ -73,7 +73,7 @@ export const postGetByForYouController: RequestHandler = async (req, res) => {
         }),
     );
 
-    res.status(200).send(formattedRes);
+    res.status(200).json(formattedRes);
 };
 
 export const postGetByFollowingController: RequestHandler = async (

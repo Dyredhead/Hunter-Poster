@@ -1,9 +1,8 @@
 import "./Post.css";
 
 type PostProps = {
-    id: number;
     username: string;
-    created_at: Date;
+    created_at: string;
     imageUrl?: string;
     content: string;
     comments: number;
@@ -126,18 +125,20 @@ const ImagePlaceholder = () => (
 );
 
 function DateTimeToString(datetime: Date): string {
-    const date = new Intl.DateTimeFormat(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-    }).format(datetime);
+    // const date = new Intl.DateTimeFormat(undefined, {
+    //     month: "short",
+    //     day: "numeric",
+    //     year: "numeric",
+    // }).format(datetime);
 
-    const time = new Intl.DateTimeFormat(undefined, {
-        hour: "numeric",
-        minute: "2-digit",
-    }).format(datetime);
+    // const time = new Intl.DateTimeFormat(undefined, {
+    //     hour: "numeric",
+    //     minute: "2-digit",
+    // }).format(datetime);
 
-    return `${date} @ ${time}`;
+    // return `${date} @ ${time}`;
+    console.log(datetime);
+    return datetime.toString();
 }
 
 export default function Post({
@@ -158,7 +159,7 @@ export default function Post({
                 </button>
                 <div className="post-header-right">
                     <span className="post-date">
-                        {DateTimeToString(created_at)}
+                        {DateTimeToString(new Date(created_at))}
                     </span>
                 </div>
             </header>

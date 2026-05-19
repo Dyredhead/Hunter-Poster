@@ -108,9 +108,7 @@ const PostGetByForYouContract = {
     backend_path: () => `${API_MOUNT}/for-you`,
     frontend_path: () => `${API_MOUNT}/for-you`,
 
-    response: z.object({
-        posts: z.array(PostSchema).max(10),
-    }),
+    response: z.array(PostSchema),
 };
 
 // const PostUpdateByIdContract = {

@@ -1,4 +1,9 @@
-import { postContract, type PostLikeRequest } from "@my-app/shared";
+import {
+    postContract,
+    type PostCreateRequest,
+    type PostGetByForYouResponse,
+    type PostLikeRequest,
+} from "@my-app/shared";
 import { apiFetch } from "@/api/client";
 
 // export async function register(request: RegisterRequest): Promise<Response> {
@@ -35,4 +40,30 @@ export async function unlikePost(request: PostLikeRequest): Promise<Response> {
     );
 
     return response;
+}
+
+const Post = postContract.routes;
+
+export async function createPost(request: PostCreateRequest): Promise<number> {
+    const response = await apiFetch<PostCreateRequest>(
+        Post.create.frontend_path(),
+        Post.create.method,
+        request,
+    );
+
+    return response.status;
+}
+
+export async function getByForYou(): Promise<PostGetByForYouResponse> {
+    const response = await apiFetch(
+        Post.getByForYou.frontend_path(),
+        Post.getByForYou.method,
+    );
+
+    try {
+        return response.json();
+    } catch (err) {
+        console.log("\n");
+        return [];
+    }
 }

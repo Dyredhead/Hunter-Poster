@@ -10,7 +10,7 @@ declare global {
 }
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-    const authorization = req.header("authorization");
+    const authorization = req.header("Authorization");
 
     if (!authorization?.startsWith("Bearer ")) {
         return res.status(401).json({
@@ -31,7 +31,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 }
 
 export function optionalAuth(req: Request, res: Response, next: NextFunction) {
-    const authorization = req.header("authorization");
+    const authorization = req.header("Authorization");
 
     if (!authorization?.startsWith("Bearer ")) {
         req.auth = undefined;

@@ -83,7 +83,7 @@ async function FormatPostContentService(
             content = {
                 type: content_type.poll,
                 question: pollPost.question,
-                closes_at: pollPost.closes_at.toISOString(),
+                closes_at: pollPost.closes_at,
                 options: (await pollOptions).map((option) => option.option),
                 vote: await yourVote,
                 current_votes: pollVotes,
@@ -104,7 +104,7 @@ export async function FormatPostGetResponseService(
     const formattedPost: post_type = {
         id: post.id,
         created_by: (await username)!.username,
-        created_at: post.created_at.toISOString(),
+        created_at: post.created_at,
         content: await content,
         comments: 0,
         likes: await likes,
