@@ -1,13 +1,13 @@
+import { login } from "@/api/auth/login";
+import hide from "@/assets/icons/hide.svg";
+import show from "@/assets/icons/show.svg";
+import BigButton from "@/components/BigButton";
+import BigTitle from "@/components/BigTitle";
+import Screen from "@/components/Screen";
+import { loginContract } from "@my-app/shared";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./auth.css";
-import Screen from "@/components/Screen";
-import BigTitle from "@/components/BigTitle";
-import BigButton from "@/components/BigButton";
-import show from "@/assets/icons/show.svg";
-import hide from "@/assets/icons/hide.svg";
-import { login } from "@/api/auth/login";
-import { loginContract } from "@my-app/shared";
 
 export default function LoginPage() {
     const navigate = useNavigate();

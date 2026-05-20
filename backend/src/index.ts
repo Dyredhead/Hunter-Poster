@@ -1,12 +1,14 @@
-import express from "express";
 import cors from "cors";
-import { env } from "./env.js";
+import express from "express";
 import morgan from "morgan";
+import { env } from "./env.js";
 
-import loginRouter from "@/routes/auth/login.js";
-import registerRouter from "@/routes/auth/register.js";
-import postRouter from "@/routes/posts.js"
-
+import {
+    loginRouter,
+    postRouter,
+    registerRouter,
+    usersRouter,
+} from "@/routes/index.js";
 const app = express();
 
 app.use(express.json());
@@ -17,6 +19,7 @@ app.use(morgan("combined"));
 app.use(loginRouter);
 app.use(registerRouter);
 app.use(postRouter);
+app.use(usersRouter);
 
 app.listen(env.express_port, () => {
     console.log(`Backend running at http://localhost:${env.express_port}`);

@@ -1,42 +1,43 @@
-// import { Router } from "express";
-// import { usersContract } from "@my-app/shared";
-// import { validateBody } from "../middleware/validateBody.js";
-// import { findUserById } from "../repositories/users.js";
+import { requireAuth } from "@/middleware/auth.js";
+import { findUserById } from "@/repositories/users.js";
+import { usersContract } from "@my-app/shared";
+import { Router } from "express";
 
-// const router = Router();
+const router = Router();
 
-// router.get(usersContract.routes.getById.pattern, async (req, res, next) => {
-//     const route = usersContract.routes.getById;
-//     try {
-//         const user = await findUserById(1);
+router.get(
+    usersContract.routes.getCurrent.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        console.log(req.auth?.sub!);
+        await findUserById(req.auth?.sub!)
+            .then((body) => {
+                if (body != null) {
+                    return res.status(200).json(body);
+                } else {
+                }
+            })
+            .catch((err) => {
+                console.log("no such user");
+                return res.sendStatus(400);
+            });
 
-//         const response = route.response.parse({ user });
-//         res.json(response);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
+        return;
+    },
+);
 
-// router.post(
-//     usersContract.routes.create.pattern,
-//     validateBody(usersContract.routes.create.request.body),
-//     async (req, res, next) => {
-//         const route = usersContract.routes.create;
-//         try {
-//             const body = route.request.body.parse(req.body);
+router.get(usersContract.routes.getById.backend_path(), async (req, res) => {
+    const params = usersContract.routes.getById.request.params.parse(
+        req.params,
+    );
 
-//             const response = route.response.parse({
-//                 user: {
-//                     id: 123,
-//                     email: body.email,
-//                 },
-//             });
+    let body = await findUserById(params.id)
+        .then((res) => res)
+        .catch((err) => {
+            console.error("no such user");
+        });
 
-//             res.status(201).json(response);
-//         } catch (error) {
-//             next(error);
-//         }
-//     },
-// );
+    return res.status(200).json(body);
+});
 
-// export default router;
+export default router;

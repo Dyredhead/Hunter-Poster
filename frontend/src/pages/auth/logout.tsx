@@ -1,8 +1,8 @@
-import "./auth.css";
-import Screen from "@/components/Screen";
-import BigTitle from "@/components/BigTitle";
-import { useEffect } from "react";
 import { logout } from "@/api/auth/logout";
+import BigTitle from "@/components/BigTitle";
+import Screen from "@/components/Screen";
+import { useEffect } from "react";
+import "./auth.css";
 
 export default function LogoutPage() {
     useEffect(() => {

@@ -1,7 +1,7 @@
-import { Router } from "express";
-import { loginContract } from "@my-app/shared";
-import { verifyUserCredentials } from "@/repositories/users.js";
 import { signAccessToken } from "@/jwt.js";
+import { verifyUserCredentials } from "@/repositories/users.js";
+import { loginContract } from "@my-app/shared";
+import { Router } from "express";
 
 const router = Router();
 

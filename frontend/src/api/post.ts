@@ -1,5 +1,5 @@
-import { postContract, type PostLikeRequest } from "@my-app/shared";
 import { apiFetch } from "@/api/client";
+import { postContract, type PostLikeRequest } from "@my-app/shared";
 
 // export async function register(request: RegisterRequest): Promise<Response> {
 //     const body = registerContract.routes.register.request.body.parse(request);
@@ -19,6 +19,7 @@ export async function likePost(request: PostLikeRequest): Promise<Response> {
     const response = await apiFetch<PostLikeRequest>(
         postContract.routes.like.frontend_path(),
         postContract.routes.like.method,
+        false,
         body,
     );
 
@@ -31,6 +32,7 @@ export async function unlikePost(request: PostLikeRequest): Promise<Response> {
     const response = await apiFetch<PostLikeRequest>(
         postContract.routes.unlike.frontend_path(),
         postContract.routes.unlike.method,
+        false,
         body,
     );
 

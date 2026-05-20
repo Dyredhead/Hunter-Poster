@@ -1,15 +1,15 @@
-// import { Router } from 'express';
-// import { healthContract, type HealthResponse } from '@my-app/shared';
+import { healthContract, type HealthResponse } from "@my-app/shared";
+import { Router } from "express";
 
-// const router = Router();
+const router = Router();
 
-// router.get(healthContract.path, (_req, res) => {
-//   const response: HealthResponse = {
-//     ok: true,
-//     message: 'Backend is running',
-//   };
+router.get(healthContract.path, (_req, res) => {
+    const response: HealthResponse = {
+        ok: true,
+        message: "Backend is running",
+    };
 
-//   res.json(response);
-// });
+    res.json(response);
+});
 
-// export default router;
+export default router;

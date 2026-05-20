@@ -1,9 +1,9 @@
 // import { useEffect, useState } from "react";
 // import { getHealth } from "./api/health";
 // import { userGetById } from "./api/users";
-import { Routes, Route } from "react-router-dom";
-import * as pages from "./pages";
+import { Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
+import * as pages from "./pages";
 import ProtectedRoute from "./ProtectedRoute";
 
 export default function App() {
@@ -34,15 +34,15 @@ export default function App() {
                         />
                     </Route>
 
-                    <Route path="/profile">
-                        <Route
+                    <Route path="/profile" element={<pages.ProfilePage />}>
+                        {/* <Route
                             path=":username"
                             element={<pages.ProfilePage />}
                         />
                         <Route
                             path="settings"
                             element={<pages.ProfileSettingsPage />}
-                        />
+                        /> */}
                     </Route>
 
                     <Route

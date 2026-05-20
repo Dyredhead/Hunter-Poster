@@ -8,17 +8,26 @@ CREATE EXTENSION IF NOT EXISTS citext;
 -- CREATE TYPE enum_name AS ENUM ('variant 1', 'variant 2');
 CREATE TYPE post_type AS ENUM ('text', 'image', 'text_image', 'poll');
 CREATE TYPE poll_position AS ENUM ('1', '2', '3', '4');
+CREATE TYPE image_type AS ENUM ('pfp', 'banner', 'post');
 
 -- Structs:
 -- CREATE TYPE struct_name AS (field1 INTEGER, field2 TEXT);
 
 -- Tables
+CREATE TABLE IF NOT EXISTS images (
+    id UUID PRIMARY KEY DEFAULT uuidv7(),
+    image_type IMAGE_TYPE,
+    image_data BYTEA
+);
+
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     username CITEXT NOT NULL UNIQUE,
     email CITEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    pfp_id UUID DEFAULT NULL REFERENCES images(id),
+    banner_id UUID DEFAULT NULL REFERENCES images(id)
 );
 
 CREATE TABLE IF NOT EXISTS user_follows (
@@ -28,7 +37,6 @@ CREATE TABLE IF NOT EXISTS user_follows (
     CONSTRAINT user_follows_pk PRIMARY KEY (follower_id, following_id),
     CONSTRAINT user_follows_no_self_follow CHECK (follower_id != following_id)
 );
-
 
 CREATE TABLE IF NOT EXISTS posts (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
@@ -46,7 +54,7 @@ CREATE TABLE IF NOT EXISTS posts_text (
 CREATE TABLE IF NOT EXISTS posts_image (
     id UUID PRIMARY KEY DEFAULT uuidv7(),
     post_id UUID REFERENCES posts(id) ON DELETE CASCADE,
-    image_url TEXT NOT NULL
+    image_id UUID REFERENCES images(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS posts_text_and_image (
@@ -110,3 +118,4 @@ CREATE TABLE IF NOT EXISTS bookmarks (
     user_id UUID NOT NULL REFERENCES users(id),
     post_id UUID NOT NULL REFERENCES posts(id)
 );
+

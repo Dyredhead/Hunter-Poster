@@ -1,10 +1,10 @@
 import "./Post.css";
 
 type PostProps = {
-    id: number;
+    id: string;
     username: string;
-    created_at: Date;
-    imageUrl?: string;
+    pfp_url?: string;
+    image_url?: string;
     content: string;
     comments: number;
     likes: number;
@@ -19,30 +19,17 @@ function onLike() {}
 function onBookmark() {}
 function onShare() {}
 
-const AvatarIcon = () => (
-    <svg
-        className="post-avatar"
-        width="40"
-        height="40"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-    >
-        <g clipPath="url(#avatar-clip)">
-            <rect width="40" height="40" rx="20" fill="#999999" />
-            <path
-                d="M8 34C8 29.5817 11.5817 26 16 26H24C28.4183 26 32 29.5817 32 34V42C32 46.4183 28.4183 50 24 50H16C11.5817 50 8 46.4183 8 42V34Z"
-                fill="#666666"
-            />
-            <circle cx="20.3618" cy="16" r="8" fill="#666666" />
-        </g>
-        <defs>
-            <clipPath id="avatar-clip">
-                <rect width="40" height="40" rx="20" fill="white" />
-            </clipPath>
-        </defs>
-    </svg>
-);
+type AvatarIconProps = {
+    pfp_url?: string;
+};
+
+const AvatarIcon = ({ pfp_url }: AvatarIconProps) => {
+    if (pfp_url == null) {
+        pfp_url = "/src/assets/icons/avatar.svg";
+    }
+
+    return <img src={pfp_url}></img>;
+};
 
 const CommentIcon = () => (
     <svg
@@ -125,6 +112,16 @@ const ImagePlaceholder = () => (
     </svg>
 );
 
+function getDateFromUUIDv7(uuid: string): Date {
+    // Remove hyphens and take the first 12 hex characters (48 bits)
+    const hexTimestamp = uuid.replace(/-/g, "").substring(0, 12);
+
+    // Convert hex to a decimal integer (milliseconds)
+    const timestampMs = parseInt(hexTimestamp, 16);
+
+    return new Date(timestampMs);
+}
+
 function DateTimeToString(datetime: Date): string {
     const date = new Intl.DateTimeFormat(undefined, {
         month: "short",
@@ -141,10 +138,11 @@ function DateTimeToString(datetime: Date): string {
 }
 
 export default function Post({
+    id,
     username,
-    created_at,
+    pfp_url,
     content,
-    imageUrl,
+    image_url,
     comments,
     likes,
     bookmarks,
@@ -153,20 +151,24 @@ export default function Post({
         <article className="post">
             <header className="post-header">
                 <button className="post-author" onClick={onUsernameClick}>
-                    <AvatarIcon />
+                    <AvatarIcon pfp_url={pfp_url} />
                     <span className="post-username">{username}</span>
                 </button>
                 <div className="post-header-right">
                     <span className="post-date">
-                        {DateTimeToString(created_at)}
+                        {DateTimeToString(getDateFromUUIDv7(id))}
                     </span>
                 </div>
             </header>
 
-            {imageUrl !== undefined && (
+            {image_url !== undefined && (
                 <button className="post-image-wrapper" onClick={onImageClick}>
-                    {imageUrl ? (
-                        <img className="post-image" src={imageUrl} alt="Post" />
+                    {image_url ? (
+                        <img
+                            className="post-image"
+                            src={image_url}
+                            alt="Post"
+                        />
                     ) : (
                         <ImagePlaceholder />
                     )}

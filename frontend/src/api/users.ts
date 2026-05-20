@@ -1,31 +1,26 @@
-// import { apiFetch } from './client.ts';
-// import {
-//   usersContract,
-//   type UserGetByIdResponse,
-//   type UserGetByIdParams,
-//   type UserCreateRequest,
-//   type UserCreateResponse,
-// } from '@my-app/shared';
+import { usersContract, type UserGetByIdParams } from "@my-app/shared";
+import { apiFetch } from "./client.ts";
 
-// export async function userGetById(params: UserGetByIdParams): Promise<UserGetByIdResponse> {
-//   const route = usersContract.routes.getById;
-//   const json = await apiFetch<unknown>(
-//     route.build(params.id),
-//     method: route.method,
-//   );
+export async function userGetById(
+    params: UserGetByIdParams,
+): Promise<Response> {
+    const route = usersContract.routes.getById;
+    const response = await apiFetch<unknown>(
+        route.frontend_path(params.id),
+        route.method,
+        false,
+    );
 
-//   return route.response.parse(json);
-// }
+    return response;
+}
 
-// export async function userCreate(body: UserCreateRequest): Promise<UserCreateResponse> {
-//   const route = usersContract.routes.create;
-//   const parsedBody = route.request.body.parse(body);
+export async function userGetCurrent(): Promise<Response> {
+    const route = usersContract.routes.getCurrent;
+    const response = await apiFetch<unknown>(
+        route.frontend_path(),
+        route.method,
+        true,
+    );
 
-//   const json = await apiFetch<unknown, UserCreateRequest>(
-//     route.build(),
-//     method: route.method,
-//     body: parsedBody,
-//   );
-
-//   return route.response.parse(json);
-// }
+    return response;
+}

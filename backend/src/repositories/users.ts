@@ -5,6 +5,8 @@ type UsersRow = {
     username: string;
     email: string;
     password_hash: string;
+    pfp_id: string;
+    banner_id: string;
 };
 
 type UsersError =

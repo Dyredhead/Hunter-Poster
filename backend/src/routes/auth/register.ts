@@ -1,6 +1,6 @@
-import { Router } from "express";
-import { registerContract } from "@my-app/shared";
 import { createUser } from "@/repositories/users.js";
+import { registerContract } from "@my-app/shared";
+import { Router } from "express";
 
 const router = Router();
 

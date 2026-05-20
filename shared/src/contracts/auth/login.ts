@@ -1,4 +1,4 @@
-import { jwt, z } from "zod";
+import { z } from "zod";
 import { API_MOUNT as PARENT_API_MOUNT } from "./api.js";
 
 const API_MOUNT = `${PARENT_API_MOUNT}/login`;
@@ -26,7 +26,6 @@ export const loginContract = {
                 },
                 401: {
                     body: z.object({
-                        error: z.literal("Unauthorized"),
                         message: z.literal(
                             "Either the email or password was incorrect",
                         ),

@@ -1,9 +1,9 @@
 export async function apiFetch<TRequest>(
     url: string,
     method: string,
+    auth: boolean,
     body?: TRequest,
     headers?: Record<string, string>,
-    auth?: boolean,
 ): Promise<Response> {
     const accessToken = localStorage.getItem("accessToken");
 

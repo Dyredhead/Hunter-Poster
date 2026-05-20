@@ -1,19 +1,42 @@
-import { useParams } from "react-router-dom";
-import { BannerContainer, FollowDisplay, UserInformation } from "@/components/ProfileComponents";
+import { userGetCurrent } from "@/api/users";
+import {
+    BannerContainer,
+    FollowDisplay,
+    UserInformation,
+} from "@/components/ProfileComponents";
+import { usersContract } from "@my-app/shared";
 
-export default function page() {
-    const { username } = useParams();
-    
+export default async function ProfilePage() {
+    const result = await userGetCurrent();
 
-    return (
-        <div className="w-full">
-            <BannerContainer/>
-            <UserInformation username={username ?? ""} description="awdawawd wdapwdaw dwa da sd wa sdwa sd wdaaw dwa da d"/>
+    if (result.ok) {
+        const user = usersContract.routes.getById.responses[200].body.parse(
+            await result.json(),
+        );
 
-            <div className="flex justify-center gap-10 text-secondary mt-2">
-                <FollowDisplay label="Following" count={10} to="/profile/settings"/>
-                <FollowDisplay label="Followers" count={20} to="/profile/settings"/>
+        return (
+            <div className="w-full">
+                <BannerContainer />
+                <UserInformation
+                    username={user.username}
+                    description={user.description}
+                />
+
+                <div className="flex justify-center gap-10 text-secondary mt-2">
+                    <FollowDisplay
+                        label="Following"
+                        count={10}
+                        to="/profile/settings"
+                    />
+                    <FollowDisplay
+                        label="Followers"
+                        count={20}
+                        to="/profile/settings"
+                    />
+                </div>
             </div>
-        </div>
-  );
+        );
+    } else {
+        console.error("something went wrong");
+    }
 }

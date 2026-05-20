@@ -1,13 +1,12 @@
+import { register } from "@/api/auth/register";
+import hide from "@/assets/icons/hide.svg";
+import show from "@/assets/icons/show.svg";
+import BigButton from "@/components/BigButton";
+import BigTitle from "@/components/BigTitle";
+import Screen from "@/components/Screen";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { userCreate } from '../../api/users.ts';
 import "./auth.css";
-import Screen from "@/components/Screen";
-import BigTitle from "@/components/BigTitle";
-import BigButton from "@/components/BigButton";
-import show from "@/assets/icons/show.svg";
-import hide from "@/assets/icons/hide.svg";
-import { register } from "@/api/auth/register";
 
 export default function RegisterPage() {
     const navigate = useNavigate();

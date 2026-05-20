@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import "./NavBar.css";
 
 const NavItem = ({
@@ -40,18 +39,18 @@ export const NavBar = () => {
             <Outlet />
             <div className="flex justify-around fixed bottom-0 w-full bg-black h-20">
                 <NavItem
-                    to="profile/${username}"
+                    to="/profile/"
                     src="/src/assets/icons/navbar/profile.svg"
                     alt="profile button"
                     description="profile"
                 />
 
-                <NavItem
+                {/* <NavItem
                     to="/chat"
                     src="/src/assets/icons/navbar/chat.svg"
                     alt="chat button"
                     description="chat"
-                />
+                /> */}
 
                 <NavItem
                     to="/home/for-you"
