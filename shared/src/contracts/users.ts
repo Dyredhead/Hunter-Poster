@@ -7,9 +7,10 @@ const UserSchema = z.object({
     id: z.uuidv7(),
     username: z.string(),
     email: z.email(),
-    description: z.string(),
-    pfp_url: z.url(),
-    banner_url: z.url(),
+    is_deleted: z.boolean(),
+    description: z.string().nullable(),
+    pfp_id: z.url().nullable(),
+    banner_id: z.url().nullable(),
 });
 
 const UserGetCurrent = {
@@ -81,6 +82,20 @@ export const usersContract = {
 } as const;
 
 export type User = z.infer<typeof UserSchema>;
+
+export type UserGetCurrent =
+    | {
+          status: 200;
+          body: z.infer<
+              (typeof usersContract.routes.getCurrent.responses)[200]["body"]
+          >;
+      }
+    | {
+          status: 404;
+          body: z.infer<
+              (typeof usersContract.routes.getCurrent.responses)[404]["body"]
+          >;
+      };
 
 export type UserGetByIdParams = z.infer<
     typeof UserGetByIdContract.request.params

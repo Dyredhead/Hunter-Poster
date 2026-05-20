@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS users (
     email CITEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    description TEXT DEFAULT NULL,
     pfp_id UUID DEFAULT NULL REFERENCES images(id),
     banner_id UUID DEFAULT NULL REFERENCES images(id)
 );

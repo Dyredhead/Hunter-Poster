@@ -10,8 +10,6 @@ export default function FollowingPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Define the async function
-        console.log("test");
         const fetchData = async () => {
             await new Promise((f) => setTimeout(f, 200));
             try {
@@ -24,7 +22,7 @@ export default function FollowingPage() {
             }
         };
 
-        fetchData(); // Execute the function
+        fetchData();
     }, []);
 
     if (loading) {
@@ -34,8 +32,6 @@ export default function FollowingPage() {
             </div>
         );
     }
-
-    console.log("posts: ", posts);
 
     return <PostFeed posts={posts!}></PostFeed>;
 }

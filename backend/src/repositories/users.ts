@@ -4,9 +4,10 @@ type UsersRow = {
     id: string;
     username: string;
     email: string;
-    password_hash: string;
-    pfp_id: string;
-    banner_id: string;
+    is_deleted: boolean;
+    description: string | null;
+    pfp_id: string | null;
+    banner_id: string | null;
 };
 
 type UsersError =
@@ -60,7 +61,7 @@ export async function verifyUserCredentials(email: string, password: string) {
 
 export async function findUserById(id: string) {
     const result = await database
-        .query<UsersRow>(
+        .query<Omit<UsersRow, "password_hash">>(
             `
         SELECT *
         FROM users
@@ -75,7 +76,7 @@ export async function findUserById(id: string) {
 
 export async function findUserByUsername(id: string) {
     const result = await database
-        .query<UsersRow>(
+        .query<Omit<UsersRow, "password_hash">>(
             `
         SELECT *
         FROM users
@@ -90,7 +91,7 @@ export async function findUserByUsername(id: string) {
 
 export async function findUserByEmail(id: string) {
     const result = await database
-        .query<UsersRow>(
+        .query<Omit<UsersRow, "password_hash">>(
             `
         SELECT *
         FROM users

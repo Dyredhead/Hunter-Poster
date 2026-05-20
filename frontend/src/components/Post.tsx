@@ -10,7 +10,7 @@ function onBookmark() {}
 function onShare() {}
 
 type AvatarIconProps = {
-    pfp_url?: string;
+    pfp_url: string | null;
 };
 
 const AvatarIcon = ({ pfp_url }: AvatarIconProps) => {
@@ -130,8 +130,8 @@ function DateTimeToString(datetime: Date): string {
 type PostProps = {
     id: string;
     username: string;
-    pfp_url?: string;
-    image_url?: string;
+    pfp_url: string | null;
+    image_url: string | null;
     content: string;
     comments: number;
     likes: number;
@@ -162,7 +162,7 @@ export function Post({
                 </div>
             </header>
 
-            {image_url !== undefined && (
+            {image_url !== null && (
                 <button className="post-image-wrapper" onClick={onImageClick}>
                     {image_url ? (
                         <img
@@ -235,6 +235,8 @@ export function PostFeed({ posts }: PostFeedProps) {
                                 comments={post.comments}
                                 likes={post.likes}
                                 bookmarks={post.booksmarks}
+                                pfp_url={null}
+                                image_url={null}
                             ></Post>
                         );
                     case "image":
