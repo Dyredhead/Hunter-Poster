@@ -1,7 +1,9 @@
 import { requireAuth } from "@/middleware/auth.js";
-import { findUserById } from "@/repositories/users.js";
+import { PostsRow } from "@/repositories/posts.js";
+import { findUserById, getPostsById } from "@/repositories/users.js";
 import { usersContract } from "@my-app/shared";
 import { Router } from "express";
+import { FormatPostGetResponseService } from "./postServices.js";
 
 const router = Router();
 
@@ -25,18 +27,42 @@ router.get(
     },
 );
 
-router.get(usersContract.routes.getById.backend_path(), async (req, res) => {
-    const params = usersContract.routes.getById.request.params.parse(
-        req.params,
-    );
+router.get(
+    usersContract.routes.getById.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        const params = usersContract.routes.getById.request.params.parse(
+            req.params,
+        );
 
-    let body = await findUserById(params.id)
-        .then((res) => res)
-        .catch((err) => {
-            console.error("no such user");
-        });
+        let body = await findUserById(params.id)
+            .then((res) => res)
+            .catch((err) => {
+                console.error("no such user");
+            });
 
-    return res.status(200).json(body);
-});
+        return res.status(200).json(body);
+    },
+);
+
+router.get(
+    usersContract.routes.getPostsbyId.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        const params = usersContract.routes.getPostsbyId.request.params.parse(
+            req.params,
+        );
+
+        const result: PostsRow[] = await getPostsById(params.id);
+
+        const formattedRes = await Promise.all(
+            result.map(async (post) => {
+                return FormatPostGetResponseService(post);
+            }),
+        );
+
+        return res.status(200).json(formattedRes);
+    },
+);
 
 export default router;

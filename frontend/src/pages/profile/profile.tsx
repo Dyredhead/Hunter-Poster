@@ -1,31 +1,35 @@
-import { userGetCurrent } from "@/api/users";
+import { userGetCurrent, userGetPostsById } from "@/api/users";
 import BigTitle from "@/components/BigTitle";
+import { PostFeed } from "@/components/Post";
 import {
     BannerContainer,
     FollowDisplay,
     UserInformation,
 } from "@/components/ProfileComponents";
-import { usersContract, type User } from "@my-app/shared";
+import { usersContract, type Post, type User } from "@my-app/shared";
 import { useEffect, useState } from "react";
 
 export default function ProfilePage() {
     const [user, setUser] = useState<User>();
-
+    const [posts, setPosts] = useState<Post[]>();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Define the async function
-        console.log("test");
         const fetchData = async () => {
             await new Promise((f) => setTimeout(f, 200));
             try {
-                const json = await (await userGetCurrent()).json();
-                console.log("json:", json);
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
                         await (await userGetCurrent()).json(),
                     );
                 setUser(user);
+
+                const posts =
+                    usersContract.routes.getPostsbyId.responses[200].body.parse(
+                        await (await userGetPostsById({ id: user.id })).json(),
+                    );
+
+                setPosts(posts);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -33,7 +37,7 @@ export default function ProfilePage() {
             }
         };
 
-        fetchData(); // Execute the function
+        fetchData();
     }, []);
 
     if (loading) {
@@ -44,14 +48,17 @@ export default function ProfilePage() {
         );
     }
 
-    console.log("user: ", user);
-
     if (user == undefined) {
-        console.log("something went wrong");
+        console.log("something went wrong with fetching user");
         return;
     }
-    // return <PostFeed posts={posts!}></PostFeed>;
-    // const result = await userGetCurrent();
+    console.log("user: ", user);
+
+    if (posts == undefined) {
+        console.log("something went wrong with fetching posts");
+        return;
+    }
+    console.log("posts: ", posts);
 
     return (
         <div className="w-full">
@@ -73,6 +80,7 @@ export default function ProfilePage() {
                     to="/profile/settings"
                 />
             </div>
+            <PostFeed posts={posts}></PostFeed>
         </div>
     );
 }

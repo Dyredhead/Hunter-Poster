@@ -1,4 +1,5 @@
 import { database } from "@/database/client.js";
+import { PostsRow } from "./posts.js";
 
 type UsersRow = {
     id: string;
@@ -74,7 +75,7 @@ export async function findUserById(id: string) {
     return result.find((user) => user.id === id) ?? null;
 }
 
-export async function findUserByUsername(id: string) {
+export async function findUserByUsername(username: string) {
     const result = await database
         .query<Omit<UsersRow, "password_hash">>(
             `
@@ -82,14 +83,14 @@ export async function findUserByUsername(id: string) {
         FROM users
         WHERE username = $1
         `,
-            [id],
+            [username],
         )
         .then((res) => res.rows);
 
-    return result.find((user) => user.id === id) ?? null;
+    return result.find((user) => user.username === username) ?? null;
 }
 
-export async function findUserByEmail(id: string) {
+export async function findUserByEmail(email: string) {
     const result = await database
         .query<Omit<UsersRow, "password_hash">>(
             `
@@ -97,14 +98,14 @@ export async function findUserByEmail(id: string) {
         FROM users
         WHERE email = $1
         `,
-            [id],
+            [email],
         )
         .then((res) => res.rows);
 
-    return result.find((user) => user.id === id) ?? null;
+    return result.find((user) => user.email === email) ?? null;
 }
 
-export async function getFollowing(id: string): Promise<string[]> {
+export async function getFollowingById(id: string): Promise<string[]> {
     return (
         await database.query(
             `
@@ -117,7 +118,7 @@ export async function getFollowing(id: string): Promise<string[]> {
     ).rows.map((row) => row.following_id);
 }
 
-export async function getFollowers(id: string): Promise<string[]> {
+export async function getFollowersById(id: string): Promise<string[]> {
     return (
         await database.query(
             `
@@ -128,4 +129,19 @@ export async function getFollowers(id: string): Promise<string[]> {
             [id],
         )
     ).rows.map((row) => row.follower_id);
+}
+
+export async function getPostsById(id: string) {
+    const result = (
+        await database.query<PostsRow>(
+            `
+        SELECT *
+        FROM posts
+        WHERE user_id = $1
+        `,
+            [id],
+        )
+    ).rows;
+
+    return result;
 }

@@ -56,8 +56,11 @@ export const postGetByIdController: RequestHandler = async (req, res) => {
         ? await FormatPostGetResponseService(result)
         : null;
 
-    if (!formattedRes) res.sendStatus(Post.getById.response.notFound);
-    else res.status(200).json(Post.getById.response.post.parse(formattedRes));
+    if (!formattedRes) res.sendStatus(404);
+    else
+        res.status(200).json(
+            Post.getById.responses[200].body.parse(formattedRes),
+        );
 };
 
 export const postGetByForYouController: RequestHandler = async (req, res) => {

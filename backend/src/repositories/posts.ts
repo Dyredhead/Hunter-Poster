@@ -1,6 +1,6 @@
 import { database } from "@/database/client.js";
 import { content_type, poll_position_type } from "@my-app/shared";
-import { getFollowing } from "./users.js";
+import { getFollowingById } from "./users.js";
 
 export type PostsRow = {
     id: string;
@@ -50,7 +50,7 @@ type PollVotesRow = {
 };
 
 export async function getPostsFollowing(id: string): Promise<PostsRow[]> {
-    const following = await getFollowing(id);
+    const following = await getFollowingById(id);
 
     return await database
         .query<PostsRow>(

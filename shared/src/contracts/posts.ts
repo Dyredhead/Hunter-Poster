@@ -86,9 +86,15 @@ const PostGetByIdContract = {
         }),
     },
 
-    response: {
-        post: PostSchema,
-        notFound: 404,
+    responses: {
+        200: {
+            body: PostSchema,
+        },
+        404: {
+            body: z.object({
+                message: z.literal("Post with id not found"),
+            }),
+        },
     },
 };
 
@@ -106,6 +112,22 @@ const PostGetByForYouContract = {
     frontend_path: () => `${API_MOUNT}/for-you`,
 
     response: z.array(PostSchema),
+};
+
+const PostDeleteByIdContract = {
+    method: "DELETE",
+    backend_path: () => `${API_MOUNT}/:id`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
+
+    request: {
+        params: z.object({
+            id: z.int(),
+        }),
+    },
+
+    response: z.object({
+        status: 204,
+    }),
 };
 
 // const PostUpdateByIdContract = {
@@ -140,22 +162,6 @@ const PostCreateContract = {
         failed: 400,
         post_created: 201,
     },
-};
-
-const PostDeleteByIdContract = {
-    method: "DELETE",
-    backend_path: () => `${API_MOUNT}/:id`,
-    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
-
-    request: {
-        params: z.object({
-            id: z.int(),
-        }),
-    },
-
-    response: z.object({
-        status: 204,
-    }),
 };
 
 export const postContract = {
@@ -193,7 +199,20 @@ export type Post = z.infer<typeof PostSchema>;
 export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params
 >;
-export type PostGetByIdResponse = z.infer<typeof PostGetByIdContract.response>;
+// export type PostGetByIdResponse = z.infer<typeof PostGetByIdContract.responses>;
+export type PostGetByIdResponse =
+    | {
+          status: 200;
+          body: z.infer<
+              (typeof postContract.routes.getById.responses)[200]["body"]
+          >;
+      }
+    | {
+          status: 404;
+          body: z.infer<
+              (typeof postContract.routes.getById.responses)[404]["body"]
+          >;
+      };
 
 export type PostGetByFollowingResponse = z.infer<
     typeof PostGetByFollowingContract.response

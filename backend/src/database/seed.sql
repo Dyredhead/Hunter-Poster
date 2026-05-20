@@ -31,6 +31,7 @@ insert_following AS (
 -- Seed Posts
 insert_posts AS (
     INSERT INTO posts (user_id, post_type) VALUES 
+        ((SELECT id FROM inserted_users WHERE username = 'Test'), 'text'),
         ((SELECT id FROM inserted_users WHERE username = 'Alice'), 'text'),
         ((SELECT id FROM inserted_users WHERE username = 'Bob'), 'text'),
         ((SELECT id FROM inserted_users WHERE username = 'Charles'), 'text'),
@@ -41,6 +42,7 @@ insert_posts AS (
 -- Seed Text Posts
 insert_text_posts AS (
     INSERT INTO posts_text (post_id, text) VALUES 
+        ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Test')), 'Lorem Ipsum 0'),
         ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Alice')), 'Lorem Ipsum 1'),
         ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Bob')), 'Lorem Ipsum 2'),
         ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Charles')), 'Lorem Ipsum 3'),

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { API_MOUNT as _API_MOUNT } from "./api.js";
+import { PostSchema } from "./posts.js";
 
 const API_MOUNT = _API_MOUNT + "/users";
 
@@ -55,6 +56,29 @@ const UserGetByIdContract = {
     },
 };
 
+const UserGetPostsByIdContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/:id/posts`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}/posts`,
+
+    request: {
+        params: z.object({
+            id: z.uuidv7(),
+        }),
+    },
+
+    responses: {
+        200: {
+            body: z.array(PostSchema),
+        },
+        404: {
+            body: z.object({
+                message: z.literal("Posts by id not found"),
+            }),
+        },
+    },
+};
+
 const UserCreateContract = {
     method: "POST",
     backend_path: () => `${API_MOUNT}`,
@@ -77,6 +101,7 @@ export const usersContract = {
     routes: {
         getCurrent: UserGetCurrent,
         getById: UserGetByIdContract,
+        getPostsbyId: UserGetPostsByIdContract,
         create: UserCreateContract,
     },
 } as const;
@@ -116,3 +141,21 @@ export type UserGetByIdResponse =
 
 export type UserCreateRequest = z.infer<typeof UserCreateContract.request.body>;
 export type UserCreateResponse = z.infer<typeof UserCreateContract.response>;
+
+export type UserGetPostsByIdRequest = z.infer<
+    typeof UserGetPostsByIdContract.request.params
+>;
+
+export type UserGetPostsByUserIdResponse =
+    | {
+          status: 200;
+          body: z.infer<
+              (typeof UserGetPostsByIdContract.responses)[200]["body"]
+          >;
+      }
+    | {
+          status: 404;
+          body: z.infer<
+              (typeof UserGetPostsByIdContract.responses)[404]["body"]
+          >;
+      };
