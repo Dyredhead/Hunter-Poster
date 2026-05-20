@@ -13,8 +13,8 @@ const SettingIcon = () => (
 );
 
 type BannerContainerProps = {
-    pfp_url?: string;
-    banner_url?: string;
+    pfp_url: string | null;
+    banner_url: string | null;
 };
 
 export const BannerContainer = ({
@@ -24,15 +24,24 @@ export const BannerContainer = ({
     return (
         <div className="mt-4 ml-4 mr-4 relative">
             <div className="bg-neutral-lightest h-30 rounded-2xl overflow-clip">
-                <img src={banner_url} />
+                <img src={banner_url == null ? "" : banner_url} />
             </div>
 
             <Link to="/profile/settings" className="absolute top-2 right-2">
                 <SettingIcon />
             </Link>
 
-            <div className="bg-gray-600 h-20 w-20 rounded-full overflow-clip absolute left-0 bottom-0 translate-x-1/10 translate-y-1/2">
-                <img src={pfp_url} alt="" />
+            <div className="h-20 w-20 overflow-clip absolute left-0 bottom-0 translate-x-1/10 translate-y-1/2">
+                <img
+                    src={
+                        pfp_url == null
+                            ? "/src/assets/icons/avatar.svg"
+                            : pfp_url
+                    }
+                    alt=""
+                    width="80px"
+                    height="80px"
+                />
             </div>
         </div>
     );

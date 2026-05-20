@@ -4,3 +4,4 @@ export * from "./home";
 export * from "./notification";
 export * from "./post";
 export * from "./profile";
+export { default as SettingsPage } from "./settings";

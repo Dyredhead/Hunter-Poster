@@ -8,6 +8,7 @@ import {
 } from "@/components/ProfileComponents";
 import { usersContract, type Post, type User } from "@my-app/shared";
 import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
 
 export default function ProfilePage() {
     const [user, setUser] = useState<User>();
@@ -62,7 +63,7 @@ export default function ProfilePage() {
 
     return (
         <div className="w-full">
-            <BannerContainer />
+            <BannerContainer pfp_url={null} banner_url={null} />
             <UserInformation
                 username={user.username}
                 description={user.description}
@@ -81,6 +82,7 @@ export default function ProfilePage() {
                 />
             </div>
             <PostFeed posts={posts}></PostFeed>
+            <Outlet></Outlet>
         </div>
     );
 }

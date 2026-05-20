@@ -34,16 +34,12 @@ export default function App() {
                         />
                     </Route>
 
-                    <Route path="/profile" element={<pages.ProfilePage />}>
-                        {/* <Route
-                            path=":username"
-                            element={<pages.ProfilePage />}
-                        />
-                        <Route
-                            path="settings"
-                            element={<pages.ProfileSettingsPage />}
-                        /> */}
-                    </Route>
+                    <Route
+                        path="/profile"
+                        element={<pages.ProfilePage />}
+                    ></Route>
+
+                    <Route path="/settings" element={<pages.SettingsPage />} />
 
                     <Route
                         path="/notifications"
