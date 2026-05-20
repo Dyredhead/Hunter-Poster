@@ -43,7 +43,7 @@ export const UserInformation = ({
     description,
 }: {
     username: string;
-    description: string;
+    description: string | null;
 }) => {
     return (
         <div className="mt-2 text-xs">

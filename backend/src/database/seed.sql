@@ -1,12 +1,12 @@
 
 -- Seed Users
 WITH inserted_users AS (
-    INSERT INTO users (username, email, password_hash) VALUES 
-        ('Test', 'test@gmail.com', crypt('test', gen_salt('md5'))),
-        ('Alice', 'alice@gmail.com', crypt('12345', gen_salt('md5'))),
-        ('Bob', 'bob@gmail.com', crypt('12345', gen_salt('md5'))),
-        ('Charles', 'charles@gmail.com', crypt('12345', gen_salt('md5'))),
-        ('Dylan', 'dylan@gmail.com', crypt('12345', gen_salt('md5')))
+    INSERT INTO users (username, email, password_hash, description) VALUES 
+        ('Test', 'test@gmail.com', crypt('test', gen_salt('md5')), 'Test description'),
+        ('Alice', 'alice@gmail.com', crypt('12345', gen_salt('md5')), 'Alice description'),
+        ('Bob', 'bob@gmail.com', crypt('12345', gen_salt('md5')), 'Bob description'),
+        ('Charles', 'charles@gmail.com', crypt('12345', gen_salt('md5')), 'Charles description'),
+        ('Dylan', 'dylan@gmail.com', crypt('12345', gen_salt('md5')), 'Dylan description')
     RETURNING id, username
 ),
 
