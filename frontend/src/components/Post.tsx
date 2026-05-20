@@ -1,15 +1,5 @@
+import type { Post } from "@my-app/shared";
 import "./Post.css";
-
-type PostProps = {
-    id: string;
-    username: string;
-    pfp_url?: string;
-    image_url?: string;
-    content: string;
-    comments: number;
-    likes: number;
-    bookmarks: number;
-};
 
 function onUsernameClick() {}
 function onImageClick() {}
@@ -137,7 +127,18 @@ function DateTimeToString(datetime: Date): string {
     return `${date} @ ${time}`;
 }
 
-export default function Post({
+type PostProps = {
+    id: string;
+    username: string;
+    pfp_url?: string;
+    image_url?: string;
+    content: string;
+    comments: number;
+    likes: number;
+    bookmarks: number;
+};
+
+export function Post({
     id,
     username,
     pfp_url,
@@ -213,5 +214,37 @@ export default function Post({
                 </button>
             </footer>
         </article>
+    );
+}
+
+type PostFeedProps = {
+    posts: Post[];
+};
+
+export function PostFeed({ posts }: PostFeedProps) {
+    return (
+        <div className="posts-feed">
+            {posts?.map((post) => {
+                switch (post.content.type) {
+                    case "text":
+                        return (
+                            <Post
+                                id={post.id}
+                                username={post.created_by}
+                                content={post.content.content}
+                                comments={post.comments}
+                                likes={post.likes}
+                                bookmarks={post.booksmarks}
+                            ></Post>
+                        );
+                    case "image":
+                        return;
+                    case "text_image":
+                        return;
+                    case "poll":
+                        return;
+                }
+            })}
+        </div>
     );
 }

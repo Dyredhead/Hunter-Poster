@@ -27,7 +27,7 @@ const PollSchema = z.object({
     current_votes: z.array(z.int().min(0)).max(4),
 });
 
-export const ContentSchema = z.union([
+const ContentSchema = z.discriminatedUnion("type", [
     TextSchema,
     ImageSchema,
     TextImageSchema,
@@ -36,10 +36,9 @@ export const ContentSchema = z.union([
 
 // const ContentUpdateSchema = z.union([TextSchema, ImageSchema, TextImageSchema]);
 
-const PostSchema = z.object({
+export const PostSchema = z.object({
     id: z.uuidv7(),
     created_by: z.string(),
-    created_at: z.iso.datetime(),
     content: ContentSchema,
     comments: z.int().min(0),
     likes: z.int().min(0),
@@ -79,7 +78,7 @@ const PostUnLikeContract = {
 const PostGetByIdContract = {
     method: "GET",
     backend_path: () => `${API_MOUNT}/:id`,
-    frontend_path: (id: number) => `${API_MOUNT}/${id}`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
 
     request: {
         params: z.object({
@@ -98,9 +97,7 @@ const PostGetByFollowingContract = {
     backend_path: () => `${API_MOUNT}/following`,
     frontend_path: () => `${API_MOUNT}/following`,
 
-    response: z.object({
-        posts: z.array(PostSchema).max(10),
-    }),
+    response: z.array(PostSchema),
 };
 
 const PostGetByForYouContract = {
@@ -108,9 +105,7 @@ const PostGetByForYouContract = {
     backend_path: () => `${API_MOUNT}/for-you`,
     frontend_path: () => `${API_MOUNT}/for-you`,
 
-    response: z.object({
-        posts: z.array(PostSchema).max(10),
-    }),
+    response: z.array(PostSchema),
 };
 
 // const PostUpdateByIdContract = {
@@ -150,7 +145,7 @@ const PostCreateContract = {
 const PostDeleteByIdContract = {
     method: "DELETE",
     backend_path: () => `${API_MOUNT}/:id`,
-    frontend_path: (id: number) => `${API_MOUNT}/${id}`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
 
     request: {
         params: z.object({
@@ -193,7 +188,7 @@ export enum poll_position_type {
 
 export type Content = z.infer<typeof ContentSchema>;
 
-export type post_type = z.infer<typeof PostSchema>;
+export type Post = z.infer<typeof PostSchema>;
 
 export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params

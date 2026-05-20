@@ -9,7 +9,6 @@ router.get(
     usersContract.routes.getCurrent.backend_path(),
     requireAuth,
     async (req, res) => {
-        console.log(req.auth?.sub!);
         await findUserById(req.auth?.sub!)
             .then((body) => {
                 if (body != null) {

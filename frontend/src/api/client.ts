@@ -1,11 +1,11 @@
 export async function apiFetch<TRequest>(
     url: string,
     method: string,
-    auth: boolean,
     body?: TRequest,
     headers?: Record<string, string>,
 ): Promise<Response> {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem("token");
+    console.log("JWT: ", accessToken);
 
     const response = await fetch(url, {
         method: method,
@@ -13,9 +13,7 @@ export async function apiFetch<TRequest>(
             ...(body !== undefined
                 ? { "Content-Type": "application/json" }
                 : {}),
-            ...(auth && accessToken
-                ? { Authorization: `Bearer ${accessToken}` }
-                : {}),
+            ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
             ...(headers ?? {}),
         },
         body: body === undefined ? undefined : JSON.stringify(body),

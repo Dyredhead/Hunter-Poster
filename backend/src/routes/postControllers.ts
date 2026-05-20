@@ -5,10 +5,11 @@ import {
     createTextPost,
     getPostAll,
     getPostsById,
+    getPostsFollowing,
     getPostsForYou,
     PostsRow,
 } from "@/repositories/posts.js";
-import { ContentSchema, postContract, PostCreateRequest } from "@my-app/shared";
+import { postContract, PostCreateRequest } from "@my-app/shared";
 import { RequestHandler } from "express";
 import { FormatPostGetResponseService } from "./postServices.js";
 
@@ -60,12 +61,7 @@ export const postGetByIdController: RequestHandler = async (req, res) => {
 };
 
 export const postGetByForYouController: RequestHandler = async (req, res) => {
-    let result: PostsRow[];
-    if (!req.auth) {
-        result = await getPostAll();
-    } else {
-        result = await getPostsForYou(req.auth.sub);
-    }
+    const result: PostsRow[] = await getPostsForYou(req.auth?.sub!);
 
     const formattedRes = await Promise.all(
         result.map(async (post) => {
@@ -73,10 +69,20 @@ export const postGetByForYouController: RequestHandler = async (req, res) => {
         }),
     );
 
-    res.status(200).send(formattedRes);
+    res.status(200).json(formattedRes);
 };
 
 export const postGetByFollowingController: RequestHandler = async (
     req,
     res,
-) => {};
+) => {
+    const result: PostsRow[] = await getPostsFollowing(req.auth?.sub!);
+
+    const formattedRes = await Promise.all(
+        result.map(async (post) => {
+            return FormatPostGetResponseService(post);
+        }),
+    );
+
+    res.status(200).json(formattedRes);
+};

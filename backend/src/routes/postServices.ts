@@ -15,7 +15,7 @@ import {
     Content,
     content_type,
     poll_position_type,
-    post_type,
+    Post,
 } from "@my-app/shared";
 import { randomUUID } from "crypto";
 
@@ -83,7 +83,7 @@ async function FormatPostContentService(
             content = {
                 type: content_type.poll,
                 question: pollPost.question,
-                closes_at: pollPost.closes_at.toISOString(),
+                closes_at: pollPost.closes_at,
                 options: (await pollOptions).map((option) => option.option),
                 vote: await yourVote,
                 current_votes: pollVotes,
@@ -96,15 +96,14 @@ async function FormatPostContentService(
 export async function FormatPostGetResponseService(
     post: PostsRow,
     user_id?: string,
-): Promise<post_type> {
+): Promise<Post> {
     const content = FormatPostContentService(post, user_id);
     const username = findUserById(post.user_id);
     const likes = getPostLikesById(post.id);
 
-    const formattedPost: post_type = {
+    const formattedPost: Post = {
         id: post.id,
         created_by: (await username)!.username,
-        created_at: post.created_at.toISOString(),
         content: await content,
         comments: 0,
         likes: await likes,

@@ -7,7 +7,6 @@ export async function login(request: LoginRequest): Promise<Response> {
     const response = await apiFetch<LoginRequest>(
         loginContract.routes.login.frontend_path(),
         loginContract.routes.login.method,
-        false,
         body,
     );
 

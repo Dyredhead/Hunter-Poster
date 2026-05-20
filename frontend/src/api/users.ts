@@ -8,7 +8,6 @@ export async function userGetById(
     const response = await apiFetch<unknown>(
         route.frontend_path(params.id),
         route.method,
-        false,
     );
 
     return response;
@@ -19,7 +18,6 @@ export async function userGetCurrent(): Promise<Response> {
     const response = await apiFetch<unknown>(
         route.frontend_path(),
         route.method,
-        true,
     );
 
     return response;

@@ -6,7 +6,7 @@ export type PostsRow = {
     id: string;
     user_id: string;
     post_type: content_type;
-    created_at: Date;
+    created_at: string;
 };
 
 type PostTextRow = {
@@ -31,7 +31,7 @@ type PostTextImageRow = {
 type PollsRow = {
     id: string;
     post_id: string;
-    closes_at: Date;
+    closes_at: string;
     question: string;
 };
 
