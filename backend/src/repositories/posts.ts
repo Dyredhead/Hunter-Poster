@@ -1,6 +1,6 @@
 import { database } from "@/database/client.js";
-import { getFollowing } from "./users.js";
 import { content_type, poll_position_type } from "@my-app/shared";
+import { getFollowing } from "./users.js";
 
 export type PostsRow = {
     id: string;

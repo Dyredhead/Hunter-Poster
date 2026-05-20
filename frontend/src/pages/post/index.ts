@@ -1,1 +1,1 @@
-export {default as PostCreationPage} from "./post-create"
+export { default as PostCreationPage } from "./post-create";

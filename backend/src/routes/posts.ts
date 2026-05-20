@@ -1,5 +1,4 @@
 import { requireAuth } from "@/middleware/auth.js";
-import { createUser } from "@/repositories/users.js";
 import { postContract } from "@my-app/shared";
 import { Router } from "express";
 import {

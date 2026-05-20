@@ -1,11 +1,11 @@
 .app-bigtitle {
-  font-family: 'Anton', sans-serif;
-  font-size: clamp(72px, 22vw, 96px);
-  font-weight: 400;
-  color: var(--color-secondary);
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 4.8px;
-  line-height: 1.2;
-  margin: 0;
+    font-family: "Anton", sans-serif;
+    font-size: clamp(72px, 22vw, 96px);
+    font-weight: 400;
+    color: var(--color-secondary);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 4.8px;
+    line-height: 1.2;
+    margin: 0;
 }

@@ -1,8 +1,8 @@
-import "./greeter.css";
-import BigTitle from "@/components/BigTitle";
 import BigButton from "@/components/BigButton";
+import BigTitle from "@/components/BigTitle";
 import Screen from "@/components/Screen";
 import { useNavigate } from "react-router-dom";
+import "./greeter.css";
 
 export default function GreeterPage() {
     const navigate = useNavigate();
