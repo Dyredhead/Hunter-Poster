@@ -90,7 +90,7 @@ export default function ProfilePage() {
     console.log("posts: ", posts);
 
     return (
-        <div id="profile-container" className="mt-4 mr-4 ml-4 flex flex-col">
+        <div id="profile-container" className="m-4 flex flex-col pb-20">
             <BannerContainer
                 pfp_id={user.pfp_id}
                 banner_id={user.banner_id}

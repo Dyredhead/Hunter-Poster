@@ -138,7 +138,7 @@ type PostProps = {
 
 function PollOption({ option, votes }: { option: string; votes: number }) {
     return (
-        <div className="flex">
+        <div className="flex flex-row justify-between">
             <p>{option}</p>
             <p>{votes}</p>
         </div>
@@ -155,20 +155,24 @@ function Poll({
     let index = 0;
 
     return (
-        <div>
-            <p>{question}</p>
-            <p>{DateTimeToString(new Date(closes_at))}</p>
+        <div className="text-neutral-darkest flex flex-col gap-4">
+            <div>
+                <p>{question}</p>
+                <p>closes at: {DateTimeToString(new Date(closes_at))}</p>
+            </div>
 
-            {options.map((option) => {
-                index++;
-                return (
-                    <PollOption
-                        key={option}
-                        option={option}
-                        votes={current_votes[index]}
-                    />
-                );
-            })}
+            <div>
+                {options.map((option) => {
+                    index++;
+                    return (
+                        <PollOption
+                            key={option}
+                            option={option}
+                            votes={current_votes[index]}
+                        />
+                    );
+                })}
+            </div>
         </div>
     );
 }
