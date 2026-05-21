@@ -1,4 +1,9 @@
-import { userGetCurrent, userGetPostsById } from "@/api/users";
+import {
+    userGetCurrent,
+    userGetFollowersById,
+    userGetFollowingById,
+    userGetPostsById,
+} from "@/api/users";
 import { PostFeed } from "@/components/Post";
 import {
     BannerContainer,
@@ -12,6 +17,8 @@ import { Outlet } from "react-router-dom";
 
 export default function ProfilePage() {
     const [user, setUser] = useState<User>();
+    const [following, setFollowing] = useState<number | null>(null);
+    const [followers, setFollowers] = useState<number | null>(null);
     const [posts, setPosts] = useState<Post[]>();
     const [loading, setLoading] = useState(true);
 
@@ -24,6 +31,22 @@ export default function ProfilePage() {
                         await (await userGetCurrent()).json(),
                     );
                 setUser(user);
+
+                setFollowing(
+                    usersContract.routes.getFollowingById.responses[200].body.parse(
+                        await (
+                            await userGetFollowingById({ id: user.id })
+                        ).json(),
+                    ).length,
+                );
+
+                setFollowers(
+                    usersContract.routes.getFollowersById.responses[200].body.parse(
+                        await (
+                            await userGetFollowersById({ id: user.id })
+                        ).json(),
+                    ).length,
+                );
 
                 const posts =
                     usersContract.routes.getPostsbyId.responses[200].body.parse(
@@ -63,10 +86,7 @@ export default function ProfilePage() {
 
     return (
         <div className="w-full">
-            <BannerContainer
-                pfp_id={user.pfp_id}
-                banner_id={user.banner_id}
-            />
+            <BannerContainer pfp_id={user.pfp_id} banner_id={user.banner_id} />
             <UserInformation
                 username={user.username}
                 description={user.description}
@@ -75,13 +95,13 @@ export default function ProfilePage() {
             <div className="text-secondary mt-2 flex justify-center gap-10">
                 <FollowDisplay
                     label="Following"
-                    count={10}
-                    to="/profile/settings"
+                    count={following!}
+                    to="/profile/following"
                 />
                 <FollowDisplay
                     label="Followers"
-                    count={20}
-                    to="/profile/settings"
+                    count={followers!}
+                    to="/profile/followers"
                 />
             </div>
             <PostFeed posts={posts}></PostFeed>

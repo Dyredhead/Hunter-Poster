@@ -1,6 +1,11 @@
 import { requireAuth } from "@/middleware/auth.js";
 import { PostsRow } from "@/repositories/posts.js";
-import { findUserById, getPostsById } from "@/repositories/users.js";
+import {
+    findUserById,
+    getFollowersById,
+    getFollowingById,
+    getPostsById,
+} from "@/repositories/users.js";
 import { usersContract } from "@my-app/shared";
 import { Router } from "express";
 import { FormatPostGetResponseService } from "./postServices.js";
@@ -36,6 +41,44 @@ router.get(
         );
 
         let body = await findUserById(params.id)
+            .then((res) => res)
+            .catch((err) => {
+                console.error("no such user");
+            });
+
+        return res.status(200).json(body);
+    },
+);
+
+router.get(
+    usersContract.routes.getFollowersById.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        const params =
+            usersContract.routes.getFollowersById.request.params.parse(
+                req.params,
+            );
+
+        let body = await getFollowersById(params.id)
+            .then((res) => res)
+            .catch((err) => {
+                console.error("no such user");
+            });
+
+        return res.status(200).json(body);
+    },
+);
+
+router.get(
+    usersContract.routes.getFollowingById.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        const params =
+            usersContract.routes.getFollowingById.request.params.parse(
+                req.params,
+            );
+
+        let body = await getFollowingById(params.id)
             .then((res) => res)
             .catch((err) => {
                 console.error("no such user");

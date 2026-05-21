@@ -56,6 +56,52 @@ const UserGetByIdContract = {
     },
 };
 
+const UserGetFollowingByIdContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/:id/following`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}/following`,
+
+    request: {
+        params: z.object({
+            id: z.string(),
+        }),
+    },
+
+    responses: {
+        200: {
+            body: z.array(z.uuidv7()),
+        },
+        404: {
+            body: z.object({
+                message: z.literal("User Id does not exist"),
+            }),
+        },
+    },
+};
+
+const UserGetFollowersByIdContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/:id/followers`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}/followers`,
+
+    request: {
+        params: z.object({
+            id: z.string(),
+        }),
+    },
+
+    responses: {
+        200: {
+            body: z.array(z.uuidv7()),
+        },
+        404: {
+            body: z.object({
+                message: z.literal("User Id does not exist"),
+            }),
+        },
+    },
+};
+
 const UserGetPostsByIdContract = {
     method: "GET",
     backend_path: () => `${API_MOUNT}/:id/posts`,
@@ -101,6 +147,8 @@ export const usersContract = {
     routes: {
         getCurrent: UserGetCurrent,
         getById: UserGetByIdContract,
+        getFollowersById: UserGetFollowersByIdContract,
+        getFollowingById: UserGetFollowingByIdContract,
         getPostsbyId: UserGetPostsByIdContract,
         create: UserCreateContract,
     },
@@ -142,6 +190,12 @@ export type UserGetByIdResponse =
 export type UserCreateRequest = z.infer<typeof UserCreateContract.request.body>;
 export type UserCreateResponse = z.infer<typeof UserCreateContract.response>;
 
+export type UserGetFollowersByIdRequest = z.infer<
+    typeof UserGetFollowersByIdContract.request.params
+>;
+export type UserGetFollowingByIdRequest = z.infer<
+    typeof UserGetFollowingByIdContract.request.params
+>;
 export type UserGetPostsByIdRequest = z.infer<
     typeof UserGetPostsByIdContract.request.params
 >;

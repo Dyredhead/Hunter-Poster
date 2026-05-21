@@ -19,12 +19,11 @@ inserted_users AS (
     RETURNING id, username
 ),
 
--- Seed Followers (Alice, Bob, Charles follow Test)
+-- Seed Followers (Alice, Bob follow Test)
 insert_followers AS (
     INSERT INTO user_follows (follower_id, following_id) VALUES
         ((SELECT id FROM inserted_users WHERE username = 'Alice'), (SELECT id FROM inserted_users WHERE username = 'Test')),
-        ((SELECT id FROM inserted_users WHERE username = 'Bob'), (SELECT id FROM inserted_users WHERE username = 'Test')),
-        ((SELECT id FROM inserted_users WHERE username = 'Charles'), (SELECT id FROM inserted_users WHERE username = 'Test'))
+        ((SELECT id FROM inserted_users WHERE username = 'Bob'), (SELECT id FROM inserted_users WHERE username = 'Test'))
     RETURNING * -- required
 ),
 
