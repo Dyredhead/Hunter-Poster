@@ -30,11 +30,11 @@ export const postCreateController: RequestHandler = async (req, res) => {
             break;
 
         case "image":
-            await createImagePost(user_id, body.image_url);
+            await createImagePost(user_id, body.image_id);
             break;
 
         case "text_image":
-            await createTextImagePost(user_id, body.content, body.image_url);
+            await createTextImagePost(user_id, body.content, body.image_id);
             break;
 
         case "poll":

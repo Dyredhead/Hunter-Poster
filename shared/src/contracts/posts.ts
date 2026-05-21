@@ -9,13 +9,13 @@ const TextSchema = z.object({
 
 const ImageSchema = z.object({
     type: z.literal("image"),
-    image_url: z.string(),
+    image_id: z.string(),
 });
 
 const TextImageSchema = z.object({
     type: z.literal("text_image"),
     content: z.string(),
-    image_url: z.string(),
+    image_id: z.string(),
 });
 
 const PollSchema = z.object({
@@ -26,6 +26,20 @@ const PollSchema = z.object({
     vote: z.int().min(0).max(4),
     current_votes: z.array(z.int().min(0)).max(4),
 });
+
+const PollCreateSchema = z.object({
+    type: z.literal("poll"),
+    question: z.string(),
+    closes_at: z.iso.datetime(),
+    options: z.array(z.string()).max(4),
+});
+
+const ContentCreateSchema = z.discriminatedUnion("type", [
+    TextSchema,
+    ImageSchema,
+    TextImageSchema,
+    PollCreateSchema,
+]);
 
 const ContentSchema = z.discriminatedUnion("type", [
     TextSchema,
@@ -155,7 +169,7 @@ const PostCreateContract = {
     frontend_path: () => `${API_MOUNT}/create`,
 
     request: {
-        body: ContentSchema,
+        body: ContentCreateSchema,
     },
 
     response: {
@@ -193,6 +207,7 @@ export enum poll_position_type {
 }
 
 export type Content = z.infer<typeof ContentSchema>;
+export type ContentPoll = z.infer<typeof PollSchema>;
 
 export type Post = z.infer<typeof PostSchema>;
 
@@ -239,3 +254,7 @@ export type PostDeleteByIdParams = z.infer<
 >;
 
 export type PostCreateRequest = z.infer<typeof PostCreateContract.request.body>;
+export enum creationStateType {
+    Basic = "Basic",
+    Poll = "Poll",
+}

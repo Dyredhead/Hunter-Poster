@@ -38,7 +38,7 @@ async function FormatPostContentService(
             const imagePost = await getImagePostByPostId(post.id);
             content = {
                 type: content_type.image,
-                image_url: imagePost.image_url,
+                image_id: imagePost.image_id,
             };
             break;
 
@@ -47,7 +47,7 @@ async function FormatPostContentService(
             content = {
                 type: content_type.text_image,
                 content: textImagePost.text,
-                image_url: textImagePost.image_url,
+                image_id: textImagePost.image_id,
             };
             break;
 
