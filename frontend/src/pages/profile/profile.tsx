@@ -7,7 +7,7 @@ import {
 } from "@/api/users";
 import Pfp from "@/components/Pfp";
 import { PostFeed } from "@/components/Post";
-import { BannerContainer, FollowDisplay } from "@/components/ProfileComponents";
+import { BannerContainer, NumberDisplay } from "@/components/ProfileComponents";
 import { BigTitle } from "@/components/Title";
 import { usersContract, type Post, type User } from "@my-app/shared";
 import { useEffect, useState } from "react";
@@ -113,12 +113,12 @@ export default function ProfilePage() {
             </div>
 
             <div className="text-secondary mt-2 flex justify-center gap-10">
-                <FollowDisplay
+                <NumberDisplay
                     label="Following"
                     count={following!}
                     to={`/following/${id == undefined ? "" : id}`}
                 />
-                <FollowDisplay
+                <NumberDisplay
                     label="Followers"
                     count={followers!}
                     to={`/followers/${id == undefined ? "" : id}`}

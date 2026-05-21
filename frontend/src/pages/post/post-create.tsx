@@ -6,30 +6,38 @@ import {
     type Content,
     type PostCreateRequest,
 } from "@my-app/shared";
-import React, { useState } from "react";
+import { default as React, useState } from "react";
+import "./post-create.css";
 
-export default function page() {
+export default function Page() {
     const [createType, setCreateType] = useState<creationStateType>(
         creationStateType.Basic,
     );
 
     return (
-        <div>
-            <select
-                onChange={(e) => {
-                    setCreateType(e.target.value as creationStateType);
-                }}
-            >
-                <option value={creationStateType.Basic}>
-                    {creationStateType.Basic}
-                </option>
-                <option value={creationStateType.Poll}>
-                    {creationStateType.Poll}
-                </option>
-            </select>
-
-            {createType === creationStateType.Basic ? <BasicForm /> : <></>}
-            {createType === creationStateType.Poll ? <PollForm /> : <></>}
+        <div
+            id="post-create-container"
+            className="mt-10 flex h-full flex-col justify-center gap-5"
+        >
+            <div className="flex flex-row justify-center">
+                <select
+                    className="flex flex-row justify-center"
+                    onChange={(e) => {
+                        setCreateType(e.target.value as creationStateType);
+                    }}
+                >
+                    <option value={creationStateType.Basic}>
+                        {creationStateType.Basic}
+                    </option>
+                    <option value={creationStateType.Poll}>
+                        {creationStateType.Poll}
+                    </option>
+                </select>
+            </div>
+            <div className="flex flex-row justify-center">
+                {createType === creationStateType.Basic ? <BasicForm /> : <></>}
+                {createType === creationStateType.Poll ? <PollForm /> : <></>}
+            </div>
         </div>
     );
 }
@@ -37,16 +45,21 @@ export default function page() {
 const FormField = ({
     type,
     onChange,
+    placeholder,
 }: {
     type: string;
     onChange: React.ChangeEventHandler<HTMLInputElement, HTMLInputElement>;
+    placeholder: string;
 }) => {
     return (
-        <input
-            type={type}
-            onChange={onChange}
-            className="border-4 border-black bg-white"
-        ></input>
+        <div className="text-input-wrapper">
+            <input
+                type={type}
+                placeholder={placeholder}
+                onChange={onChange}
+                className="text-neutral-darkest text-input border-4 border-black bg-white"
+            ></input>
+        </div>
     );
 };
 
@@ -55,12 +68,18 @@ const BasicForm = () => {
     const [imageFIle, setImageFile] = useState<File | null>(null);
 
     return (
-        <form onSubmit={handleSubmitBasic}>
-            <FormField type="text" onChange={(e) => setText(e.target.value)} />
+        <form
+            className="flex w-100 max-w-full flex-col gap-2"
+            onSubmit={handleSubmitBasic}
+        >
+            <AutoGrowTextArea
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+            />
             <input
                 type="file"
                 onChange={(event) => handleFileChange(event, setImageFile)}
-                className="bg-white"
+                className="file-input bg-white"
             ></input>
             <input type="submit"></input>
         </form>
@@ -132,25 +151,30 @@ const PollForm = () => {
     const [option4, setOption4] = useState("");
 
     return (
-        <form onSubmit={handleSubmitPoll}>
+        <form onSubmit={handleSubmitPoll} className="flex flex-col gap-2">
             <FormField
                 type="text"
+                placeholder="Question"
                 onChange={(e) => setQuestion(e.target.value)}
             />
             <FormField
                 type="text"
+                placeholder="Choice 1"
                 onChange={(e) => setOption1(e.target.value)}
             />
             <FormField
                 type="text"
+                placeholder="Choice 2"
                 onChange={(e) => setOption2(e.target.value)}
             />
             <FormField
                 type="text"
+                placeholder="Choice 3"
                 onChange={(e) => setOption3(e.target.value)}
             />
             <FormField
                 type="text"
+                placeholder="Choice 4"
                 onChange={(e) => setOption4(e.target.value)}
             />
             <input type="submit"></input>
@@ -173,4 +197,26 @@ const PollForm = () => {
 
         await createPost(content);
     }
+};
+
+const AutoGrowTextArea = ({
+    value,
+    onChange,
+}: {
+    value: string;
+    onChange: React.ChangeEventHandler<HTMLTextAreaElement>;
+}) => {
+    return (
+        <div className="text-input-wrapper">
+            <div className="auto-grow-textarea" data-value={value || " "}>
+                <textarea
+                    value={value}
+                    onChange={onChange}
+                    className="text-input"
+                    rows={1}
+                    placeholder="What's on your mind?"
+                />
+            </div>
+        </div>
+    );
 };

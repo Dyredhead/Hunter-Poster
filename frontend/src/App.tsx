@@ -49,22 +49,22 @@ export default function App() {
                     <Route path="/following">
                         <Route
                             index
-                            element={<pages.ProfileFollowingPage />}
+                            element={<pages.PfpPage type="Following" />}
                         ></Route>
                         <Route
                             path=":id"
-                            element={<pages.ProfileFollowingPage />}
+                            element={<pages.PfpPage type="Following" />}
                         ></Route>
                     </Route>
 
                     <Route path="/followers">
                         <Route
                             index
-                            element={<pages.ProfileFollowersPage />}
+                            element={<pages.PfpPage type="Followers" />}
                         ></Route>
                         <Route
                             path=":id"
-                            element={<pages.ProfileFollowersPage />}
+                            element={<pages.PfpPage type="Followers" />}
                         ></Route>
                     </Route>
 

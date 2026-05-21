@@ -1,3 +1,2 @@
-export { default as ProfileFollowersPage } from "./followers.tsx";
-export { default as ProfileFollowingPage } from "./following.tsx";
+export { default as PfpPage } from "./PfpPage.tsx";
 export { default as ProfilePage } from "./profile.tsx";

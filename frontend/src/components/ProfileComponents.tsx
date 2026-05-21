@@ -69,7 +69,7 @@ export const BannerContainer = ({
     );
 };
 
-export const FollowDisplay = ({
+export const NumberDisplay = ({
     label,
     count,
     to,
