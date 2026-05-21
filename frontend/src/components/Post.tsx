@@ -7,7 +7,7 @@ import {
     type User,
 } from "@my-app/shared";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import Pfp from "./Pfp";
 import "./Post.css";
 
 function onUsernameClick() {}
@@ -17,48 +17,6 @@ function onComment() {}
 function onLike() {}
 function onBookmark() {}
 function onShare() {}
-
-type AvatarIconProps = {
-    id: string;
-    pfp_id: string | null;
-};
-
-const AvatarIcon = ({ id, pfp_id }: AvatarIconProps) => {
-    const [pfp_url, setPfpUrl] = useState<string | null>(null);
-    useEffect(() => {
-        const fetchData = async () => {
-            // await new Promise((f) => setTimeout(f, 200));
-            try {
-                if (pfp_id != null) {
-                    const image =
-                        ImageContract.routes.getById.responses[200].body.parse(
-                            await (await getImage({ id: pfp_id })).json(),
-                        );
-                    setPfpUrl(
-                        `data:${image.image_mime};base64,${image.image_data}`,
-                    );
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                // setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [pfp_id]);
-
-    return (
-        <Link
-            to={`/profile/${id}`}
-            className="bg-neutral-darkest border-neutral-lightest flex w-1/4 justify-center overflow-clip rounded-full border-2"
-        >
-            <img
-                src={pfp_url == null ? "/src/assets/icons/avatar.svg" : pfp_url}
-            ></img>
-        </Link>
-    );
-};
 
 const CommentIcon = () => (
     <svg
@@ -226,7 +184,11 @@ export function Post({
         <article className="post">
             <header className="post-header">
                 <button className="post-author" onClick={onUsernameClick}>
-                    <AvatarIcon pfp_id={user.pfp_id} id={user.id} />
+                    <Pfp
+                        id={user.id}
+                        pfp_id={user.pfp_id}
+                        className="h-10 w-10"
+                    />
                     <span className="post-username">{user.username}</span>
                 </button>
                 <div className="post-header-right">

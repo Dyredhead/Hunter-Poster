@@ -28,10 +28,13 @@ export default function App() {
                 <Route path="/auth/logout" element={<pages.LogoutPage />} />
                 <Route element={<NavBar />}>
                     <Route path="/home" element={<pages.HomeLayout />}>
-                        <Route path="for-you" element={<pages.ForYouPage />} />
+                        <Route
+                            path="for-you"
+                            element={<pages.HomeForYouPage />}
+                        />
                         <Route
                             path="following"
-                            element={<pages.FollowingPage />}
+                            element={<pages.HomeFollowingPage />}
                         />
                     </Route>
 
@@ -40,6 +43,28 @@ export default function App() {
                         <Route
                             path=":id"
                             element={<pages.ProfilePage />}
+                        ></Route>
+                    </Route>
+
+                    <Route path="/following">
+                        <Route
+                            index
+                            element={<pages.ProfileFollowingPage />}
+                        ></Route>
+                        <Route
+                            path=":id"
+                            element={<pages.ProfileFollowingPage />}
+                        ></Route>
+                    </Route>
+
+                    <Route path="/followers">
+                        <Route
+                            index
+                            element={<pages.ProfileFollowersPage />}
+                        ></Route>
+                        <Route
+                            path=":id"
+                            element={<pages.ProfileFollowersPage />}
                         ></Route>
                     </Route>
 

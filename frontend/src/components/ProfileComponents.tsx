@@ -2,6 +2,7 @@ import { getImage } from "@/api/images";
 import { ImageContract } from "@my-app/shared";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+// import Pfp from "./Pfp";
 
 const SettingIcon = () => (
     <svg
@@ -26,24 +27,12 @@ export const BannerContainer = ({
     banner_id,
     display_settings,
 }: BannerContainerProps) => {
-    const [pfp_url, setPfpUrl] = useState<string | null>(null);
     const [banner_url, setBannerUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
             // await new Promise((f) => setTimeout(f, 200));
             try {
-                if (pfp_id != null) {
-                    const image =
-                        ImageContract.routes.getById.responses[200].body.parse(
-                            await (await getImage({ id: pfp_id })).json(),
-                        );
-                    console.log("got pfpurl");
-                    setPfpUrl(
-                        `data:${image.image_mime};base64,${image.image_data}`,
-                    );
-                }
-
                 if (banner_id != null) {
                     const image =
                         ImageContract.routes.getById.responses[200].body.parse(
@@ -65,9 +54,9 @@ export const BannerContainer = ({
     }, [banner_id, pfp_id]);
 
     return (
-        <div className="relative mt-4 mr-4 ml-4">
+        <div id="banner-container" className="">
             {display_settings && (
-                <div className="bg-neutrual-lightest bg-neutral-lightest p1 absolute top-2 right-2 rounded-full p-1">
+                <div className="bg-neutrual-lightest bg-neutral-lightest p1 absolute top-5 right-5 rounded-full p-1">
                     <Link to="/settings">
                         <SettingIcon />
                     </Link>
@@ -75,37 +64,6 @@ export const BannerContainer = ({
             )}
             <div className="bg-neutral-lightest flex h-30 w-full flex-1 justify-center overflow-clip rounded-2xl">
                 <img src={banner_url == null ? "" : banner_url} width="100%" />
-            </div>
-            <div className="bg-neutral-darkest absolute bottom-0 left-0 flex h-20 w-20 flex-1 translate-x-1/10 translate-y-1/2 justify-center overflow-clip rounded-full border-2">
-                <img
-                    src={
-                        pfp_url == null
-                            ? "/src/assets/icons/avatar.svg"
-                            : pfp_url
-                    }
-                    alt=""
-                    width="100%"
-                />
-            </div>
-        </div>
-    );
-};
-
-export const UserInformation = ({
-    username,
-    description,
-}: {
-    username: string;
-    description: string | null;
-}) => {
-    return (
-        <div className="mt-2 text-xs">
-            <div className="text-neutral-lightest ml-30 font-bold">
-                {username}
-            </div>
-
-            <div className="bg-neutral-lightest border-secondary mt-3 mr-3 ml-3 flex h-15 flex-col justify-center rounded-md border-2 px-5 text-2xl font-bold">
-                <p className="text-black">{description}</p>
             </div>
         </div>
     );

@@ -5,12 +5,9 @@ import {
     userGetFollowingById,
     userGetPostsById,
 } from "@/api/users";
+import Pfp from "@/components/Pfp";
 import { PostFeed } from "@/components/Post";
-import {
-    BannerContainer,
-    FollowDisplay,
-    UserInformation,
-} from "@/components/ProfileComponents";
+import { BannerContainer, FollowDisplay } from "@/components/ProfileComponents";
 import { BigTitle } from "@/components/Title";
 import { usersContract, type Post, type User } from "@my-app/shared";
 import { useEffect, useState } from "react";
@@ -93,27 +90,38 @@ export default function ProfilePage() {
     console.log("posts: ", posts);
 
     return (
-        <div className="w-full">
+        <div id="profile-container" className="mt-4 mr-4 ml-4 flex flex-col">
             <BannerContainer
                 pfp_id={user.pfp_id}
                 banner_id={user.banner_id}
                 display_settings={id == undefined}
             />
-            <UserInformation
-                username={user.username}
-                description={user.description}
-            />
+            <div
+                id="pfp-username-container"
+                className="-mt-10 flex translate-x-2 flex-row gap-4"
+            >
+                <Pfp id={user.id} pfp_id={user.pfp_id} className="h-20 w-20" />
+                <p className="flex -translate-y-3 flex-col justify-end">
+                    {user.username}
+                </p>
+            </div>
+
+            <div id="description-container" className="text-xs">
+                <div className="bg-neutral-lightest border-secondary mt-3 mr-3 ml-3 flex h-15 flex-col justify-center rounded-md border-2 px-5 text-2xl font-bold">
+                    <p className="text-black">{user.description}</p>
+                </div>
+            </div>
 
             <div className="text-secondary mt-2 flex justify-center gap-10">
                 <FollowDisplay
                     label="Following"
                     count={following!}
-                    to="/profile/following"
+                    to={`/following/${id == undefined ? "" : id}`}
                 />
                 <FollowDisplay
                     label="Followers"
                     count={followers!}
-                    to="/profile/followers"
+                    to={`/followers/${id == undefined ? "" : id}`}
                 />
             </div>
             <PostFeed posts={posts}></PostFeed>
