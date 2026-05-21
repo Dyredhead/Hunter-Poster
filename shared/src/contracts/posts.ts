@@ -38,7 +38,7 @@ const ContentSchema = z.discriminatedUnion("type", [
 
 export const PostSchema = z.object({
     id: z.uuidv7(),
-    created_by: z.string(),
+    author_id: z.uuidv7(),
     content: ContentSchema,
     comments: z.int().min(0),
     likes: z.int().min(0),

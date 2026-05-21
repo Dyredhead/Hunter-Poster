@@ -95,15 +95,13 @@ async function FormatPostContentService(
 
 export async function FormatPostGetResponseService(
     post: PostsRow,
-    user_id?: string,
 ): Promise<Post> {
-    const content = FormatPostContentService(post, user_id);
-    const username = findUserById(post.user_id);
+    const content = FormatPostContentService(post);
     const likes = getPostLikesById(post.id);
 
     const formattedPost: Post = {
         id: post.id,
-        created_by: (await username)!.username,
+        author_id: post.user_id,
         content: await content,
         comments: 0,
         likes: await likes,

@@ -1,4 +1,12 @@
-import type { Post } from "@my-app/shared";
+import { getImage } from "@/api/images";
+import { userGetById } from "@/api/users";
+import {
+    ImageContract,
+    usersContract,
+    type Post,
+    type User,
+} from "@my-app/shared";
+import { useEffect, useState } from "react";
 import "./Post.css";
 
 function onUsernameClick() {}
@@ -10,15 +18,40 @@ function onBookmark() {}
 function onShare() {}
 
 type AvatarIconProps = {
-    pfp_url: string | null;
+    pfp_id: string | null;
 };
 
-const AvatarIcon = ({ pfp_url }: AvatarIconProps) => {
-    if (pfp_url == null) {
-        pfp_url = "/src/assets/icons/avatar.svg";
-    }
+const AvatarIcon = ({ pfp_id }: AvatarIconProps) => {
+    const [pfp_url, setPfpUrl] = useState<string | null>(null);
+    useEffect(() => {
+        const fetchData = async () => {
+            await new Promise((f) => setTimeout(f, 200));
+            try {
+                if (pfp_id != null) {
+                    const image =
+                        ImageContract.routes.getById.responses[200].body.parse(
+                            await (await getImage({ id: pfp_id })).json(),
+                        );
+                    setPfpUrl(
+                        `data:${image.image_mime};base64,${image.image_data}`,
+                    );
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                // setLoading(false);
+            }
+        };
 
-    return <img src={pfp_url}></img>;
+        fetchData();
+    }, [pfp_id]);
+
+    return (
+        <img
+            src={pfp_url == null ? "/src/assets/icons/avatar.svg" : pfp_url}
+            className="bg-neutral-darkest border-neutral-lightest flex w-1/4 justify-center overflow-clip rounded-full border-2"
+        ></img>
+    );
 };
 
 const CommentIcon = () => (
@@ -129,9 +162,8 @@ function DateTimeToString(datetime: Date): string {
 
 type PostProps = {
     id: string;
-    username: string;
-    pfp_url: string | null;
-    image_url: string | null;
+    author_id: string;
+    image_id: string | null;
     content: string;
     comments: number;
     likes: number;
@@ -140,20 +172,56 @@ type PostProps = {
 
 export function Post({
     id,
-    username,
-    pfp_url,
+    author_id,
     content,
-    image_url,
+    image_id,
     comments,
     likes,
     bookmarks,
 }: PostProps) {
+    const [user, setUser] = useState<User>();
+    const [imageUrl, setImageUrl] = useState<string | null>();
+    useEffect(() => {
+        const fetchData = async () => {
+            await new Promise((f) => setTimeout(f, 100));
+            try {
+                const user =
+                    usersContract.routes.getById.responses[200].body.parse(
+                        await (await userGetById({ id: author_id })).json(),
+                    );
+                setUser(user);
+
+                if (image_id != null) {
+                    const image =
+                        ImageContract.routes.getById.responses[200].body.parse(
+                            await (await getImage({ id: image_id })).json(),
+                        );
+                    setImageUrl(
+                        `data:${image.image_mime};base64,${image.image_data}`,
+                    );
+                } else {
+                    setImageUrl(null);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                // setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [author_id, image_id]);
+
+    if (user == undefined) {
+        return;
+    }
+
     return (
         <article className="post">
             <header className="post-header">
                 <button className="post-author" onClick={onUsernameClick}>
-                    <AvatarIcon pfp_url={pfp_url} />
-                    <span className="post-username">{username}</span>
+                    <AvatarIcon pfp_id={user.pfp_id} />
+                    <span className="post-username">{user.username}</span>
                 </button>
                 <div className="post-header-right">
                     <span className="post-date">
@@ -162,14 +230,10 @@ export function Post({
                 </div>
             </header>
 
-            {image_url !== null && (
+            {imageUrl !== null && (
                 <button className="post-image-wrapper" onClick={onImageClick}>
-                    {image_url ? (
-                        <img
-                            className="post-image"
-                            src={image_url}
-                            alt="Post"
-                        />
+                    {imageUrl ? (
+                        <img className="post-image" src={imageUrl} alt="Post" />
                     ) : (
                         <ImagePlaceholder />
                     )}
@@ -230,13 +294,12 @@ export function PostFeed({ posts }: PostFeedProps) {
                         return (
                             <Post
                                 id={post.id}
-                                username={post.created_by}
+                                author_id={post.author_id}
                                 content={post.content.content}
                                 comments={post.comments}
                                 likes={post.likes}
                                 bookmarks={post.booksmarks}
-                                pfp_url={null}
-                                image_url={null}
+                                image_id={null}
                             ></Post>
                         );
                     case "image":
