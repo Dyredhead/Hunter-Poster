@@ -3,6 +3,7 @@
 // import { userGetById } from "./api/users";
 import { Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
+import NotFoundPage from "./NotFound";
 import * as pages from "./pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -19,6 +20,7 @@ export default function App() {
 
     return (
         <Routes>
+            <Route path="*" element={<NotFoundPage />} />
             <Route path="/" element={<pages.GreeterPage />} />
             <Route path="/auth/login" element={<pages.LoginPage />} />
             <Route path="/auth/register" element={<pages.RegisterPage />} />

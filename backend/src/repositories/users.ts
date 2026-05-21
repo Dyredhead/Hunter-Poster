@@ -148,15 +148,18 @@ export async function getPostsById(id: string) {
 
 export async function updateUserSettingsProfile(
     id: string,
-    description: string,
-    pfp_id: string,
-    banner_id: string,
+    description: string | null,
+    pfp_id: string | null,
+    banner_id: string | null,
 ) {
     const result = (
         await database.query(
             `
         UPDATE users
-        SET description = $2, pfp_id = $3, banner_id = $4
+        SET
+            description = COALESCE($2, description),
+            pfp_id = COALESCE($3, pfp_id),
+            banner_id = COALESCE($4, banner_id)
         WHERE id = $1
         `,
             [id, description, pfp_id, banner_id],
@@ -168,14 +171,16 @@ export async function updateUserSettingsProfile(
 
 export async function updateUserSettingsAccount(
     id: string,
-    username: string,
-    password: string,
+    username: string | null,
+    password: string | null,
 ) {
     const result = (
         await database.query(
             `
         UPDATE users
-        SET username = $2, password_hash = crypt($3, gen_salt('md5'))
+        SET
+            username = COALESCE($2, username),
+            password_hash = COALESCE(crypt($3, gen_salt('md5')), password_hash)
         WHERE id = $1
         `,
             [id, username, password],

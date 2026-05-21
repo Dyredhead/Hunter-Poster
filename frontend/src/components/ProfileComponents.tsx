@@ -68,9 +68,11 @@ export const BannerContainer = ({
                 <img src={banner_url == null ? "" : banner_url} width="100%" />
             </div>
 
-            <Link to="/settings" className="absolute top-2 right-2">
-                <SettingIcon />
-            </Link>
+            <div className="bg-neutrual-lightest bg-neutral-lightest p1 absolute top-2 right-2 rounded-full p-1">
+                <Link to="/settings">
+                    <SettingIcon />
+                </Link>
+            </div>
 
             <div className="bg-neutral-darkest absolute bottom-0 left-0 flex h-20 w-20 flex-1 translate-x-1/10 translate-y-1/2 justify-center overflow-clip rounded-full border-2">
                 <img

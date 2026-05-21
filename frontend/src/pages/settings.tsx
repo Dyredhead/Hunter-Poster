@@ -190,19 +190,22 @@ export default function SettingsPage() {
 
                     <BigButton
                         type="button"
-                        onClick={handleClick}
+                        onClick={() => navigate("/profile")}
                         disabled={loading}
                     >
                         Go Back to Profile
+                    </BigButton>
+                    <BigButton
+                        type="button"
+                        onClick={() => navigate("/auth/logout")}
+                        disabled={loading}
+                    >
+                        Logout
                     </BigButton>
                 </div>
             </div>
         </Screen>
     );
-
-    function handleClick() {
-        navigate("/profile");
-    }
 
     async function handleSubmitProfile(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -210,46 +213,41 @@ export default function SettingsPage() {
         setLoadingProfile(true);
         await new Promise((f) => setTimeout(f, 200));
 
-        const pfp_id = ImageContract.routes.upload.responses[200].body.parse(
-            await (
-                await uploadImage({
-                    image_type: "pfp",
-                    image_mime: pfp!.type,
-                    image_data: await fileToBase64(pfp!),
-                })
-            ).json(),
-        ).id;
+        console.log("pfp: ", pfp);
+        console.log("banner: ", banner);
 
-        const banner_id = ImageContract.routes.upload.responses[200].body.parse(
-            await (
-                await uploadImage({
-                    image_type: "banner",
-                    image_mime: pfp!.type,
-                    image_data: await fileToBase64(banner!),
-                })
-            ).json(),
-        ).id;
+        const pfp_id =
+            pfp == null
+                ? null
+                : ImageContract.routes.upload.responses[200].body.parse(
+                      await (
+                          await uploadImage({
+                              image_type: "pfp",
+                              image_mime: pfp.type,
+                              image_data: await fileToBase64(pfp),
+                          })
+                      ).json(),
+                  ).id;
 
-        const result = await updateSettingsProfile({
+        const banner_id =
+            banner == null
+                ? null
+                : ImageContract.routes.upload.responses[200].body.parse(
+                      await (
+                          await uploadImage({
+                              image_type: "banner",
+                              image_mime: banner!.type,
+                              image_data: await fileToBase64(banner),
+                          })
+                      ).json(),
+                  ).id;
+
+        await updateSettingsProfile({
             pfp_id: pfp_id,
             banner_id: banner_id,
             description: description,
         });
 
-        console.log(result);
-
-        // if (result.ok) {
-        //     const parsed_body =
-        //         loginContract.routes.login.responses[200].body.parse(
-        //             await result.json(),
-        //         );
-        //     localStorage.setItem("token", parsed_body.token);
-        //     navigate("/home/for-you");
-        // } else {
-        //     if (result.status === 401) {
-        //         setError("Incorrect email or password");
-        //     }
-        // }
         setLoadingProfile(false);
     }
 
@@ -259,8 +257,8 @@ export default function SettingsPage() {
         await new Promise((f) => setTimeout(f, 200));
 
         const result = await updateSettingsAccount({
-            username: username,
-            password: password,
+            username: username == "" ? null : username,
+            password: password == "" ? null : password,
         });
 
         console.log(result);
