@@ -17,6 +17,9 @@ export default function ProfilePage() {
     const id = useParams().id; // to differentiate current user's profile and other users profile
 
     const [user, setUser] = useState<User>();
+    const [isCurrentUser, setIsCurentUser] = useState<boolean>();
+    const [isFollowing, setIsFollowing] = useState<boolean>();
+
     const [following, setFollowing] = useState<number | null>(null);
     const [followers, setFollowers] = useState<number | null>(null);
     const [posts, setPosts] = useState<Post[]>();
@@ -37,18 +40,31 @@ export default function ProfilePage() {
                     );
                 setUser(user);
 
+                const current_id =
+                    usersContract.routes.getById.responses[200].body.parse(
+                        await (await userGetCurrent()).json(),
+                    ).id;
+
+                setIsCurentUser(current_id == user.id);
+
+                const followers =
+                    usersContract.routes.getFollowersById.responses[200].body.parse(
+                        await (
+                            await userGetFollowersById({ id: user.id })
+                        ).json(),
+                    );
+                setFollowers(followers.length);
+
+                setIsFollowing(
+                    followers.some((follower) => follower == current_id),
+                );
+
+                setFollowing(followers.length);
+
                 setFollowing(
                     usersContract.routes.getFollowingById.responses[200].body.parse(
                         await (
                             await userGetFollowingById({ id: user.id })
-                        ).json(),
-                    ).length,
-                );
-
-                setFollowers(
-                    usersContract.routes.getFollowersById.responses[200].body.parse(
-                        await (
-                            await userGetFollowersById({ id: user.id })
                         ).json(),
                     ).length,
                 );
@@ -97,13 +113,24 @@ export default function ProfilePage() {
                 display_settings={id == undefined}
             />
             <div
-                id="pfp-username-container"
+                id="pfp-username-follow-container"
                 className="-mt-10 flex translate-x-2 flex-row gap-4"
             >
                 <Pfp id={user.id} pfp_id={user.pfp_id} className="h-20 w-20" />
-                <p className="flex -translate-y-3 flex-col justify-end">
-                    {user.username}
-                </p>
+                <div className="flex flex-col justify-end">
+                    <div className="flex -translate-y-3 flex-row justify-end gap-2">
+                        <p className="p-0.5">{user.username}</p>
+
+                        {!isCurrentUser! && (
+                            <button
+                                onClick={handleFollow}
+                                className={`rounded-2xl ${isFollowing ? "bg-red-600" : "bg-green-600"} p-0.5 px-2`}
+                            >
+                                {isFollowing ? "Unfollow" : "Follow"}
+                            </button>
+                        )}
+                    </div>
+                </div>
             </div>
 
             <div id="description-container" className="text-xs">
@@ -129,3 +156,5 @@ export default function ProfilePage() {
         </div>
     );
 }
+
+function handleFollow() {}
