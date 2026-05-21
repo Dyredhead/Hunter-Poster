@@ -25,7 +25,7 @@ export default function SettingsPage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 500));
+            // await new Promise((f) => setTimeout(f, 500));
             try {
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
@@ -190,77 +190,72 @@ export default function SettingsPage() {
 
                     <BigButton
                         type="button"
-                        onClick={handleClick}
+                        onClick={() => navigate("/profile")}
                         disabled={loading}
                     >
                         Go Back to Profile
+                    </BigButton>
+                    <BigButton
+                        type="button"
+                        onClick={() => navigate("/auth/logout")}
+                        disabled={loading}
+                    >
+                        Logout
                     </BigButton>
                 </div>
             </div>
         </Screen>
     );
 
-    function handleClick() {
-        navigate("/profile");
-    }
-
     async function handleSubmitProfile(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         // setError("");
         setLoadingProfile(true);
-        await new Promise((f) => setTimeout(f, 200));
+        // await new Promise((f) => setTimeout(f, 200));
 
-        const pfp_id = ImageContract.routes.upload.responses[200].body.parse(
-            await (
-                await uploadImage({
-                    image_type: "pfp",
-                    image_mime: pfp!.type,
-                    image_data: await fileToBase64(pfp!),
-                })
-            ).json(),
-        ).id;
+        const pfp_id =
+            pfp == null
+                ? null
+                : ImageContract.routes.upload.responses[200].body.parse(
+                      await (
+                          await uploadImage({
+                              image_type: "pfp",
+                              image_mime: pfp.type,
+                              image_data: await fileToBase64(pfp),
+                          })
+                      ).json(),
+                  ).id;
 
-        const banner_id = ImageContract.routes.upload.responses[200].body.parse(
-            await (
-                await uploadImage({
-                    image_type: "banner",
-                    image_mime: pfp!.type,
-                    image_data: await fileToBase64(banner!),
-                })
-            ).json(),
-        ).id;
+        const banner_id =
+            banner == null
+                ? null
+                : ImageContract.routes.upload.responses[200].body.parse(
+                      await (
+                          await uploadImage({
+                              image_type: "banner",
+                              image_mime: banner!.type,
+                              image_data: await fileToBase64(banner),
+                          })
+                      ).json(),
+                  ).id;
 
-        const result = await updateSettingsProfile({
+        await updateSettingsProfile({
             pfp_id: pfp_id,
             banner_id: banner_id,
             description: description,
         });
 
-        console.log(result);
-
-        // if (result.ok) {
-        //     const parsed_body =
-        //         loginContract.routes.login.responses[200].body.parse(
-        //             await result.json(),
-        //         );
-        //     localStorage.setItem("token", parsed_body.token);
-        //     navigate("/home/for-you");
-        // } else {
-        //     if (result.status === 401) {
-        //         setError("Incorrect email or password");
-        //     }
-        // }
         setLoadingProfile(false);
     }
 
     async function handleSubmitAccount(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoadingAccount(true);
-        await new Promise((f) => setTimeout(f, 200));
+        // await new Promise((f) => setTimeout(f, 200));
 
         const result = await updateSettingsAccount({
-            username: username,
-            password: password,
+            username: username == "" ? null : username,
+            password: password == "" ? null : password,
         });
 
         console.log(result);

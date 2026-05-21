@@ -11,7 +11,7 @@ export default function FollowingPage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 200));
+            // await new Promise((f) => setTimeout(f, 200));
             try {
                 const response = await getByFollowing();
                 setPosts(response);

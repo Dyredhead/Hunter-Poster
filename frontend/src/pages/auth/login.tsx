@@ -94,7 +94,7 @@ export default function LoginPage() {
             password: password,
         });
 
-        await new Promise((f) => setTimeout(f, 500));
+        // await new Promise((f) => setTimeout(f, 500));
 
         if (result.ok) {
             const parsed_body =

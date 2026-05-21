@@ -112,7 +112,7 @@ export default function RegisterPage() {
             password: password,
         });
 
-        await new Promise((f) => setTimeout(f, 500));
+        // await new Promise((f) => setTimeout(f, 500));
 
         if (result.ok) {
             navigate("/");

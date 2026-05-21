@@ -8,6 +8,7 @@ import {
     type User,
 } from "@my-app/shared";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./Post.css";
 
 function onUsernameClick() {}
@@ -19,14 +20,15 @@ function onBookmark() {}
 function onShare() {}
 
 type AvatarIconProps = {
+    id: string;
     pfp_id: string | null;
 };
 
-const AvatarIcon = ({ pfp_id }: AvatarIconProps) => {
+const AvatarIcon = ({ id, pfp_id }: AvatarIconProps) => {
     const [pfp_url, setPfpUrl] = useState<string | null>(null);
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 200));
+            // await new Promise((f) => setTimeout(f, 200));
             try {
                 if (pfp_id != null) {
                     const image =
@@ -48,10 +50,14 @@ const AvatarIcon = ({ pfp_id }: AvatarIconProps) => {
     }, [pfp_id]);
 
     return (
-        <img
-            src={pfp_url == null ? "/src/assets/icons/avatar.svg" : pfp_url}
+        <Link
+            to={`/profile/${id}`}
             className="bg-neutral-darkest border-neutral-lightest flex w-1/4 justify-center overflow-clip rounded-full border-2"
-        ></img>
+        >
+            <img
+                src={pfp_url == null ? "/src/assets/icons/avatar.svg" : pfp_url}
+            ></img>
+        </Link>
     );
 };
 
@@ -223,7 +229,7 @@ export function Post({
     const [imageUrl, setImageUrl] = useState<string | null>();
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 100));
+            // await new Promise((f) => setTimeout(f, 100));
             try {
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
@@ -260,7 +266,7 @@ export function Post({
         <article className="post">
             <header className="post-header">
                 <button className="post-author" onClick={onUsernameClick}>
-                    <AvatarIcon pfp_id={user.pfp_id} />
+                    <AvatarIcon pfp_id={user.pfp_id} id={user.id} />
                     <span className="post-username">{user.username}</span>
                 </button>
                 <div className="post-header-right">

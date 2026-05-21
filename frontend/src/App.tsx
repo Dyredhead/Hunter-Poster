@@ -3,6 +3,7 @@
 // import { userGetById } from "./api/users";
 import { Route, Routes } from "react-router-dom";
 import { NavBar } from "./components/NavBar";
+import NotFoundPage from "./NotFound";
 import * as pages from "./pages";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -34,10 +35,13 @@ export default function App() {
                         />
                     </Route>
 
-                    <Route
-                        path="/profile"
-                        element={<pages.ProfilePage />}
-                    ></Route>
+                    <Route path="/profile">
+                        <Route index element={<pages.ProfilePage />}></Route>
+                        <Route
+                            path=":id"
+                            element={<pages.ProfilePage />}
+                        ></Route>
+                    </Route>
 
                     <Route path="/settings" element={<pages.SettingsPage />} />
 
@@ -54,6 +58,9 @@ export default function App() {
                     </Route>
                 </Route>
             </Route>
+            {/* catch-all & named 404 page*/}
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
     );
 }

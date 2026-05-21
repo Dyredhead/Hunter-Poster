@@ -1,4 +1,5 @@
 import {
+    userGetById,
     userGetCurrent,
     userGetFollowersById,
     userGetFollowingById,
@@ -13,9 +14,11 @@ import {
 import { BigTitle } from "@/components/Title";
 import { usersContract, type Post, type User } from "@my-app/shared";
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useParams } from "react-router-dom";
 
 export default function ProfilePage() {
+    const id = useParams().id; // to differentiate current user's profile and other users profile
+
     const [user, setUser] = useState<User>();
     const [following, setFollowing] = useState<number | null>(null);
     const [followers, setFollowers] = useState<number | null>(null);
@@ -24,11 +27,16 @@ export default function ProfilePage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 200));
+            // await new Promise((f) => setTimeout(f, 200));
             try {
+                const response =
+                    id === undefined
+                        ? await userGetCurrent()
+                        : await userGetById({ id });
+
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
-                        await (await userGetCurrent()).json(),
+                        await response.json(),
                     );
                 setUser(user);
 
@@ -62,7 +70,7 @@ export default function ProfilePage() {
         };
 
         fetchData();
-    }, []);
+    }, [id]);
 
     if (loading) {
         return (
@@ -86,7 +94,11 @@ export default function ProfilePage() {
 
     return (
         <div className="w-full">
-            <BannerContainer pfp_id={user.pfp_id} banner_id={user.banner_id} />
+            <BannerContainer
+                pfp_id={user.pfp_id}
+                banner_id={user.banner_id}
+                display_settings={id == undefined}
+            />
             <UserInformation
                 username={user.username}
                 description={user.description}

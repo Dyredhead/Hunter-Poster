@@ -4,14 +4,14 @@ import { API_MOUNT as _API_MOUNT } from "./api.js";
 const API_MOUNT = _API_MOUNT + "/settings";
 
 const SettingsProfileSchema = z.object({
-    pfp_id: z.uuidv7(),
-    banner_id: z.uuidv7(),
-    description: z.string(),
+    pfp_id: z.uuidv7().nullable(),
+    banner_id: z.uuidv7().nullable(),
+    description: z.string().nullable(),
 });
 
 const SettingsAccountSchema = z.object({
-    username: z.string(),
-    password: z.string(),
+    username: z.string().nullable(),
+    password: z.string().nullable(),
 });
 
 export const SettingsContract = {
