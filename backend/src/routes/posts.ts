@@ -2,10 +2,12 @@ import { requireAuth } from "@/middleware/auth.js";
 import { postContract } from "@my-app/shared";
 import { Router } from "express";
 import {
+    likePostController,
     postCreateController,
     postGetByFollowingController,
     postGetByForYouController,
     postGetByIdController,
+    unlikePostController,
 } from "./postControllers.js";
 
 const router = Router();
@@ -25,5 +27,7 @@ router.get(
     postGetByFollowingController,
 );
 router.get(Post.getById.backend_path(), postGetByIdController);
+router.post(Post.like.backend_path(), requireAuth, likePostController);
+router.delete(Post.unlike.backend_path(), requireAuth, unlikePostController);
 
 export default router;

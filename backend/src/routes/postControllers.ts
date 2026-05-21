@@ -7,7 +7,9 @@ import {
     getPostsById,
     getPostsFollowing,
     getPostsForYou,
+    likePost,
     PostsRow,
+    unlikePost,
 } from "@/repositories/posts.js";
 import { postContract, PostCreateRequest } from "@my-app/shared";
 import { RequestHandler } from "express";
@@ -88,4 +90,26 @@ export const postGetByFollowingController: RequestHandler = async (
     );
 
     res.status(200).json(formattedRes);
+};
+
+export const likePostController: RequestHandler = async (req, res) => {
+    const body = Post.like.request.body.parse(req.body);
+
+    try {
+        await likePost(body.user_id, body.post_id);
+        res.sendStatus(200);
+    } catch (err) {
+        res.sendStatus(404);
+    }
+};
+
+export const unlikePostController: RequestHandler = async (req, res) => {
+    const body = Post.unlike.request.body.parse(req.body);
+
+    try {
+        await unlikePost(body.user_id, body.post_id);
+        res.sendStatus(200);
+    } catch (err) {
+        res.sendStatus(404);
+    }
 };
