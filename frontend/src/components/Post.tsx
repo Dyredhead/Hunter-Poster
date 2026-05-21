@@ -3,6 +3,7 @@ import { userGetById } from "@/api/users";
 import {
     ImageContract,
     usersContract,
+    type ContentPoll,
     type Post,
     type User,
 } from "@my-app/shared";
@@ -129,16 +130,55 @@ type PostProps = {
     author_id: string;
     image_id: string | null;
     content: string;
+    poll: ContentPoll | null;
     comments: number;
     likes: number;
     bookmarks: number;
 };
+
+function PollOption({ option, votes }: { option: string; votes: number }) {
+    return (
+        <div className="flex">
+            <p>{option}</p>
+            <p>{votes}</p>
+        </div>
+    );
+}
+
+function Poll({
+    question,
+    closes_at,
+    options,
+    // vote,
+    current_votes,
+}: ContentPoll) {
+    let index = 0;
+
+    return (
+        <div>
+            <p>{question}</p>
+            <p>{DateTimeToString(new Date(closes_at))}</p>
+
+            {options.map((option) => {
+                index++;
+                return (
+                    <PollOption
+                        key={option}
+                        option={option}
+                        votes={current_votes[index]}
+                    />
+                );
+            })}
+        </div>
+    );
+}
 
 export function Post({
     id,
     author_id,
     content,
     image_id,
+    poll,
     comments,
     likes,
     bookmarks,
@@ -208,9 +248,24 @@ export function Post({
                 </button>
             )}
 
-            <button className="post-body" onClick={onContentClick}>
-                <p className="post-content">{content}</p>
-            </button>
+            {content.trim() && (
+                <>
+                    <button className="post-body" onClick={onContentClick}>
+                        <p className="post-content">{content}</p>
+                    </button>
+                </>
+            )}
+
+            {poll && (
+                <Poll
+                    type="poll"
+                    question={poll.question}
+                    closes_at={poll.closes_at}
+                    options={poll.options}
+                    vote={poll.vote}
+                    current_votes={poll.current_votes}
+                />
+            )}
 
             <footer className="post-actions">
                 <button
@@ -261,6 +316,7 @@ export function PostFeed({ posts }: PostFeedProps) {
                     case "text":
                         return (
                             <Post
+                                key={post.id}
                                 id={post.id}
                                 author_id={post.author_id}
                                 content={post.content.content}
@@ -268,14 +324,51 @@ export function PostFeed({ posts }: PostFeedProps) {
                                 likes={post.likes}
                                 bookmarks={post.booksmarks}
                                 image_id={null}
+                                poll={null}
                             ></Post>
                         );
                     case "image":
-                        return;
+                        return (
+                            <Post
+                                key={post.id}
+                                id={post.id}
+                                author_id={post.author_id}
+                                content=""
+                                comments={post.comments}
+                                likes={post.likes}
+                                bookmarks={post.booksmarks}
+                                image_id={post.content.image_id}
+                                poll={null}
+                            ></Post>
+                        );
                     case "text_image":
-                        return;
+                        return (
+                            <Post
+                                key={post.id}
+                                id={post.id}
+                                author_id={post.author_id}
+                                content={post.content.content}
+                                comments={post.comments}
+                                likes={post.likes}
+                                bookmarks={post.booksmarks}
+                                image_id={post.content.image_id}
+                                poll={null}
+                            ></Post>
+                        );
                     case "poll":
-                        return;
+                        return (
+                            <Post
+                                key={post.id}
+                                id={post.id}
+                                author_id={post.author_id}
+                                content=""
+                                comments={post.comments}
+                                likes={post.likes}
+                                bookmarks={post.booksmarks}
+                                image_id={null}
+                                poll={post.content}
+                            ></Post>
+                        );
                 }
             })}
         </div>

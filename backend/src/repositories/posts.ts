@@ -18,14 +18,14 @@ type PostTextRow = {
 type PostImageRow = {
     id: string;
     post_id: string;
-    image_url: string;
+    image_id: string;
 };
 
 type PostTextImageRow = {
     id: string;
     post_id: string;
     text: string;
-    image_url: string;
+    image_id: string;
 };
 
 type PollsRow = {
@@ -217,16 +217,16 @@ export async function createTextPost(user_id: string, text: string) {
     await database.query(query, values);
 }
 
-export async function createImagePost(user_id: string, image_url: string) {
+export async function createImagePost(user_id: string, image_id: string) {
     // create post and get id
     const post_id = await createPost(user_id, content_type.image);
 
     // query for inserting into posts_image
     const query = `
-        INSERT INTO posts_image(post_id, image_url) 
+        INSERT INTO posts_image(post_id, image_id) 
         VALUES($1, $2)
     `;
-    const values = [post_id, image_url];
+    const values = [post_id, image_id];
 
     await database.query(query, values);
 }
@@ -234,17 +234,17 @@ export async function createImagePost(user_id: string, image_url: string) {
 export async function createTextImagePost(
     user_id: string,
     text: string,
-    image_url: string,
+    image_id: string,
 ) {
     // create post and get id
     const post_id = await createPost(user_id, content_type.text_image);
 
     // query for inserting into posts_text_and_image
     const query = `
-        INSERT INTO posts_text_and_image(post_id, text, image_url) 
+        INSERT INTO posts_text_and_image(post_id, text, image_id) 
         VALUES($1, $2, $3)
     `;
-    const values = [post_id, text, image_url];
+    const values = [post_id, text, image_id];
 
     await database.query(query, values);
 }

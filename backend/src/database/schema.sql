@@ -69,7 +69,7 @@ CREATE TABLE
         id UUID PRIMARY KEY DEFAULT uuidv7 (),
         post_id UUID REFERENCES posts (id) ON DELETE CASCADE,
         text TEXT NOT NULL,
-        image_url TEXT NOT NULL
+        image_id UUID REFERENCES images (id) ON DELETE CASCADE
     );
 
 CREATE TABLE
