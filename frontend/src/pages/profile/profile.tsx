@@ -1,11 +1,11 @@
 import { userGetCurrent, userGetPostsById } from "@/api/users";
-import BigTitle from "@/components/BigTitle";
 import { PostFeed } from "@/components/Post";
 import {
     BannerContainer,
     FollowDisplay,
     UserInformation,
 } from "@/components/ProfileComponents";
+import { BigTitle } from "@/components/Title";
 import { usersContract, type Post, type User } from "@my-app/shared";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
@@ -63,13 +63,16 @@ export default function ProfilePage() {
 
     return (
         <div className="w-full">
-            <BannerContainer pfp_url={null} banner_url={null} />
+            <BannerContainer
+                pfp_id={user.pfp_id}
+                banner_id={user.banner_id}
+            />
             <UserInformation
                 username={user.username}
                 description={user.description}
             />
 
-            <div className="flex justify-center gap-10 text-secondary mt-2">
+            <div className="text-secondary mt-2 flex justify-center gap-10">
                 <FollowDisplay
                     label="Following"
                     count={10}

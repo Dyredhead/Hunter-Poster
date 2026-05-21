@@ -1,6 +1,6 @@
 import { getByFollowing } from "@/api/post";
-import BigTitle from "@/components/BigTitle";
 import { PostFeed } from "@/components/Post";
+import { BigTitle } from "@/components/Title";
 import { type PostGetByFollowingResponse } from "@my-app/shared";
 import { useEffect, useState } from "react";
 

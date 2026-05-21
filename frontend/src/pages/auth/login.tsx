@@ -2,8 +2,8 @@ import { login } from "@/api/auth/login";
 import hide from "@/assets/icons/hide.svg";
 import show from "@/assets/icons/show.svg";
 import BigButton from "@/components/BigButton";
-import BigTitle from "@/components/BigTitle";
 import Screen from "@/components/Screen";
+import { BigTitle } from "@/components/Title";
 import { loginContract } from "@my-app/shared";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,15 +20,15 @@ export default function LoginPage() {
     return (
         <Screen>
             <BigTitle>Login</BigTitle>
-            <form onSubmit={handleSubmit}>
-                <div className="form-field">
-                    <label className="form-field-label" htmlFor="email">
+            <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="auth-form-field">
+                    <label className="auth-form-field-label" htmlFor="email">
                         Email
                     </label>
-                    <div className="form-field-input-wrapper">
+                    <div className="auth-form-field-input-wrapper">
                         <input
                             id="email"
-                            className="form-field-input"
+                            className="auth-form-field-input"
                             type="email"
                             placeholder="john.doe@example.com"
                             value={email}
@@ -39,14 +39,14 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                <div className="form-field">
-                    <label className="form-field-label" htmlFor="password">
+                <div className="auth-form-field">
+                    <label className="auth-form-field-label" htmlFor="password">
                         Password
                     </label>
-                    <div className="form-field-input-wrapper">
+                    <div className="auth-form-field-input-wrapper">
                         <input
                             id="password"
-                            className="form-field-input"
+                            className="auth-form-field-input"
                             type={showPassword ? "text" : "password"}
                             placeholder="MyStrongPasword123!"
                             value={password}
@@ -56,7 +56,7 @@ export default function LoginPage() {
                         />
                         <button
                             type="button"
-                            className="form-password-toggle"
+                            className="auth-form-password-toggle"
                             onClick={() => setShowPassword((v) => !v)}
                             aria-label={
                                 showPassword ? "Hide password" : "Show password"
@@ -71,11 +71,11 @@ export default function LoginPage() {
                     </div>
                 </div>
 
-                {error && <p className="form-error">{error}</p>}
+                {error && <p className="auth-form-error">{error}</p>}
 
                 <BigButton
                     type="submit"
-                    className="form-submit-btn"
+                    className="auth-form-submit-btn"
                     disabled={loading}
                 >
                     {loading ? "Loging in..." : "Login"}

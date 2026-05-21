@@ -10,8 +10,8 @@ const UserSchema = z.object({
     email: z.email(),
     is_deleted: z.boolean(),
     description: z.string().nullable(),
-    pfp_id: z.url().nullable(),
-    banner_id: z.url().nullable(),
+    pfp_id: z.uuidv7().nullable(),
+    banner_id: z.uuidv7().nullable(),
 });
 
 const UserGetCurrent = {

@@ -22,7 +22,7 @@ export async function createUser(
     password: string,
 ) {
     const result = await database
-        .query<Number>(
+        .query<String>(
             `
         INSERT INTO users (username, email, password_hash)
         VALUES ($1, $2, crypt($3, gen_salt('md5')))
@@ -144,4 +144,43 @@ export async function getPostsById(id: string) {
     ).rows;
 
     return result;
+}
+
+export async function updateUserSettingsProfile(
+    id: string,
+    description: string,
+    pfp_id: string,
+    banner_id: string,
+) {
+    const result = (
+        await database.query(
+            `
+        UPDATE users
+        SET description = $2, pfp_id = $3, banner_id = $4
+        WHERE id = $1
+        `,
+            [id, description, pfp_id, banner_id],
+        )
+    ).rows;
+
+    return;
+}
+
+export async function updateUserSettingsAccount(
+    id: string,
+    username: string,
+    password: string,
+) {
+    const result = (
+        await database.query(
+            `
+        UPDATE users
+        SET username = $2, password_hash = crypt($3, gen_salt('md5'))
+        WHERE id = $1
+        `,
+            [id, username, password],
+        )
+    ).rows;
+
+    return;
 }

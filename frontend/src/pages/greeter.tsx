@@ -1,6 +1,6 @@
 import BigButton from "@/components/BigButton";
-import BigTitle from "@/components/BigTitle";
 import Screen from "@/components/Screen";
+import { BigTitle } from "@/components/Title";
 import { useNavigate } from "react-router-dom";
 import "./greeter.css";
 

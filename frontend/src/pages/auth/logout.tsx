@@ -1,6 +1,6 @@
 import { logout } from "@/api/auth/logout";
-import BigTitle from "@/components/BigTitle";
 import Screen from "@/components/Screen";
+import { BigTitle } from "@/components/Title";
 import { useEffect } from "react";
 import "./auth.css";
 

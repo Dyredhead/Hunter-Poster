@@ -1,3 +1,6 @@
+import { getImage } from "@/api/images";
+import { ImageContract } from "@my-app/shared";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const SettingIcon = () => (
@@ -13,25 +16,63 @@ const SettingIcon = () => (
 );
 
 type BannerContainerProps = {
-    pfp_url: string | null;
-    banner_url: string | null;
+    pfp_id: string | null;
+    banner_id: string | null;
 };
 
 export const BannerContainer = ({
-    pfp_url,
-    banner_url,
+    pfp_id,
+    banner_id,
 }: BannerContainerProps) => {
+    const [pfp_url, setPfpUrl] = useState<string | null>(null);
+    const [banner_url, setBannerUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await new Promise((f) => setTimeout(f, 200));
+            try {
+                if (pfp_id != null) {
+                    const image =
+                        ImageContract.routes.getById.responses[200].body.parse(
+                            await (await getImage({ id: pfp_id })).json(),
+                        );
+                    console.log("got pfpurl");
+                    setPfpUrl(
+                        `data:${image.image_mime};base64,${image.image_data}`,
+                    );
+                }
+
+                if (banner_id != null) {
+                    const image =
+                        ImageContract.routes.getById.responses[200].body.parse(
+                            await (await getImage({ id: banner_id })).json(),
+                        );
+                    console.log("got bannerurl");
+                    setBannerUrl(
+                        `data:${image.image_mime};base64,${image.image_data}`,
+                    );
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            } finally {
+                // setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [banner_id, pfp_id]);
+
     return (
-        <div className="mt-4 ml-4 mr-4 relative">
-            <div className="bg-neutral-lightest h-30 rounded-2xl overflow-clip">
-                <img src={banner_url == null ? "" : banner_url} />
+        <div className="relative mt-4 mr-4 ml-4">
+            <div className="bg-neutral-lightest flex h-30 w-full flex-1 justify-center overflow-clip rounded-2xl">
+                <img src={banner_url == null ? "" : banner_url} width="100%" />
             </div>
 
-            <Link to="/profile/settings" className="absolute top-2 right-2">
+            <Link to="/settings" className="absolute top-2 right-2">
                 <SettingIcon />
             </Link>
 
-            <div className="h-20 w-20 overflow-clip absolute left-0 bottom-0 translate-x-1/10 translate-y-1/2">
+            <div className="bg-neutral-darkest absolute bottom-0 left-0 flex h-20 w-20 flex-1 translate-x-1/10 translate-y-1/2 justify-center overflow-clip rounded-full border-2">
                 <img
                     src={
                         pfp_url == null
@@ -39,8 +80,7 @@ export const BannerContainer = ({
                             : pfp_url
                     }
                     alt=""
-                    width="80px"
-                    height="80px"
+                    width="100%"
                 />
             </div>
         </div>
@@ -56,11 +96,11 @@ export const UserInformation = ({
 }) => {
     return (
         <div className="mt-2 text-xs">
-            <div className="ml-30 font-bold text-neutral-lightest">
+            <div className="text-neutral-lightest ml-30 font-bold">
                 {username}
             </div>
 
-            <div className="bg-neutral-lightest mt-3 ml-3 mr-3 rounded-md h-15 p-1 border-2 border-secondary">
+            <div className="bg-neutral-lightest border-secondary mt-3 mr-3 ml-3 flex h-15 flex-col justify-center rounded-md border-2 px-5 text-2xl font-bold">
                 <p className="text-black">{description}</p>
             </div>
         </div>
@@ -78,7 +118,7 @@ export const FollowDisplay = ({
 }) => {
     return (
         <Link to={to}>
-            <div className="flex flex-col text-secondary text-xs items-center">
+            <div className="text-secondary flex flex-col items-center text-xs">
                 <p className="font-bold">{label}</p>
                 <p>{count}</p>
             </div>

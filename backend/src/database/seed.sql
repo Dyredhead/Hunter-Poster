@@ -1,7 +1,7 @@
 
 -- Seed Users
 WITH inserted_users AS (
-    INSERT INTO users (username, email, password_hash, description) VALUES 
+    INSERT INTO users (username, email, password_hash, description) VALUES
         ('Test', 'test@gmail.com', crypt('test', gen_salt('md5')), 'Test description'),
         ('Alice', 'alice@gmail.com', crypt('12345', gen_salt('md5')), 'Alice description'),
         ('Bob', 'bob@gmail.com', crypt('12345', gen_salt('md5')), 'Bob description'),
@@ -12,7 +12,7 @@ WITH inserted_users AS (
 
 -- Seed Followers (Alice, Bob, Charles follow Test)
 insert_followers AS (
-    INSERT INTO user_follows (follower_id, following_id) VALUES 
+    INSERT INTO user_follows (follower_id, following_id) VALUES
         ((SELECT id FROM inserted_users WHERE username = 'Alice'), (SELECT id FROM inserted_users WHERE username = 'Test')),
         ((SELECT id FROM inserted_users WHERE username = 'Bob'), (SELECT id FROM inserted_users WHERE username = 'Test')),
         ((SELECT id FROM inserted_users WHERE username = 'Charles'), (SELECT id FROM inserted_users WHERE username = 'Test'))
@@ -21,7 +21,7 @@ insert_followers AS (
 
 -- Seed Following (Test follows Alice, Bob, Dylan)
 insert_following AS (
-    INSERT INTO user_follows (follower_id, following_id) VALUES 
+    INSERT INTO user_follows (follower_id, following_id) VALUES
         ((SELECT id FROM inserted_users WHERE username = 'Test'), (SELECT id FROM inserted_users WHERE username = 'Alice')),
         ((SELECT id FROM inserted_users WHERE username = 'Test'), (SELECT id FROM inserted_users WHERE username = 'Bob')),
         ((SELECT id FROM inserted_users WHERE username = 'Test'), (SELECT id FROM inserted_users WHERE username = 'Dylan'))
@@ -30,7 +30,7 @@ insert_following AS (
 
 -- Seed Posts
 insert_posts AS (
-    INSERT INTO posts (user_id, post_type) VALUES 
+    INSERT INTO posts (user_id, post_type) VALUES
         ((SELECT id FROM inserted_users WHERE username = 'Test'), 'text'),
         ((SELECT id FROM inserted_users WHERE username = 'Alice'), 'text'),
         ((SELECT id FROM inserted_users WHERE username = 'Bob'), 'text'),
@@ -41,7 +41,7 @@ insert_posts AS (
 
 -- Seed Text Posts
 insert_text_posts AS (
-    INSERT INTO posts_text (post_id, text) VALUES 
+    INSERT INTO posts_text (post_id, text) VALUES
         ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Test')), 'Lorem Ipsum 0'),
         ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Alice')), 'Lorem Ipsum 1'),
         ((SELECT id FROM insert_posts WHERE user_id = (SELECT id FROM inserted_users WHERE username = 'Bob')), 'Lorem Ipsum 2'),
@@ -51,4 +51,4 @@ insert_text_posts AS (
 )
 
 -- Dummy statment to close off WITH block
-SELECT 'Seeding successful' AS result; 
+SELECT 'Seeding successful' AS result;

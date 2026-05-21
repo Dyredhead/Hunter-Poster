@@ -1,4 +1,4 @@
-.form-screen {
+.auth-form-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -8,7 +8,7 @@
     box-sizing: border-box;
 }
 
-.form-title {
+.auth-form-title {
     font-family: "Anton", sans-serif;
     font-size: clamp(72px, 22vw, 96px);
     font-weight: 400;
@@ -21,7 +21,7 @@
     width: 100%;
 }
 
-form {
+.auth-form {
     display: flex;
     flex-direction: column;
     gap: 50px;
@@ -31,13 +31,13 @@ form {
     justify-content: center;
 }
 
-.form-field {
+.auth-form-field {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-.form-field-label {
+.auth-form-field-label {
     color: var(--color-secondary);
     font-family: Inter, sans-serif;
     font-size: 12px;
@@ -45,7 +45,7 @@ form {
     line-height: normal;
 }
 
-.form-field-input-wrapper {
+.auth-form-field-input-wrapper {
     display: flex;
     align-items: center;
     height: 48px;
@@ -57,7 +57,7 @@ form {
     box-sizing: border-box;
 }
 
-.form-field-input {
+.auth-form-field-input {
     flex: 1;
     border: none;
     background: transparent;
@@ -70,11 +70,11 @@ form {
     min-width: 0;
 }
 
-.form-field-input::placeholder {
+.auth-form-field-input::placeholder {
     color: var(--color-neutral-middle);
 }
 
-.form-password-toggle {
+.auth-form-password-toggle {
     background: none;
     border: none;
     padding: 0;
@@ -85,12 +85,12 @@ form {
     flex-shrink: 0;
 }
 
-.form-password-toggle img {
+.auth-form-password-toggle img {
     width: 16px;
     height: 16px;
 }
 
-.form-submit-btn {
+.auth-form-submit-btn {
     margin-top: 17px;
     /* display: flex;
   justify-content: center;
@@ -112,12 +112,12 @@ form {
   align-self: center; */
 }
 
-.form-submit-btn:disabled {
+.auth-form-submit-btn:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.form-error {
+.auth-form-error {
     color: #ff4d4d;
     font-family: Inter, sans-serif;
     font-size: 13px;
