@@ -20,7 +20,6 @@ export default function App() {
 
     return (
         <Routes>
-            <Route path="*" element={<NotFoundPage />} />
             <Route path="/" element={<pages.GreeterPage />} />
             <Route path="/auth/login" element={<pages.LoginPage />} />
             <Route path="/auth/register" element={<pages.RegisterPage />} />
@@ -36,10 +35,13 @@ export default function App() {
                         />
                     </Route>
 
-                    <Route
-                        path="/profile"
-                        element={<pages.ProfilePage />}
-                    ></Route>
+                    <Route path="/profile">
+                        <Route index element={<pages.ProfilePage />}></Route>
+                        <Route
+                            path=":id"
+                            element={<pages.ProfilePage />}
+                        ></Route>
+                    </Route>
 
                     <Route path="/settings" element={<pages.SettingsPage />} />
 
@@ -56,6 +58,9 @@ export default function App() {
                     </Route>
                 </Route>
             </Route>
+            {/* catch-all & named 404 page*/}
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="*" element={<NotFoundPage />} />
         </Routes>
     );
 }

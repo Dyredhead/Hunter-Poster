@@ -25,7 +25,7 @@ export default function SettingsPage() {
 
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 500));
+            // await new Promise((f) => setTimeout(f, 500));
             try {
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
@@ -211,10 +211,7 @@ export default function SettingsPage() {
         e.preventDefault();
         // setError("");
         setLoadingProfile(true);
-        await new Promise((f) => setTimeout(f, 200));
-
-        console.log("pfp: ", pfp);
-        console.log("banner: ", banner);
+        // await new Promise((f) => setTimeout(f, 200));
 
         const pfp_id =
             pfp == null
@@ -254,7 +251,7 @@ export default function SettingsPage() {
     async function handleSubmitAccount(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
         setLoadingAccount(true);
-        await new Promise((f) => setTimeout(f, 200));
+        // await new Promise((f) => setTimeout(f, 200));
 
         const result = await updateSettingsAccount({
             username: username == "" ? null : username,

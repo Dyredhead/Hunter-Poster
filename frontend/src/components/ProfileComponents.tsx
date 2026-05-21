@@ -18,18 +18,20 @@ const SettingIcon = () => (
 type BannerContainerProps = {
     pfp_id: string | null;
     banner_id: string | null;
+    display_settings: boolean;
 };
 
 export const BannerContainer = ({
     pfp_id,
     banner_id,
+    display_settings,
 }: BannerContainerProps) => {
     const [pfp_url, setPfpUrl] = useState<string | null>(null);
     const [banner_url, setBannerUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
-            await new Promise((f) => setTimeout(f, 200));
+            // await new Promise((f) => setTimeout(f, 200));
             try {
                 if (pfp_id != null) {
                     const image =
@@ -64,16 +66,16 @@ export const BannerContainer = ({
 
     return (
         <div className="relative mt-4 mr-4 ml-4">
+            {display_settings && (
+                <div className="bg-neutrual-lightest bg-neutral-lightest p1 absolute top-2 right-2 rounded-full p-1">
+                    <Link to="/settings">
+                        <SettingIcon />
+                    </Link>
+                </div>
+            )}
             <div className="bg-neutral-lightest flex h-30 w-full flex-1 justify-center overflow-clip rounded-2xl">
                 <img src={banner_url == null ? "" : banner_url} width="100%" />
             </div>
-
-            <div className="bg-neutrual-lightest bg-neutral-lightest p1 absolute top-2 right-2 rounded-full p-1">
-                <Link to="/settings">
-                    <SettingIcon />
-                </Link>
-            </div>
-
             <div className="bg-neutral-darkest absolute bottom-0 left-0 flex h-20 w-20 flex-1 translate-x-1/10 translate-y-1/2 justify-center overflow-clip rounded-full border-2">
                 <img
                     src={
