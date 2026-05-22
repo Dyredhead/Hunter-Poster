@@ -1,11 +1,40 @@
 import {
     usersContract,
+    type UserFollowByIdRequest,
     type UserGetByIdParams,
     type UserGetFollowersByIdRequest,
     type UserGetFollowingByIdRequest,
     type UserGetPostsByIdRequest,
 } from "@my-app/shared";
 import { apiFetch } from "./client.ts";
+
+export async function userFollowById(
+    request: UserFollowByIdRequest,
+): Promise<Response> {
+    const body = usersContract.routes.followById.request.body.parse(request);
+
+    const response = await apiFetch<unknown>(
+        usersContract.routes.followById.frontend_path(),
+        usersContract.routes.followById.method,
+        body,
+    );
+
+    return response;
+}
+
+export async function userUnfollowById(
+    request: UserFollowByIdRequest,
+): Promise<Response> {
+    const body = usersContract.routes.unfollowById.request.body.parse(request);
+
+    const response = await apiFetch<unknown>(
+        usersContract.routes.unfollowById.frontend_path(),
+        usersContract.routes.unfollowById.method,
+        body,
+    );
+
+    return response;
+}
 
 export async function userGetById(
     params: UserGetByIdParams,

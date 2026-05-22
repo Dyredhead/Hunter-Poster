@@ -1,9 +1,11 @@
 import {
+    userFollowById,
     userGetById,
     userGetCurrent,
     userGetFollowersById,
     userGetFollowingById,
     userGetPostsById,
+    userUnfollowById,
 } from "@/api/users";
 import Pfp from "@/components/Pfp";
 import { PostFeed } from "@/components/Post";
@@ -155,6 +157,13 @@ export default function ProfilePage() {
             <Outlet></Outlet>
         </div>
     );
-}
 
-function handleFollow() {}
+    async function handleFollow() {
+        if (!isFollowing) {
+            await userFollowById({ id: user!.id });
+        } else {
+            await userUnfollowById({ id: user!.id });
+        }
+        window.location.reload();
+    }
+}

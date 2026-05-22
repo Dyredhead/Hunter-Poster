@@ -189,3 +189,31 @@ export async function updateUserSettingsAccount(
 
     return;
 }
+
+export async function followById(follower_id: string, following_id: string) {
+    const result = (
+        await database.query(
+            `
+        INSERT INTO user_follows (follower_id, following_id)
+        VALUES ($1, $2)
+        `,
+            [follower_id, following_id],
+        )
+    ).rows;
+
+    return;
+}
+
+export async function unfollowById(follower_id: string, following_id: string) {
+    const result = (
+        await database.query(
+            `
+        DELETE FROM user_follows
+        WHERE follower_id = $1 AND following_id = $2
+        `,
+            [follower_id, following_id],
+        )
+    ).rows;
+
+    return;
+}

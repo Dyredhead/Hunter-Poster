@@ -14,6 +14,48 @@ const UserSchema = z.object({
     banner_id: z.uuidv7().nullable(),
 });
 
+const UserFollowById = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/follow`,
+    frontend_path: () => `${API_MOUNT}/follow`,
+
+    request: {
+        body: z.object({
+            id: z.uuidv7(),
+        }),
+    },
+
+    responses: {
+        200: {},
+        404: {
+            body: z.object({
+                message: z.literal("User Id does not exist"),
+            }),
+        },
+    },
+};
+
+const UserUnfollowById = {
+    method: "DELETE",
+    backend_path: () => `${API_MOUNT}/unfollow`,
+    frontend_path: () => `${API_MOUNT}/unfollow`,
+
+    request: {
+        body: z.object({
+            id: z.uuidv7(),
+        }),
+    },
+
+    responses: {
+        200: {},
+        404: {
+            body: z.object({
+                message: z.literal("User Id does not exist"),
+            }),
+        },
+    },
+};
+
 const UserGetCurrent = {
     method: "GET",
     backend_path: () => `${API_MOUNT}`,
@@ -145,6 +187,8 @@ const UserCreateContract = {
 export const usersContract = {
     mount: API_MOUNT,
     routes: {
+        followById: UserFollowById,
+        unfollowById: UserUnfollowById,
         getCurrent: UserGetCurrent,
         getById: UserGetByIdContract,
         getFollowersById: UserGetFollowersByIdContract,
@@ -155,6 +199,14 @@ export const usersContract = {
 } as const;
 
 export type User = z.infer<typeof UserSchema>;
+
+export type UserFollowByIdRequest = z.infer<
+    typeof usersContract.routes.followById.request.body
+>;
+
+export type UserUnfollowByIdRequest = z.infer<
+    typeof usersContract.routes.unfollowById.request.body
+>;
 
 export type UserGetCurrent =
     | {

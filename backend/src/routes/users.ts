@@ -2,15 +2,59 @@ import { requireAuth } from "@/middleware/auth.js";
 import { PostsRow } from "@/repositories/posts.js";
 import {
     findUserById,
+    followById,
     getFollowersById,
     getFollowingById,
     getPostsById,
+    unfollowById,
 } from "@/repositories/users.js";
 import { usersContract } from "@my-app/shared";
 import { Router } from "express";
 import { FormatPostGetResponseService } from "./postServices.js";
 
 const router = Router();
+
+router.post(
+    usersContract.routes.followById.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        const body = usersContract.routes.followById.request.body.parse(
+            req.body,
+        );
+
+        await followById(req.auth?.sub!, body.id)
+            .then((body) => {
+                return res.status(200).json(body);
+            })
+            .catch((err) => {
+                console.log("no such user");
+                return res.sendStatus(400);
+            });
+
+        return;
+    },
+);
+
+router.delete(
+    usersContract.routes.unfollowById.backend_path(),
+    requireAuth,
+    async (req, res) => {
+        const body = usersContract.routes.followById.request.body.parse(
+            req.body,
+        );
+
+        await unfollowById(req.auth?.sub!, body.id)
+            .then((body) => {
+                return res.status(200).json(body);
+            })
+            .catch((err) => {
+                console.log("no such user");
+                return res.sendStatus(400);
+            });
+
+        return;
+    },
+);
 
 router.get(
     usersContract.routes.getCurrent.backend_path(),
