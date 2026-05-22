@@ -1,0 +1,22 @@
+            <svg
+                className="post-avatar"
+                width="40"
+                height="40"
+                viewBox="0 0 40 40"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+                <g clipPath="url(#avatar-clip)">
+                    <rect width="40" height="40" rx="20" fill="#999999" />
+                    <path
+                        d="M8 34C8 29.5817 11.5817 26 16 26H24C28.4183 26 32 29.5817 32 34V42C32 46.4183 28.4183 50 24 50H16C11.5817 50 8 46.4183 8 42V34Z"
+                        fill="#666666"
+                    />
+                    <circle cx="20.3618" cy="16" r="8" fill="#666666" />
+                </g>
+                <defs>
+                    <clipPath id="avatar-clip">
+                        <rect width="40" height="40" rx="20" fill="white" />
+                    </clipPath>
+                </defs>
+            </svg>

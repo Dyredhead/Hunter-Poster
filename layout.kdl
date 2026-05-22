@@ -1,0 +1,48 @@
+layout {
+	tab name="Hunter Poster" {
+		pane split_direction="vertical" {
+			pane {
+				name "Frontend"
+				size "33%"
+				cwd "./frontend"
+				command "bash"
+				args "-c" "make start"
+				start_suspended true
+			}
+			pane {
+				name "Backend Server"
+				size "33%"
+				cwd "./backend"
+				command "bash"
+				args "-c" "make start-server"
+				start_suspended true
+			}
+			pane {
+				name "Backend Database"
+				size "33%"
+				cwd "./backend"
+				command "bash"
+				args "-c" "make start-database"
+				start_suspended true
+			}
+
+		}
+
+		pane {
+			size 2
+			borderless true
+			plugin location="zellij:status-bar"
+		}
+
+		floating_panes {
+			pane {
+				name "SETUP"
+				command "bash"
+				args "-lc" "sleep .5 && make setup; status=$?; if [ $status -eq 0 ]; then sleep .5 && zellij action close-pane --pane-id \"$ZELLIJ_PANE_ID\"; else exit $status; fi"
+				// start_suspended true
+				// close_on_exit true
+			}
+		}
+	}
+}
+

@@ -1,0 +1,126 @@
+import { register } from "@/api/auth/register";
+import hide from "@/assets/icons/hide.svg";
+import show from "@/assets/icons/show.svg";
+import BigButton from "@/components/BigButton";
+import Screen from "@/components/Screen";
+import { BigTitle } from "@/components/Title";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./auth.css";
+
+export default function RegisterPage() {
+    const navigate = useNavigate();
+    const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    return (
+        <Screen>
+            <BigTitle>Register</BigTitle>
+            <form className="auth-form" onSubmit={handleSubmit}>
+                <div className="auth-form-field">
+                    <label className="auth-form-field-label" htmlFor="username">
+                        Username
+                    </label>
+                    <div className="auth-form-field-input-wrapper">
+                        <input
+                            id="username"
+                            className="auth-form-field-input"
+                            type="text"
+                            placeholder="JohnDoe"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            autoComplete="username"
+                        />
+                    </div>
+                </div>
+
+                <div className="auth-form-field">
+                    <label className="auth-form-field-label" htmlFor="email">
+                        Email
+                    </label>
+                    <div className="auth-form-field-input-wrapper">
+                        <input
+                            id="email"
+                            className="auth-form-field-input"
+                            type="email"
+                            placeholder="john.doe@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                            autoComplete="email"
+                        />
+                    </div>
+                </div>
+
+                <div className="auth-form-field">
+                    <label className="auth-form-field-label" htmlFor="password">
+                        Password
+                    </label>
+                    <div className="auth-form-field-input-wrapper">
+                        <input
+                            id="password"
+                            className="auth-form-field-input"
+                            type={showPassword ? "text" : "password"}
+                            placeholder="MyStrongPasword123!"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                            autoComplete="new-password"
+                        />
+                        <button
+                            type="button"
+                            className="auth-form-password-toggle"
+                            onClick={() => setShowPassword((v) => !v)}
+                            aria-label={
+                                showPassword ? "Hide password" : "Show password"
+                            }
+                        >
+                            {showPassword ? (
+                                <img src={show} alt="show" />
+                            ) : (
+                                <img src={hide} alt="hide" />
+                            )}
+                        </button>
+                    </div>
+                </div>
+
+                {error && <p className="auth-form-error">{error}</p>}
+
+                <BigButton
+                    type="submit"
+                    className="auth-form-submit-btn"
+                    disabled={loading}
+                >
+                    {loading ? "Registering..." : "Register"}
+                </BigButton>
+            </form>
+        </Screen>
+    );
+
+    async function handleSubmit(e: React.SubmitEvent) {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
+
+        const result = await register({
+            username: username,
+            email: email,
+            password: password,
+        });
+
+        // await new Promise((f) => setTimeout(f, 500));
+
+        if (result.ok) {
+            navigate("/");
+        } else {
+            if (result.status === 401) {
+                setError("User already exists with that username or email");
+            }
+        }
+        setLoading(false);
+    }
+}

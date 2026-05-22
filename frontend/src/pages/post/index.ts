@@ -1,0 +1,1 @@
+export { default as PostCreationPage } from "./post-create";

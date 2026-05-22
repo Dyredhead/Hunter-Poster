@@ -1,0 +1,260 @@
+import { parseAsync, string, z } from "zod";
+import { API_MOUNT as _API_MOUNT } from "./api.js";
+const API_MOUNT = _API_MOUNT + "/posts";
+
+const TextSchema = z.object({
+    type: z.literal("text"),
+    content: z.string(),
+});
+
+const ImageSchema = z.object({
+    type: z.literal("image"),
+    image_id: z.string(),
+});
+
+const TextImageSchema = z.object({
+    type: z.literal("text_image"),
+    content: z.string(),
+    image_id: z.string(),
+});
+
+const PollSchema = z.object({
+    type: z.literal("poll"),
+    question: z.string(),
+    closes_at: z.iso.datetime(),
+    options: z.array(z.string()).max(4),
+    vote: z.int().min(0).max(4),
+    current_votes: z.array(z.int().min(0)).max(4),
+});
+
+const PollCreateSchema = z.object({
+    type: z.literal("poll"),
+    question: z.string(),
+    closes_at: z.iso.datetime(),
+    options: z.array(z.string()).max(4),
+});
+
+const ContentCreateSchema = z.discriminatedUnion("type", [
+    TextSchema,
+    ImageSchema,
+    TextImageSchema,
+    PollCreateSchema,
+]);
+
+const ContentSchema = z.discriminatedUnion("type", [
+    TextSchema,
+    ImageSchema,
+    TextImageSchema,
+    PollSchema,
+]);
+
+// const ContentUpdateSchema = z.union([TextSchema, ImageSchema, TextImageSchema]);
+
+export const PostSchema = z.object({
+    id: z.uuidv7(),
+    author_id: z.uuidv7(),
+    content: ContentSchema,
+    comments: z.int().min(0),
+    likes: z.int().min(0),
+    booksmarks: z.int().min(0),
+});
+
+// const PostUpdateSchema = z.object({
+//     content: ContentUpdateSchema,
+// });
+
+const PostLikeContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/like`,
+    frontend_path: () => `${API_MOUNT}/like`,
+
+    request: {
+        body: z.object({
+            post_id: z.uuidv7(),
+            user_id: z.uuidv7(),
+        }),
+    },
+};
+
+const PostUnLikeContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/unlike`,
+    frontend_path: () => `${API_MOUNT}/unlike`,
+
+    request: {
+        body: z.object({
+            post_id: z.uuidv7(),
+            user_id: z.uuidv7(),
+        }),
+    },
+};
+
+const PostGetByIdContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/:id`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
+
+    request: {
+        params: z.object({
+            id: z.int(),
+        }),
+    },
+
+    responses: {
+        200: {
+            body: PostSchema,
+        },
+        404: {
+            body: z.object({
+                message: z.literal("Post with id not found"),
+            }),
+        },
+    },
+};
+
+const PostGetByFollowingContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/following`,
+    frontend_path: () => `${API_MOUNT}/following`,
+
+    response: z.array(PostSchema),
+};
+
+const PostGetByForYouContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/for-you`,
+    frontend_path: () => `${API_MOUNT}/for-you`,
+
+    response: z.array(PostSchema),
+};
+
+const PostDeleteByIdContract = {
+    method: "DELETE",
+    backend_path: () => `${API_MOUNT}/:id`,
+    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
+
+    request: {
+        params: z.object({
+            id: z.int(),
+        }),
+    },
+
+    response: z.object({
+        status: 204,
+    }),
+};
+
+// const PostUpdateByIdContract = {
+//     method: "PUT",
+//     pattern: "/:id",
+//     build: (id: number) => `${API_MOUNT}/${id}`,
+
+//     request: {
+//         params: z.object({
+//             id: z.int(),
+//         }),
+//         body: z.object({
+//             post: PostUpdateSchema,
+//         }),
+//     },
+
+//     response: z.object({
+//         post: PostSchema,
+//     }),
+// };
+
+const PostCreateContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/create`,
+    frontend_path: () => `${API_MOUNT}/create`,
+
+    request: {
+        body: ContentCreateSchema,
+    },
+
+    response: {
+        failed: 400,
+        post_created: 201,
+    },
+};
+
+export const postContract = {
+    mount: API_MOUNT,
+    routes: {
+        getById: PostGetByIdContract,
+        getByFollowing: PostGetByFollowingContract,
+        getByForYou: PostGetByForYouContract,
+        //updateById: PostUpdateByIdContract,
+        create: PostCreateContract,
+        delete: PostDeleteByIdContract,
+        like: PostLikeContract,
+        unlike: PostUnLikeContract,
+    },
+} as const;
+
+export enum content_type {
+    text = "text",
+    image = "image",
+    text_image = "text_image",
+    poll = "poll",
+}
+
+export enum poll_position_type {
+    _1 = "1",
+    _2 = "2",
+    _3 = "3",
+    _4 = "4",
+}
+
+export type Content = z.infer<typeof ContentSchema>;
+export type ContentPoll = z.infer<typeof PollSchema>;
+
+export type Post = z.infer<typeof PostSchema>;
+
+export type PostGetByIdRequest = z.infer<
+    typeof PostGetByIdContract.request.params
+>;
+// export type PostGetByIdResponse = z.infer<typeof PostGetByIdContract.responses>;
+export type PostGetByIdResponse =
+    | {
+          status: 200;
+          body: z.infer<
+              (typeof postContract.routes.getById.responses)[200]["body"]
+          >;
+      }
+    | {
+          status: 404;
+          body: z.infer<
+              (typeof postContract.routes.getById.responses)[404]["body"]
+          >;
+      };
+
+export type PostGetByFollowingResponse = z.infer<
+    typeof PostGetByFollowingContract.response
+>;
+export type PostGetByForYouResponse = z.infer<
+    typeof PostGetByForYouContract.response
+>;
+
+// export type PostUpdateByIdParams = z.infer<
+//     typeof PostUpdateByIdContract.request.params
+// >;
+// export type PostUpdateByIdRequestBody = z.infer<
+//     typeof PostUpdateByIdContract.request.body
+// >;
+// export type PostUpdateByIdResponseBody = z.infer<
+//     typeof PostUpdateByIdContract.response
+//>;
+
+export type PostLikeRequest = z.infer<typeof PostLikeContract.request.body>;
+export type PostUnLikeRequest = z.infer<typeof PostUnLikeContract.request.body>;
+
+export type PostDeleteByIdParams = z.infer<
+    typeof PostDeleteByIdContract.request.params
+>;
+
+export type PostCreateRequest = z.infer<typeof PostCreateContract.request.body>;
+export enum creationStateType {
+    Basic = "Basic",
+    Poll = "Poll",
+}
