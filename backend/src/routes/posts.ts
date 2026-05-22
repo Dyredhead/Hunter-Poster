@@ -7,6 +7,7 @@ import {
     postGetByFollowingController,
     postGetByForYouController,
     postGetByIdController,
+    PostLikedByUserController,
     unlikePostController,
 } from "./postControllers.js";
 
@@ -27,7 +28,13 @@ router.get(
     postGetByFollowingController,
 );
 router.get(Post.getById.backend_path(), postGetByIdController);
+
 router.post(Post.like.backend_path(), requireAuth, likePostController);
 router.delete(Post.unlike.backend_path(), requireAuth, unlikePostController);
+router.get(
+    Post.checkLike.backend_path(),
+    requireAuth,
+    PostLikedByUserController,
+);
 
 export default router;

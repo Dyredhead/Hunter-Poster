@@ -1,14 +1,17 @@
 import {
     postContract,
+    type PostLikeRequest,
+    type PostCheckLikedRequest,
+    type PostCheckLikedResponse,
     type PostCreateRequest,
     type PostGetByFollowingResponse,
     type PostGetByForYouResponse,
-    type PostLikeRequest,
+    type PostUnlikeRequest,
 } from "@my-app/shared";
 import { apiFetch } from "./client";
 
 export async function likePost(request: PostLikeRequest): Promise<Response> {
-    const body = postContract.routes.like.request.body.parse(request);
+    const body = postContract.routes.unlike.request.body.parse(request);
 
     const response = await apiFetch<PostLikeRequest>(
         postContract.routes.like.frontend_path(),
@@ -19,10 +22,12 @@ export async function likePost(request: PostLikeRequest): Promise<Response> {
     return response;
 }
 
-export async function unlikePost(request: PostLikeRequest): Promise<Response> {
+export async function unlikePost(
+    request: PostUnlikeRequest,
+): Promise<Response> {
     const body = postContract.routes.unlike.request.body.parse(request);
 
-    const response = await apiFetch<PostLikeRequest>(
+    const response = await apiFetch<PostUnlikeRequest>(
         postContract.routes.unlike.frontend_path(),
         postContract.routes.unlike.method,
         body,
@@ -68,5 +73,21 @@ export async function getByFollowing(): Promise<PostGetByFollowingResponse> {
     } catch (err) {
         console.log({ err });
         return [];
+    }
+}
+
+export async function checkLikeByUser(
+    post_id: string,
+): Promise<PostCheckLikedResponse> {
+    const response = await apiFetch<PostCheckLikedRequest>(
+        Post.checkLike.frontend_path(post_id),
+        Post.checkLike.method,
+    );
+
+    try {
+        return response.json();
+    } catch (err) {
+        console.log({ err });
+        return { liked: false };
     }
 }

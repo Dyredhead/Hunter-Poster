@@ -10,12 +10,13 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Post.css";
+import { checkLikeByUser, likePost, unlikePost } from "@/api/post";
 
 function onUsernameClick() {}
 function onImageClick() {}
 function onContentClick() {}
 function onComment() {}
-function onLike() {}
+//function onLike() {}
 function onBookmark() {}
 function onShare() {}
 
@@ -76,12 +77,12 @@ const CommentIcon = () => (
     </svg>
 );
 
-const HeartIcon = () => (
+const HeartIcon = ({ like }: { like: boolean }) => (
     <svg
         width="24"
         height="24"
         viewBox="0 0 24 24"
-        fill="none"
+        fill={like ? "red" : "none"}
         xmlns="http://www.w3.org/2000/svg"
     >
         <path
@@ -227,10 +228,15 @@ export function Post({
 }: PostProps) {
     const [user, setUser] = useState<User>();
     const [imageUrl, setImageUrl] = useState<string | null>();
+    const [uiLikes, setUiLikes] = useState<number>(likes);
+    const [liked, setLiked] = useState<boolean>(false);
+
     useEffect(() => {
         const fetchData = async () => {
             // await new Promise((f) => setTimeout(f, 100));
             try {
+                let tempLiked = checkLikeByUser(id);
+
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
                         await (await userGetById({ id: author_id })).json(),
@@ -248,6 +254,8 @@ export function Post({
                 } else {
                     setImageUrl(null);
                 }
+
+                setLiked((await tempLiked).liked);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -256,7 +264,7 @@ export function Post({
         };
 
         fetchData();
-    }, [author_id, image_id]);
+    }, []);
 
     if (user == undefined) {
         return;
@@ -316,11 +324,28 @@ export function Post({
                 </button>
                 <button
                     className="post-action-btn"
-                    onClick={onLike}
+                    onClick={async () => {
+                        if (liked) {
+                            if (
+                                (await unlikePost({ post_id: id })).status ===
+                                200
+                            ) {
+                                setUiLikes(uiLikes - 1);
+                            }
+                            setLiked(false);
+                        } else {
+                            if (
+                                (await likePost({ post_id: id })).status === 200
+                            ) {
+                                setUiLikes(uiLikes + 1);
+                            }
+                            setLiked(true);
+                        }
+                    }}
                     aria-label="Like"
                 >
-                    <HeartIcon />
-                    <p className="post-action-text">{likes}</p>
+                    <HeartIcon like={liked} />
+                    <p className="post-action-text">{uiLikes}</p>
                 </button>
                 <button
                     className="post-action-btn"

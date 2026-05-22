@@ -317,7 +317,7 @@ export async function checkPostLikedByUser(user_id: string, post_id: string) {
     `;
     const values = [user_id, post_id];
 
-    return (await database.query(query, values)).rowCount !== null;
+    return (await database.query(query, values)).rowCount === null;
 }
 
 export async function likePost(user_id: string, post_id: string) {

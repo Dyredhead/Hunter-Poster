@@ -71,22 +71,54 @@ const PostLikeContract = {
     request: {
         body: z.object({
             post_id: z.uuidv7(),
-            user_id: z.uuidv7(),
         }),
     },
+
+    response: z.union([
+        z.object({
+            success: z.literal(200),
+        }),
+        z.object({
+            failed: z.literal(400),
+        }),
+    ]),
 };
 
-const PostUnLikeContract = {
-    method: "POST",
+const PostUnlikeContract = {
+    method: "DELETE",
     backend_path: () => `${API_MOUNT}/unlike`,
     frontend_path: () => `${API_MOUNT}/unlike`,
 
     request: {
         body: z.object({
             post_id: z.uuidv7(),
-            user_id: z.uuidv7(),
         }),
     },
+
+    response: z.union([
+        z.object({
+            success: z.literal(200),
+        }),
+        z.object({
+            failed: z.literal(400),
+        }),
+    ]),
+};
+
+const PostCheckLikedContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/checklike/:id`,
+    frontend_path: (id: string) => `${API_MOUNT}/checklike/${id}`,
+
+    request: {
+        params: z.object({
+            id: z.uuidv7(),
+        }),
+    },
+
+    response: z.object({
+        liked: z.boolean(),
+    }),
 };
 
 const PostGetByIdContract = {
@@ -188,7 +220,8 @@ export const postContract = {
         create: PostCreateContract,
         delete: PostDeleteByIdContract,
         like: PostLikeContract,
-        unlike: PostUnLikeContract,
+        unlike: PostUnlikeContract,
+        checkLike: PostCheckLikedContract,
     },
 } as const;
 
@@ -210,6 +243,13 @@ export type Content = z.infer<typeof ContentSchema>;
 export type ContentPoll = z.infer<typeof PollSchema>;
 
 export type Post = z.infer<typeof PostSchema>;
+
+export type PostCheckLikedRequest = z.infer<
+    typeof PostCheckLikedContract.request.params
+>;
+export type PostCheckLikedResponse = z.infer<
+    typeof PostCheckLikedContract.response
+>;
 
 export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params
@@ -247,7 +287,9 @@ export type PostGetByForYouResponse = z.infer<
 //>;
 
 export type PostLikeRequest = z.infer<typeof PostLikeContract.request.body>;
-export type PostUnLikeRequest = z.infer<typeof PostUnLikeContract.request.body>;
+export const PostLikeResponse = PostLikeContract.response;
+export type PostUnlikeRequest = z.infer<typeof PostUnlikeContract.request.body>;
+export const PostUnLikeResponse = PostUnlikeContract.response;
 
 export type PostDeleteByIdParams = z.infer<
     typeof PostDeleteByIdContract.request.params

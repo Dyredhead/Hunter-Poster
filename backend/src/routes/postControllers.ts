@@ -1,4 +1,5 @@
 import {
+    checkPostLikedByUser,
     createImagePost,
     createPollPost,
     createTextImagePost,
@@ -96,7 +97,7 @@ export const likePostController: RequestHandler = async (req, res) => {
     const body = Post.like.request.body.parse(req.body);
 
     try {
-        await likePost(body.user_id, body.post_id);
+        await likePost(req.auth!.sub, body.post_id);
         res.sendStatus(200);
     } catch (err) {
         res.sendStatus(404);
@@ -107,9 +108,20 @@ export const unlikePostController: RequestHandler = async (req, res) => {
     const body = Post.unlike.request.body.parse(req.body);
 
     try {
-        await unlikePost(body.user_id, body.post_id);
+        await unlikePost(req.auth!.sub, body.post_id);
         res.sendStatus(200);
     } catch (err) {
         res.sendStatus(404);
+    }
+};
+
+export const PostLikedByUserController: RequestHandler = async (req, res) => {
+    const params = Post.checkLike.request.params.parse(req.params);
+
+    try {
+        const result = await checkPostLikedByUser(req.auth!.sub, params.id);
+        res.status(200).json({ liked: result });
+    } catch {
+        res.status(404).json({ liked: false });
     }
 };
