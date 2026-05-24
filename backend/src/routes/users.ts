@@ -10,7 +10,7 @@ import {
 } from "@/repositories/users.js";
 import { usersContract } from "@my-app/shared";
 import { Router } from "express";
-import { FormatPostGetResponseService } from "./postServices.js";
+import { FormatPostGetResponseService } from "./postsServices.js";
 
 const router = Router();
 

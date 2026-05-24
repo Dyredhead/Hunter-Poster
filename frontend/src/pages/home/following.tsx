@@ -1,4 +1,4 @@
-import { getByFollowing } from "@/api/post";
+import { getByFollowing } from "@/api/posts";
 import { PostFeed } from "@/components/Post";
 import { BigTitle } from "@/components/Title";
 import { type PostGetByFollowingResponse } from "@my-app/shared";

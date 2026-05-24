@@ -1,5 +1,5 @@
 import { fileToBase64, uploadImage } from "@/api/images";
-import { createPost } from "@/api/post";
+import { createPost } from "@/api/posts";
 import {
     creationStateType,
     ImageContract,

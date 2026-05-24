@@ -1,4 +1,4 @@
-import { getByForYou } from "@/api/post";
+import { getByForYou } from "@/api/posts";
 import { PostFeed } from "@/components/Post";
 import { BigTitle } from "@/components/Title";
 import { type PostGetByForYouResponse } from "@my-app/shared";
