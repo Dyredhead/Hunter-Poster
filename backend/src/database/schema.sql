@@ -99,11 +99,18 @@ CREATE TABLE
     );
 
 CREATE TABLE
-    IF NOT EXISTS post_likes (
+    IF NOT EXISTS likes (
         id UUID PRIMARY KEY DEFAULT uuidv7 (),
         user_id UUID NOT NULL REFERENCES users (id),
         post_id UUID NOT NULL REFERENCES posts (id),
         CONSTRAINT post_likes_user_post_unique UNIQUE (user_id, post_id)
+    );
+
+CREATE TABLE
+    IF NOT EXISTS bookmarks (
+        id UUID PRIMARY KEY DEFAULT uuidv7 (),
+        user_id UUID NOT NULL REFERENCES users (id),
+        post_id UUID NOT NULL REFERENCES posts (id)
     );
 
 CREATE TABLE
@@ -119,11 +126,4 @@ CREATE TABLE
         id UUID PRIMARY KEY DEFAULT uuidv7 (),
         user_id UUID NOT NULL REFERENCES users (id),
         comment_id UUID NOT NULL REFERENCES comments (id)
-    );
-
-CREATE TABLE
-    IF NOT EXISTS bookmarks (
-        id UUID PRIMARY KEY DEFAULT uuidv7 (),
-        user_id UUID NOT NULL REFERENCES users (id),
-        post_id UUID NOT NULL REFERENCES posts (id)
     );

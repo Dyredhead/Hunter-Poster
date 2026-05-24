@@ -63,7 +63,7 @@ export async function getPostsFollowing(id: string): Promise<PostsRow[]> {
         .then((res) => res.rows);
 }
 
-/** 
+/**
     Gets most recent posts from all users except own user.
 */
 export async function getPostsForYou(id: string): Promise<PostsRow[]> {
@@ -167,8 +167,8 @@ export async function getPollVotesByPollId(
     position: poll_position_type,
 ): Promise<number> {
     const query = `
-        SELECT COUNT(*) 
-        FROM poll_votes 
+        SELECT COUNT(*)
+        FROM poll_votes
         WHERE poll_id = $1 AND position = $2
     `;
     const values = [poll_id, position];
@@ -194,8 +194,8 @@ export async function getPollVoteByUserId(
 async function createPost(user_id: string, post_type: content_type) {
     // query for inserting into posts
     const query = `
-        INSERT INTO posts(user_id, post_type) 
-        VALUES($1, $2) 
+        INSERT INTO posts(user_id, post_type)
+        VALUES($1, $2)
         RETURNING *
     `;
     const values = [user_id, post_type];
@@ -209,7 +209,7 @@ export async function createTextPost(user_id: string, text: string) {
 
     // query for inserting into posts_text
     const query = `
-        INSERT INTO posts_text(post_id, text) 
+        INSERT INTO posts_text(post_id, text)
         VALUES($1, $2)
     `;
     const values = [post_id, text];
@@ -223,7 +223,7 @@ export async function createImagePost(user_id: string, image_id: string) {
 
     // query for inserting into posts_image
     const query = `
-        INSERT INTO posts_image(post_id, image_id) 
+        INSERT INTO posts_image(post_id, image_id)
         VALUES($1, $2)
     `;
     const values = [post_id, image_id];
@@ -241,7 +241,7 @@ export async function createTextImagePost(
 
     // query for inserting into posts_text_and_image
     const query = `
-        INSERT INTO posts_text_and_image(post_id, text, image_id) 
+        INSERT INTO posts_text_and_image(post_id, text, image_id)
         VALUES($1, $2, $3)
     `;
     const values = [post_id, text, image_id];
@@ -260,8 +260,8 @@ export async function createPollPost(
 
     // create poll and get id
     const pollQuery = `
-        INSERT INTO polls(post_id, closes_at, question) 
-        VALUES($1, $2, $3) 
+        INSERT INTO polls(post_id, closes_at, question)
+        VALUES($1, $2, $3)
         RETURNING *
     `;
     const pollValues = [post_id, closes_at, question];
@@ -271,7 +271,7 @@ export async function createPollPost(
 
     // creates poll options
     const optionsQuery = `
-        INSERT INTO poll_options(poll_id, position, option) 
+        INSERT INTO poll_options(poll_id, position, option)
         VALUES($1, $2, $3)
     `;
 
@@ -288,8 +288,8 @@ export async function createPollPost(
 
 export async function deletePost(id: string) {
     const query = `
-        DELETE 
-        FROM posts 
+        DELETE
+        FROM posts
         WHERE id = $1
     `;
     const values = [id];
@@ -297,10 +297,10 @@ export async function deletePost(id: string) {
     await database.query(query, values);
 }
 
-export async function getPostLikesById(post_id: string) {
+export async function getPostCommentsById(post_id: string) {
     const query = `
-        SELECT COUNT(*) 
-        FROM post_likes 
+        SELECT COUNT(*)
+        FROM comments
         WHERE post_id = $1
     `;
     const values = [post_id];
@@ -310,19 +310,36 @@ export async function getPostLikesById(post_id: string) {
     );
 }
 
-export async function checkPostLikedByUser(user_id: string, post_id: string) {
+// Like
+export async function getPostLikesById(post_id: string) {
     const query = `
-        SELECT * FROM post_likes
+        SELECT COUNT(*)
+        FROM likes
+        WHERE post_id = $1
+    `;
+    const values = [post_id];
+
+    return Number(
+        (await database.query<{ count: string }>(query, values)).rows[0].count,
+    );
+}
+
+export async function checkPostLikedByUser(
+    user_id: string,
+    post_id: string,
+): Promise<boolean> {
+    const query = `
+        SELECT * FROM likes
         WHERE user_id = $1 AND post_id = $2
     `;
     const values = [user_id, post_id];
 
-    return (await database.query(query, values)).rowCount === null;
+    return (await database.query(query, values)).rows.length === 1;
 }
 
 export async function likePost(user_id: string, post_id: string) {
     const query = `
-        INSERT INTO post_likes(user_id, post_id) 
+        INSERT INTO likes(user_id, post_id)
         VALUES($1, $2)
     `;
     const values = [user_id, post_id];
@@ -332,7 +349,54 @@ export async function likePost(user_id: string, post_id: string) {
 
 export async function unlikePost(user_id: string, post_id: string) {
     const query = `
-        DELETE FROM post_likes
+        DELETE FROM likes
+        WHERE user_id = $1 AND post_id = $2
+    `;
+    const values = [user_id, post_id];
+
+    await database.query(query, values);
+}
+
+// Bookmark
+export async function getPostBookmarksById(post_id: string) {
+    const query = `
+        SELECT COUNT(*)
+        FROM bookmarks
+        WHERE post_id = $1
+    `;
+    const values = [post_id];
+
+    return Number(
+        (await database.query<{ count: string }>(query, values)).rows[0].count,
+    );
+}
+
+export async function checkPostBookmarkedByUser(
+    user_id: string,
+    post_id: string,
+): Promise<boolean> {
+    const query = `
+        SELECT * FROM bookmarks
+        WHERE user_id = $1 AND post_id = $2
+    `;
+    const values = [user_id, post_id];
+
+    return (await database.query(query, values)).rows.length === 1;
+}
+
+export async function bookmarkPost(user_id: string, post_id: string) {
+    const query = `
+        INSERT INTO bookmarks(user_id, post_id)
+        VALUES($1, $2)
+    `;
+    const values = [user_id, post_id];
+
+    await database.query(query, values);
+}
+
+export async function unbookmarkPost(user_id: string, post_id: string) {
+    const query = `
+        DELETE FROM bookmarks
         WHERE user_id = $1 AND post_id = $2
     `;
     const values = [user_id, post_id];

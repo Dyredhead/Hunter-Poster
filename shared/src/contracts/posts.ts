@@ -56,12 +56,33 @@ export const PostSchema = z.object({
     content: ContentSchema,
     comments: z.int().min(0),
     likes: z.int().min(0),
-    booksmarks: z.int().min(0),
+    bookmarks: z.int().min(0),
 });
 
-// const PostUpdateSchema = z.object({
-//     content: ContentUpdateSchema,
-// });
+const PostCheckLikedContract = {
+    method: "GET",
+    backend_path: () => `${API_MOUNT}/like/:id`,
+    frontend_path: (id: string) => `${API_MOUNT}/like/${id}`,
+
+    request: {
+        params: z.object({
+            id: z.uuidv7(),
+        }),
+    },
+
+    responses: {
+        200: {
+            body: z.object({
+                isLiked: z.boolean(),
+            }),
+        },
+        404: {
+            body: z.object({
+                message: z.literal("Post with id not found"),
+            }),
+        },
+    },
+};
 
 const PostLikeContract = {
     method: "POST",
@@ -86,8 +107,8 @@ const PostLikeContract = {
 
 const PostUnlikeContract = {
     method: "DELETE",
-    backend_path: () => `${API_MOUNT}/unlike`,
-    frontend_path: () => `${API_MOUNT}/unlike`,
+    backend_path: () => `${API_MOUNT}/like`,
+    frontend_path: () => `${API_MOUNT}/like`,
 
     request: {
         body: z.object({
@@ -105,10 +126,10 @@ const PostUnlikeContract = {
     ]),
 };
 
-const PostCheckLikedContract = {
+const PostCheckBookmarkedContract = {
     method: "GET",
-    backend_path: () => `${API_MOUNT}/checklike/:id`,
-    frontend_path: (id: string) => `${API_MOUNT}/checklike/${id}`,
+    backend_path: () => `${API_MOUNT}/bookmark/:id`,
+    frontend_path: (id: string) => `${API_MOUNT}/bookmark/${id}`,
 
     request: {
         params: z.object({
@@ -116,9 +137,60 @@ const PostCheckLikedContract = {
         }),
     },
 
-    response: z.object({
-        liked: z.boolean(),
-    }),
+    responses: {
+        200: {
+            body: z.object({
+                isBookmarked: z.boolean(),
+            }),
+        },
+        404: {
+            body: z.object({
+                message: z.literal("Post with id not found"),
+            }),
+        },
+    },
+};
+
+const PostBookmarkContract = {
+    method: "POST",
+    backend_path: () => `${API_MOUNT}/bookmark`,
+    frontend_path: () => `${API_MOUNT}/bookmark`,
+
+    request: {
+        body: z.object({
+            post_id: z.uuidv7(),
+        }),
+    },
+
+    response: z.union([
+        z.object({
+            success: z.literal(200),
+        }),
+        z.object({
+            failed: z.literal(400),
+        }),
+    ]),
+};
+
+const PostUnbookmarkContract = {
+    method: "DELETE",
+    backend_path: () => `${API_MOUNT}/bookmark`,
+    frontend_path: () => `${API_MOUNT}/bookmark`,
+
+    request: {
+        body: z.object({
+            post_id: z.uuidv7(),
+        }),
+    },
+
+    response: z.union([
+        z.object({
+            success: z.literal(200),
+        }),
+        z.object({
+            failed: z.literal(400),
+        }),
+    ]),
 };
 
 const PostGetByIdContract = {
@@ -216,12 +288,16 @@ export const postContract = {
         getById: PostGetByIdContract,
         getByFollowing: PostGetByFollowingContract,
         getByForYou: PostGetByForYouContract,
-        //updateById: PostUpdateByIdContract,
         create: PostCreateContract,
         delete: PostDeleteByIdContract,
+        // Like
+        checkLiked: PostCheckLikedContract,
         like: PostLikeContract,
         unlike: PostUnlikeContract,
-        checkLike: PostCheckLikedContract,
+        // Bookmark
+        checkBookmarked: PostCheckBookmarkedContract,
+        bookmark: PostBookmarkContract,
+        unbookmark: PostUnbookmarkContract,
     },
 } as const;
 
@@ -247,9 +323,36 @@ export type Post = z.infer<typeof PostSchema>;
 export type PostCheckLikedRequest = z.infer<
     typeof PostCheckLikedContract.request.params
 >;
-export type PostCheckLikedResponse = z.infer<
-    typeof PostCheckLikedContract.response
+export type PostCheckLikedResponse =
+    | {
+          status: 200;
+          body: z.infer<
+              (typeof postContract.routes.checkLiked.responses)[200]["body"]
+          >;
+      }
+    | {
+          status: 404;
+          body: z.infer<
+              (typeof postContract.routes.checkLiked.responses)[404]["body"]
+          >;
+      };
+
+export type PostCheckBookmarkedRequest = z.infer<
+    typeof PostCheckBookmarkedContract.request.params
 >;
+export type PostCheckBookmarkedResponse =
+    | {
+          status: 200;
+          body: z.infer<
+              (typeof postContract.routes.checkBookmarked.responses)[200]["body"]
+          >;
+      }
+    | {
+          status: 404;
+          body: z.infer<
+              (typeof postContract.routes.checkBookmarked.responses)[404]["body"]
+          >;
+      };
 
 export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params
@@ -290,6 +393,15 @@ export type PostLikeRequest = z.infer<typeof PostLikeContract.request.body>;
 export const PostLikeResponse = PostLikeContract.response;
 export type PostUnlikeRequest = z.infer<typeof PostUnlikeContract.request.body>;
 export const PostUnLikeResponse = PostUnlikeContract.response;
+
+export type PostBookmarkRequest = z.infer<
+    typeof PostBookmarkContract.request.body
+>;
+export const PostBookmarkResponse = PostBookmarkContract.response;
+export type PostUnbookmarkRequest = z.infer<
+    typeof PostUnbookmarkContract.request.body
+>;
+export const PostUnbookmarkResponse = PostUnbookmarkContract.response;
 
 export type PostDeleteByIdParams = z.infer<
     typeof PostDeleteByIdContract.request.params
