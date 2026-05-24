@@ -33,5 +33,5 @@ export default function ForYouPage() {
         );
     }
 
-    return <PostFeed posts={posts!}></PostFeed>;
+    return <PostFeed key={"for-you"} posts={posts!}></PostFeed>;
 }

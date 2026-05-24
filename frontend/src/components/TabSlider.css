@@ -1,0 +1,59 @@
+.tab-slider {
+    position: relative;
+    display: flex;
+    width: 100%;
+    border-radius: 8px;
+    background: var(--color-secondary);
+}
+
+.tab-slider__pill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% / var(--tab-count));
+    height: 100%;
+    border-radius: 10px;
+    border: 4px solid var(--color-secondary);
+    background: var(--color-primary);
+    box-sizing: border-box;
+    transform: translateX(calc(var(--active-tab-index) * 100%));
+    transition: transform 0.3s ease;
+}
+
+.tab-slider__item {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 1;
+    padding: 12px;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    font-family:
+        Inter,
+        -apple-system,
+        Roboto,
+        Helvetica,
+        sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: normal;
+    text-align: center;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.tab-slider__item:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tab-slider__item--active {
+    color: var(--color-neutral-lightest);
+}
+
+.tab-slider__item--inactive {
+    color: var(--color-neutral-darkest);
+}

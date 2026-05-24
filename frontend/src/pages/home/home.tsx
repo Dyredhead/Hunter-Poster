@@ -1,30 +1,28 @@
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { TabSlider, type TabSliderOption } from "@/components/TabSlider";
+import { Outlet, useLocation } from "react-router-dom";
 import "./home.css";
+
+type HomeTabValue = "for-you" | "following";
+
+const HOME_TABS: TabSliderOption<HomeTabValue>[] = [
+    {
+        value: "for-you",
+        label: "For You",
+    },
+    {
+        value: "following",
+        label: "Following",
+    },
+];
 
 export default function HomeLayout() {
     const { pathname } = useLocation();
-    const isForYou = pathname === "/home/for-you";
+    const activeTab = pathname.split("/").at(-1)!;
 
     return (
         <div className="home-screen">
             <div className="home-tabs-bar">
-                <div className="tab-switcher">
-                    <div
-                        className={`tab-slider-pill ${isForYou ? "tab-slider-pill--left" : "tab-slider-pill--right"}`}
-                    />
-                    <Link
-                        to="/home/for-you"
-                        className={`tab-item ${isForYou ? "tab-item--active" : "tab-item--inactive"}`}
-                    >
-                        For You
-                    </Link>
-                    <Link
-                        to="/home/following"
-                        className={`tab-item ${isForYou ? "tab-item--inactive" : "tab-item--active"}`}
-                    >
-                        Following
-                    </Link>
-                </div>
+                <TabSlider options={HOME_TABS} value={activeTab} />
             </div>
             <Outlet />
         </div>

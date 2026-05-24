@@ -99,18 +99,16 @@ export default function ProfilePage() {
         console.log("something went wrong with fetching user");
         return;
     }
-    console.log("user: ", user);
 
     if (posts == undefined) {
         console.log("something went wrong with fetching posts");
         return;
     }
-    console.log("posts: ", posts);
 
     return (
         <div id="profile-container" className="m-4 flex flex-col pb-20">
             <BannerContainer
-                pfp_id={user.pfp_id}
+                key={user.banner_id}
                 banner_id={user.banner_id}
                 display_settings={id == undefined}
             />
@@ -118,7 +116,12 @@ export default function ProfilePage() {
                 id="pfp-username-follow-container"
                 className="-mt-10 flex translate-x-2 flex-row gap-4"
             >
-                <Pfp id={user.id} pfp_id={user.pfp_id} className="h-20 w-20" />
+                <Pfp
+                    key={user.pfp_id}
+                    id={user.id}
+                    pfp_id={user.pfp_id}
+                    className="h-20 w-20"
+                />
                 <div className="flex flex-col justify-end">
                     <div className="flex -translate-y-3 flex-row justify-end gap-2">
                         <p className="p-0.5">{user.username}</p>
@@ -153,7 +156,8 @@ export default function ProfilePage() {
                     to={`/followers/${id == undefined ? "" : id}`}
                 />
             </div>
-            <PostFeed posts={posts}></PostFeed>
+
+            <PostFeed key="profile" posts={posts}></PostFeed>
             <Outlet></Outlet>
         </div>
     );

@@ -87,7 +87,6 @@ const BasicForm = () => {
 
     async function handleSubmitBasic(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
-        console.log("\n \n \n");
         let content: Content | undefined;
 
         if (imageFIle) {

@@ -93,13 +93,10 @@ export async function unlikePost(
 export async function checkBookmarkedByUser(
     request: PostCheckBookmarkedRequest,
 ): Promise<Response> {
-    console.log("here1");
     const response = await apiFetch<PostCheckBookmarkedRequest>(
         postContract.routes.checkBookmarked.frontend_path(request.id),
         postContract.routes.checkBookmarked.method,
     );
-    console.log("response: ", response);
-    console.log("here2");
 
     return response;
 }

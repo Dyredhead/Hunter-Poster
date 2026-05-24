@@ -19,65 +19,6 @@
     background-color: var(--color-primary);
 }
 
-.tab-switcher {
-    position: relative;
-    display: flex;
-    width: 100%;
-    border-radius: 8px;
-    background: var(--color-secondary);
-}
-
-.tab-slider-pill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 50%;
-    height: 100%;
-    border-radius: 10px;
-    border: 4px solid var(--color-secondary);
-    background: var(--color-primary);
-    box-sizing: border-box;
-    transition: transform 0.3s ease;
-}
-
-.tab-slider-pill--left {
-    transform: translateX(0);
-}
-
-.tab-slider-pill--right {
-    transform: translateX(100%);
-}
-
-.tab-item {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex: 1;
-    padding: 12px;
-    justify-content: center;
-    align-items: center;
-    font-family:
-        Inter,
-        -apple-system,
-        Roboto,
-        Helvetica,
-        sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    line-height: normal;
-    text-align: center;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.tab-item--active {
-    color: var(--color-neutral-lightest);
-}
-
-.tab-item--inactive {
-    color: var(--color-neutral-darkest);
-}
-
 .posts-feed {
     display: flex;
     flex-direction: column;

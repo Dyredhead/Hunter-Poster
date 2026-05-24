@@ -33,5 +33,5 @@ export default function FollowingPage() {
         );
     }
 
-    return <PostFeed posts={posts!}></PostFeed>;
+    return <PostFeed key={"following"} posts={posts!}></PostFeed>;
 }

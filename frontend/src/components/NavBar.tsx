@@ -12,18 +12,10 @@ const NavItem = ({
     alt: string;
     description: string;
 }) => {
-    // function handleClick(event: React.MouseEvent<HTMLAnchorElement>) {
-    //     console.log("Login link clicked");
-
-    //     // optional: prevent navigation if needed
-    //     event.preventDefault();
-    // }
-
     return (
         <Link
             to={to}
-            // onClick={handleClick}
-            className="flex w-full items-center justify-center flex-col"
+            className="flex w-full flex-col items-center justify-center"
         >
             <img src={src} alt={alt} />
             {/* <p className="text-xs font-bold text-neutral-middle">{description}</p> */}
@@ -32,12 +24,10 @@ const NavItem = ({
 };
 
 export const NavBar = () => {
-    //TODO: make this generate dynamically to whatever the current user's username is.
-    // const username = "john";
     return (
         <div>
             <Outlet />
-            <div className="flex justify-around fixed bottom-0 w-full bg-black h-20">
+            <div className="fixed bottom-0 flex h-20 w-full justify-around bg-black">
                 <NavItem
                     to="/profile/"
                     src="/src/assets/icons/navbar/profile.svg"
@@ -59,12 +49,12 @@ export const NavBar = () => {
                     description="home"
                 />
 
-                <NavItem
+                {/* <NavItem
                     to="/notifications"
                     src="/src/assets/icons/navbar/notifications.svg"
                     alt="notifications button"
                     description="notifications"
-                />
+                /> */}
 
                 <NavItem
                     to="/post/create"

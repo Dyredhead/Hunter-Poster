@@ -17,13 +17,11 @@ const SettingIcon = () => (
 );
 
 type BannerContainerProps = {
-    pfp_id: string | null;
     banner_id: string | null;
     display_settings: boolean;
 };
 
 export const BannerContainer = ({
-    pfp_id,
     banner_id,
     display_settings,
 }: BannerContainerProps) => {
@@ -51,7 +49,7 @@ export const BannerContainer = ({
         };
 
         fetchData();
-    }, [banner_id, pfp_id]);
+    }, [banner_id]);
 
     return (
         <div id="banner-container" className="">

@@ -10,7 +10,7 @@ type PfpProps = {
 };
 
 export default function Pfp({ id, pfp_id, className }: PfpProps) {
-    const [pfp_url, setPfpUrl] = useState<string | null>(null);
+    const [pfp_url, setPfpUrl] = useState<string>();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -21,7 +21,6 @@ export default function Pfp({ id, pfp_id, className }: PfpProps) {
                         ImageContract.routes.getById.responses[200].body.parse(
                             await (await getImage({ id: pfp_id })).json(),
                         );
-                    console.log("got pfpurl");
                     setPfpUrl(
                         `data:${image.image_mime};base64,${image.image_data}`,
                     );
@@ -43,7 +42,11 @@ export default function Pfp({ id, pfp_id, className }: PfpProps) {
             className={`bg-neutral-darkest flex justify-center overflow-clip rounded-full border-2 ${className}`}
         >
             <img
-                src={pfp_url == null ? "/src/assets/icons/avatar.svg" : pfp_url}
+                src={
+                    pfp_url == undefined
+                        ? "/src/assets/icons/avatar.svg"
+                        : pfp_url
+                }
                 alt=""
                 width="100%"
             />

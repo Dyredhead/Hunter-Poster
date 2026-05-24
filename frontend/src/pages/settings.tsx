@@ -253,12 +253,10 @@ export default function SettingsPage() {
         setLoadingAccount(true);
         // await new Promise((f) => setTimeout(f, 200));
 
-        const result = await updateSettingsAccount({
+        await updateSettingsAccount({
             username: username == "" ? null : username,
             password: password == "" ? null : password,
         });
-
-        console.log(result);
 
         setLoadingAccount(false);
     }

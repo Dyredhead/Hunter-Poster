@@ -134,7 +134,6 @@ export const PostBookmarkedByUserController: RequestHandler = async (
     req,
     res,
 ) => {
-    console.log("here3");
     const params = Post.checkBookmarked.request.params.parse(req.params);
 
     try {
@@ -142,7 +141,6 @@ export const PostBookmarkedByUserController: RequestHandler = async (
             req.auth!.sub,
             params.id,
         );
-        console.log("here4");
 
         res.status(200).json({ isBookmarked: result });
     } catch {
