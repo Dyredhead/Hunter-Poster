@@ -4,9 +4,12 @@
 ## Quick Start
 
 From a fresh install, do the following:
-1. `make setup`
-2. In terminal 1: `make dev-backend`
-3. In terminal 2: `make dev-frontend`
+1. Ensure you have `npm` and `docker` installed
+2. Run: `make setup`
+3. Then in three seperate Terminal windows:
+    1. In terminal 1: `make start-frontend`
+    2. In terminal 2: `make start-server`
+    3. In terminal 3: `make start-database`
 
 
 ### Folder Structure:
