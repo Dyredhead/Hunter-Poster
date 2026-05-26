@@ -200,19 +200,16 @@ const PostGetByIdContract = {
 
     request: {
         params: z.object({
-            id: z.int(),
+            post_id: z.uuidv7(),
         }),
     },
 
-    responses: {
-        200: {
-            body: PostSchema,
+    response: {
+        status: {
+            success: 200,
+            failed: 404,
         },
-        404: {
-            body: z.object({
-                message: z.literal("Post with id not found"),
-            }),
-        },
+        body: PostSchema.nullish(),
     },
 };
 
@@ -358,19 +355,9 @@ export type PostGetByIdRequest = z.infer<
     typeof PostGetByIdContract.request.params
 >;
 // export type PostGetByIdResponse = z.infer<typeof PostGetByIdContract.responses>;
-export type PostGetByIdResponse =
-    | {
-          status: 200;
-          body: z.infer<
-              (typeof postContract.routes.getById.responses)[200]["body"]
-          >;
-      }
-    | {
-          status: 404;
-          body: z.infer<
-              (typeof postContract.routes.getById.responses)[404]["body"]
-          >;
-      };
+export type PostGetByIdResponse = z.infer<
+    typeof PostGetByIdContract.response.body
+>;
 
 export type PostGetByFollowingResponse = z.infer<
     typeof PostGetByFollowingContract.response
