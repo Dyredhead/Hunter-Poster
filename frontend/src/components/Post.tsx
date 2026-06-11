@@ -347,7 +347,7 @@ export function Post({
     }
 
     return (
-        <article className="post">
+        <article className="post ransform rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-1">
             <header className="post-header">
                 <button className="post-author" onClick={onUsernameClick}>
                     <Pfp

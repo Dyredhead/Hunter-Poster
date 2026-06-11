@@ -6,16 +6,19 @@ import {
     type PostCreateRequest,
     type PostGetByFollowingResponse,
     type PostGetByForYouResponse,
+    type PostGetByIdResponse,
     type PostLikeRequest,
     type PostUnbookmarkRequest,
     type PostUnlikeRequest,
 } from "@my-app/shared";
 import { apiFetch } from "./client";
 
+const post = postContract.routes;
+
 export async function createPost(request: PostCreateRequest): Promise<number> {
     const response = await apiFetch<PostCreateRequest>(
-        postContract.routes.create.frontend_path(),
-        postContract.routes.create.method,
+        post.create.frontend_path(),
+        post.create.method,
         request,
     );
 
@@ -24,8 +27,8 @@ export async function createPost(request: PostCreateRequest): Promise<number> {
 
 export async function getByForYou(): Promise<PostGetByForYouResponse> {
     const response = await apiFetch(
-        postContract.routes.getByForYou.frontend_path(),
-        postContract.routes.getByForYou.method,
+        post.getByForYou.frontend_path(),
+        post.getByForYou.method,
     );
 
     try {
@@ -38,8 +41,8 @@ export async function getByForYou(): Promise<PostGetByForYouResponse> {
 
 export async function getByFollowing(): Promise<PostGetByFollowingResponse> {
     const response = await apiFetch(
-        postContract.routes.getByFollowing.frontend_path(),
-        postContract.routes.getByFollowing.method,
+        post.getByFollowing.frontend_path(),
+        post.getByFollowing.method,
     );
 
     try {
@@ -50,24 +53,33 @@ export async function getByFollowing(): Promise<PostGetByFollowingResponse> {
     }
 }
 
+export async function getById(post_id: string): Promise<PostGetByIdResponse> {
+    const response = await apiFetch(
+        post.getById.frontend_path(post_id),
+        post.getById.method,
+    );
+
+    return post.getById.response.body.parse(response.body);
+}
+
 // Like
 export async function checkLikedByUser(
     request: PostCheckLikedRequest,
 ): Promise<Response> {
     const response = await apiFetch<PostCheckLikedRequest>(
-        postContract.routes.checkLiked.frontend_path(request.id),
-        postContract.routes.checkLiked.method,
+        post.checkLiked.frontend_path(request.id),
+        post.checkLiked.method,
     );
 
     return response;
 }
 
 export async function likePost(request: PostLikeRequest): Promise<Response> {
-    const body = postContract.routes.unlike.request.body.parse(request);
+    const body = post.unlike.request.body.parse(request);
 
     const response = await apiFetch<PostLikeRequest>(
-        postContract.routes.like.frontend_path(),
-        postContract.routes.like.method,
+        post.like.frontend_path(),
+        post.like.method,
         body,
     );
 
@@ -77,11 +89,11 @@ export async function likePost(request: PostLikeRequest): Promise<Response> {
 export async function unlikePost(
     request: PostUnlikeRequest,
 ): Promise<Response> {
-    const body = postContract.routes.unlike.request.body.parse(request);
+    const body = post.unlike.request.body.parse(request);
 
     const response = await apiFetch<PostUnlikeRequest>(
-        postContract.routes.unlike.frontend_path(),
-        postContract.routes.unlike.method,
+        post.unlike.frontend_path(),
+        post.unlike.method,
         body,
     );
 
@@ -94,8 +106,8 @@ export async function checkBookmarkedByUser(
     request: PostCheckBookmarkedRequest,
 ): Promise<Response> {
     const response = await apiFetch<PostCheckBookmarkedRequest>(
-        postContract.routes.checkBookmarked.frontend_path(request.id),
-        postContract.routes.checkBookmarked.method,
+        post.checkBookmarked.frontend_path(request.id),
+        post.checkBookmarked.method,
     );
 
     return response;
@@ -104,11 +116,11 @@ export async function checkBookmarkedByUser(
 export async function bookmarkPost(
     request: PostBookmarkRequest,
 ): Promise<Response> {
-    const body = postContract.routes.bookmark.request.body.parse(request);
+    const body = post.bookmark.request.body.parse(request);
 
     const response = await apiFetch<PostBookmarkRequest>(
-        postContract.routes.bookmark.frontend_path(),
-        postContract.routes.bookmark.method,
+        post.bookmark.frontend_path(),
+        post.bookmark.method,
         body,
     );
 
@@ -118,11 +130,11 @@ export async function bookmarkPost(
 export async function unbookmarkPost(
     request: PostUnbookmarkRequest,
 ): Promise<Response> {
-    const body = postContract.routes.unbookmark.request.body.parse(request);
+    const body = post.unbookmark.request.body.parse(request);
 
     const response = await apiFetch<PostUnbookmarkRequest>(
-        postContract.routes.unbookmark.frontend_path(),
-        postContract.routes.unbookmark.method,
+        post.unbookmark.frontend_path(),
+        post.unbookmark.method,
         body,
     );
 

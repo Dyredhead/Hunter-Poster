@@ -117,6 +117,7 @@ CREATE TABLE
     IF NOT EXISTS comments (
         id UUID PRIMARY KEY DEFAULT uuidv7 (),
         user_id UUID NOT NULL REFERENCES users (id),
+        comment_id UUID REFERENCES comments (id),
         post_id UUID NOT NULL REFERENCES posts (id),
         content TEXT NOT NULL
     );
@@ -125,5 +126,6 @@ CREATE TABLE
     IF NOT EXISTS comment_likes (
         id UUID PRIMARY KEY DEFAULT uuidv7 (),
         user_id UUID NOT NULL REFERENCES users (id),
-        comment_id UUID NOT NULL REFERENCES comments (id)
+        comment_id UUID NOT NULL REFERENCES comments (id),
+        CONSTRAINT user_comment_unique UNIQUE (user_id, comment_id)
     );
