@@ -2,16 +2,17 @@ import { z } from "zod";
 import { API_MOUNT as _API_MOUNT } from "./api.js";
 const API_MOUNT = _API_MOUNT + "/comment";
 
-const CommentSchema = z.object({
-    id: z.uuidv7(),
-    user_id: z.uuidv7(),
-    username: z.string(),
-    comment_id: z.uuidv7().nullish(),
-    post_id: z.uuidv7(),
-    content: z.string(),
-    likes: z.number(),
-    liked: z.boolean(),
-});
+export type CommentSchema = {
+    id: string;
+    user_id: string;
+    username: string;
+    comment_id: string | null | undefined;
+    post_id: string;
+    content: string;
+    likes: number;
+    liked: boolean;
+    replies: CommentSchema[];
+}
 
 export const ConmmentCreateSchema = z.object({
     comment_id: z.uuidv7().nullish(),
@@ -19,7 +20,7 @@ export const ConmmentCreateSchema = z.object({
     content: z.string(),
 });
 
-const CommentGetPostImmediateContract = {
+const CommentGetByPostContract = {
     method: "GET",
     backend_path: () => `${API_MOUNT}/post/:id`,
     frontend_path: (id: string) => `${API_MOUNT}/post/${id}`,
@@ -35,9 +36,14 @@ const CommentGetPostImmediateContract = {
             success: 200,
             failed: 404,
         },
-        body: z.array(CommentSchema),
     },
 };
+
+export type CommentGetByPostRequest = z.infer<
+    typeof CommentGetByPostContract.request.params
+>;
+export type CommentGetByPostResponse = CommentSchema;
+
 
 const CommentGetRepliesContract = {
     method: "GET",
@@ -55,9 +61,14 @@ const CommentGetRepliesContract = {
             success: 200,
             failed: 404,
         },
-        body: z.array(CommentSchema),
     },
 };
+
+export type CommentGetRepliesRequest = z.infer<
+    typeof CommentGetRepliesContract.request.params
+>;
+export type CommentGetRepliesResponse = CommentSchema;
+
 
 const CommentGetByIdContract = {
     method: "GET",
@@ -75,9 +86,14 @@ const CommentGetByIdContract = {
             success: 200,
             failed: 404,
         },
-        body: CommentSchema,
     },
 };
+
+export type CommentGetByIdRequest = z.infer<
+    typeof CommentGetByIdContract.request.params
+>;
+export type CommentGetByIdResponse = CommentSchema;
+
 
 const CommentCreateContract = {
     method: "POST",
@@ -93,46 +109,22 @@ const CommentCreateContract = {
             success: 200,
             failed: 400,
         },
-        body: CommentSchema,
     },
 };
 
-export type Comment = z.infer<typeof CommentSchema>;
+export type CommentCreateRequest = z.infer<
+    typeof CommentCreateContract.request.body
+>;
+export type CommentCreateResponse = CommentSchema;
+
 
 export const commentContract = {
     mount: API_MOUNT,
     routes: {
-        getByPostImm: CommentGetPostImmediateContract,
+        getByPost: CommentGetByPostContract,
         getByReplies: CommentGetRepliesContract,
         getById: CommentGetByIdContract,
         create: CommentCreateContract,
     },
 };
 
-export type CommentGetPostImmediateRequest = z.infer<
-    typeof CommentGetPostImmediateContract.request.params
->;
-export type CommentGetPostImmediateResponse = z.infer<
-    typeof CommentGetPostImmediateContract.response.body
->;
-
-export type CommentGetRepliesRequest = z.infer<
-    typeof CommentGetRepliesContract.request.params
->;
-export type CommentGetRepliesResponse = z.infer<
-    typeof CommentGetRepliesContract.response.body
->;
-
-export type CommentGetByIdRequest = z.infer<
-    typeof CommentGetByIdContract.request.params
->;
-export type CommentGetByIdResponse = z.infer<
-    typeof CommentGetByIdContract.response.body
->;
-
-export type CommentCreateRequest = z.infer<
-    typeof CommentCreateContract.request.body
->;
-export type CommentCreateResponse = z.infer<
-    typeof CommentCreateContract.response.body
->;

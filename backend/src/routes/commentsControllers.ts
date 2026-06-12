@@ -6,26 +6,26 @@ import {
 } from "@/repositories/comments.js";
 import { commentContract, CommentCreateRequest } from "@my-app/shared";
 import { RequestHandler } from "express";
-import { FormatCommentResponseService } from "./commentsServices.js";
+import { FormatCommentResponse, FormatCommentWithReplies } from "./commentsServices.js";
 
 const comment = commentContract.routes;
 
-export const getByPostImmController: RequestHandler = async (req, res) => {
-    const params = comment.getByPostImm.request.params.parse(req.params);
+export const getByPostController: RequestHandler = async (req, res) => {
+    const params = comment.getByPost.request.params.parse(req.params);
 
     const result = await commentGetPostImm(params.post_id);
 
     const formattedResult = await Promise.all(
         result.map(async (comment) => {
-            return FormatCommentResponseService(comment);
+            return FormatCommentWithReplies(comment);
         }),
     );
 
     formattedResult.length >= 0
         ? res
-              .status(comment.getByPostImm.response.status.success)
+              .status(comment.getByPost.response.status.success)
               .json(formattedResult)
-        : res.sendStatus(comment.getByPostImm.response.status.failed);
+        : res.sendStatus(comment.getByPost.response.status.failed);
 };
 
 export const getByPostRepliesController: RequestHandler = async (req, res) => {
@@ -35,7 +35,7 @@ export const getByPostRepliesController: RequestHandler = async (req, res) => {
 
     const formattedResult = await Promise.all(
         result.map(async (comment) => {
-            return FormatCommentResponseService(comment);
+            return FormatCommentResponse(comment);
         }),
     );
 
@@ -54,7 +54,7 @@ export const CommentGetByIdController: RequestHandler = async (req, res) => {
     if (!result) {
         res.sendStatus(comment.getById.response.status.failed);
     } else {
-        const formattedResult = await FormatCommentResponseService(result);
+        const formattedResult = await FormatCommentResponse(result);
 
         res.status(comment.getById.response.status.success).json(
             formattedResult,
@@ -77,7 +77,7 @@ export const CommentCreateController: RequestHandler = async (req, res) => {
     if (!result) {
         res.sendStatus(comment.create.response.status.failed);
     } else {
-        const formattedResult = await FormatCommentResponseService(result);
+        const formattedResult = await FormatCommentResponse(result);
 
         res.status(comment.create.response.status.success).json(
             formattedResult,

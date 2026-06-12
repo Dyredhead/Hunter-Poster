@@ -1,14 +1,14 @@
-import { CommentRow } from "@/repositories/comments.js";
+import { commentGetReplies, CommentRow } from "@/repositories/comments.js";
 import { findUserById } from "@/repositories/users.js";
-import { Comment } from "@my-app/shared";
+import { CommentSchema } from "@my-app/shared";
 
-export async function FormatCommentResponseService(
+export async function FormatCommentResponse(
     comment: CommentRow,
     user_id?: string,
 ) {
     const username = findUserById(comment.user_id);
 
-    const formattedComment: Comment = {
+    const formattedComment: CommentSchema = {
         id: comment.id,
         user_id: comment.user_id,
         username: (await username)?.username ?? "",
@@ -17,7 +17,25 @@ export async function FormatCommentResponseService(
         likes: 0,
         liked: false,
         comment_id: comment.comment_id,
+        replies: []
     };
+
+    return formattedComment; 
+}
+
+
+export async function FormatCommentWithReplies(comment: CommentRow) {
+    const formattedComment = await FormatCommentResponse(comment);
+
+    const replies = await commentGetReplies(formattedComment.id);
+
+    if (replies.length > 0) {
+        formattedComment.replies = await Promise.all(
+            replies.map(async (comment) => {
+                return FormatCommentWithReplies(comment);
+            })
+        );        
+    }
 
     return formattedComment;
 }
