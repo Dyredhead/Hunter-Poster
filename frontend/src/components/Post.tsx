@@ -2,7 +2,6 @@ import { getImage } from "@/api/images";
 import {
     bookmarkPost,
     checkBookmarkedByUser,
-    checkLikedByUser,
     likePost,
     unbookmarkPost,
     unlikePost,
@@ -44,34 +43,12 @@ const CommentIcon = () => (
 type HeartIconProps = {
     post_id: string;
     likes: number;
+    liked: boolean;
 };
 
-const HeartIcon = ({ post_id, likes }: HeartIconProps) => {
-    const [isLiked, setIsLiked] = useState<boolean>();
+const HeartIcon = ({ post_id, likes, liked }: HeartIconProps) => {
+    const [isLiked, setIsLiked] = useState<boolean>(liked);
     const [uiLikes, setUiLikes] = useState<number>(likes);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            // await new Promise((f) => setTimeout(f, 200));
-            try {
-                setIsLiked(
-                    postContract.routes.checkLiked.responses[200].body.parse(
-                        await (await checkLikedByUser({ id: post_id })).json(),
-                    ).isLiked,
-                );
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                // setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [post_id, isLiked, uiLikes]);
-
-    if (isLiked == undefined) {
-        return;
-    }
 
     return (
         <button
@@ -292,6 +269,7 @@ type PostProps = {
     author_id: string;
     comments: number;
     likes: number;
+    liked: boolean;
     bookmarks: number;
     image_id: string | null;
     content: string | null;
@@ -306,6 +284,7 @@ export function Post({
     poll,
     comments,
     likes,
+    liked,
     bookmarks,
 }: PostProps) {
     const [user, setUser] = useState<User>();
@@ -403,7 +382,7 @@ export function Post({
                     <p className="post-action-text">{comments}</p>
                 </button>
 
-                <HeartIcon post_id={id} likes={likes} />
+                <HeartIcon post_id={id} likes={likes} liked={liked} />
 
                 <BookmarkIcon post_id={id} bookmarks={bookmarks} />
                 <button
@@ -452,6 +431,7 @@ export function PostFeed({ posts }: PostFeedProps) {
                         author_id={post.author_id}
                         comments={post.comments}
                         likes={post.likes}
+                        liked={post.liked}
                         bookmarks={post.bookmarks}
                         content={content}
                         image_id={image_id}

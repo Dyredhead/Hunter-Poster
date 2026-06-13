@@ -1,4 +1,5 @@
 import {
+    checkPostLikedByUser,
     // checkPostLikedByUser,
     getImagePostByPostId,
     getPollOptionsByPollId,
@@ -96,11 +97,16 @@ async function FormatPostContentService(
 
 export async function FormatPostGetResponseService(
     post: PostsRow,
+    user_id?: string,
 ): Promise<Post> {
     const content = FormatPostContentService(post);
     const comments = getPostCommentsById(post.id);
     const likes = getPostLikesById(post.id);
     const bookmarks = getPostBookmarksById(post.id);
+
+    const liked = user_id 
+        ? checkPostLikedByUser(user_id, post.id)
+        : false;
 
     const formattedPost: Post = {
         id: post.id,
@@ -108,6 +114,7 @@ export async function FormatPostGetResponseService(
         content: await content,
         comments: await comments,
         likes: await likes,
+        liked: await liked,
         bookmarks: await bookmarks,
     };
 

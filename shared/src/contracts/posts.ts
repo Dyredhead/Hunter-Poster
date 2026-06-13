@@ -56,6 +56,7 @@ export const PostSchema = z.object({
     content: ContentSchema,
     comments: z.int().min(0),
     likes: z.int().min(0),
+    liked: z.boolean(),
     bookmarks: z.int().min(0),
 });
 

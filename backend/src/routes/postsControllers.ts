@@ -56,9 +56,10 @@ export const postCreateController: RequestHandler = async (req, res) => {
 
 export const postGetByIdController: RequestHandler = async (req, res) => {
     const result = await getPostsById(String(req.params.id));
+    const user_id = req.auth!.sub;
 
     const formattedRes = result
-        ? await FormatPostGetResponseService(result)
+        ? await FormatPostGetResponseService(result, user_id)
         : null;
 
     if (!formattedRes) res.sendStatus(Post.getById.response.status.failed);
@@ -67,10 +68,11 @@ export const postGetByIdController: RequestHandler = async (req, res) => {
 
 export const postGetByForYouController: RequestHandler = async (req, res) => {
     const result: PostsRow[] = await getPostsForYou(req.auth?.sub!);
+    const user_id = req.auth!.sub;
 
     const formattedRes = await Promise.all(
         result.map(async (post) => {
-            return FormatPostGetResponseService(post);
+            return FormatPostGetResponseService(post, user_id);
         }),
     );
 
@@ -82,10 +84,11 @@ export const postGetByFollowingController: RequestHandler = async (
     res,
 ) => {
     const result: PostsRow[] = await getPostsFollowing(req.auth?.sub!);
+    const user_id = req.auth!.sub;
 
     const formattedRes = await Promise.all(
         result.map(async (post) => {
-            return FormatPostGetResponseService(post);
+            return FormatPostGetResponseService(post, user_id);
         }),
     );
 
