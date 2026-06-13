@@ -1,7 +1,6 @@
 import { getImage } from "@/api/images";
 import {
     bookmarkPost,
-    checkBookmarkedByUser,
     likePost,
     unbookmarkPost,
     unlikePost,
@@ -9,7 +8,6 @@ import {
 import { userGetById } from "@/api/users";
 import {
     ImageContract,
-    postContract,
     usersContract,
     type ContentPoll,
     type Post,
@@ -93,36 +91,12 @@ const HeartIcon = ({ post_id, likes, liked }: HeartIconProps) => {
 type BookmarkIconProps = {
     post_id: string;
     bookmarks: number;
+    bookmarked: boolean;
 };
 
-const BookmarkIcon = ({ post_id, bookmarks }: BookmarkIconProps) => {
-    const [isBookmarked, setIsBookmarked] = useState<boolean>();
+const BookmarkIcon = ({ post_id, bookmarks, bookmarked }: BookmarkIconProps) => {
+    const [isBookmarked, setIsBookmarked] = useState<boolean>(bookmarked);
     const [uiBookmarks, setUiBookmarks] = useState<number>(bookmarks);
-
-    useEffect(() => {
-        const fetchData = async () => {
-            // await new Promise((f) => setTimeout(f, 200));
-            try {
-                setIsBookmarked(
-                    postContract.routes.checkBookmarked.responses[200].body.parse(
-                        await (
-                            await checkBookmarkedByUser({ id: post_id })
-                        ).json(),
-                    ).isBookmarked,
-                );
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            } finally {
-                // setLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [post_id, isBookmarked, uiBookmarks]);
-
-    if (isBookmarked == undefined) {
-        return;
-    }
 
     return (
         <button
@@ -271,6 +245,7 @@ type PostProps = {
     likes: number;
     liked: boolean;
     bookmarks: number;
+    bookmarked: boolean;
     image_id: string | null;
     content: string | null;
     poll: ContentPoll | null;
@@ -286,6 +261,7 @@ export function Post({
     likes,
     liked,
     bookmarks,
+    bookmarked,
 }: PostProps) {
     const [user, setUser] = useState<User>();
     const [imageUrl, setImageUrl] = useState<string | null>();
@@ -384,7 +360,7 @@ export function Post({
 
                 <HeartIcon post_id={id} likes={likes} liked={liked} />
 
-                <BookmarkIcon post_id={id} bookmarks={bookmarks} />
+                <BookmarkIcon post_id={id} bookmarks={bookmarks} bookmarked={bookmarked} />
                 <button
                     className="post-action-btn"
                     onClick={onShare}
@@ -433,6 +409,7 @@ export function PostFeed({ posts }: PostFeedProps) {
                         likes={post.likes}
                         liked={post.liked}
                         bookmarks={post.bookmarks}
+                        bookmarked={post.bookmarked}
                         content={content}
                         image_id={image_id}
                         poll={poll}

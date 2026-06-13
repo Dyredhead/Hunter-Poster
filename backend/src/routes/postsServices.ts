@@ -1,4 +1,5 @@
 import {
+    checkPostBookmarkedByUser,
     checkPostLikedByUser,
     // checkPostLikedByUser,
     getImagePostByPostId,
@@ -108,6 +109,10 @@ export async function FormatPostGetResponseService(
         ? checkPostLikedByUser(user_id, post.id)
         : false;
 
+    const bookmarked = user_id
+        ? checkPostBookmarkedByUser(user_id, post.id)
+        : false;
+
     const formattedPost: Post = {
         id: post.id,
         author_id: post.user_id,
@@ -116,6 +121,7 @@ export async function FormatPostGetResponseService(
         likes: await likes,
         liked: await liked,
         bookmarks: await bookmarks,
+        bookmarked: await bookmarked,
     };
 
     return formattedPost;

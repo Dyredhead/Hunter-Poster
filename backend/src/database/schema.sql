@@ -110,7 +110,8 @@ CREATE TABLE
     IF NOT EXISTS bookmarks (
         id UUID PRIMARY KEY DEFAULT uuidv7 (),
         user_id UUID NOT NULL REFERENCES users (id),
-        post_id UUID NOT NULL REFERENCES posts (id)
+        post_id UUID NOT NULL REFERENCES posts (id),
+        CONSTRAINT post_bookmarks_user_unique UNIQUE (user_id, post_id)
     );
 
 CREATE TABLE

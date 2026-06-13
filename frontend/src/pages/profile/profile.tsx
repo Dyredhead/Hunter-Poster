@@ -85,7 +85,7 @@ export default function ProfilePage() {
         };
 
         fetchData();
-    }, [id]);
+    }, []);
 
     if (loading) {
         return (

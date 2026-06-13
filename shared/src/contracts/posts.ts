@@ -58,6 +58,7 @@ export const PostSchema = z.object({
     likes: z.int().min(0),
     liked: z.boolean(),
     bookmarks: z.int().min(0),
+    bookmarked: z.boolean(),
 });
 
 const PostCheckLikedContract = {

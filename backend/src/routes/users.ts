@@ -144,7 +144,7 @@ router.get(
 
         const formattedRes = await Promise.all(
             result.map(async (post) => {
-                return FormatPostGetResponseService(post);
+                return FormatPostGetResponseService(post, params.id);
             }),
         );
 
