@@ -16,6 +16,7 @@ import {
 import { useEffect, useState } from "react";
 import Pfp from "./Pfp";
 import "./Post.css";
+import { Link } from "react-router-dom";
 
 function onUsernameClick() {}
 function onImageClick() {}
@@ -302,7 +303,7 @@ export function Post({
     }
 
     return (
-        <article className="post rounded-lg shadow-lg transition-all duration-300 hover:-translate-y-1">
+        <article className="post rounded-lg shadow-lg w-full">
             <header className="post-header">
                 <button className="post-author" onClick={onUsernameClick}>
                     <Pfp
@@ -400,20 +401,25 @@ export function PostFeed({ posts }: PostFeedProps) {
                         poll = post.content;
                         break;
                 }
+
+                const postLink = `/post/${post.id}`
+
                 return (
-                    <Post
-                        key={post.id}
-                        id={post.id}
-                        author_id={post.author_id}
-                        comments={post.comments}
-                        likes={post.likes}
-                        liked={post.liked}
-                        bookmarks={post.bookmarks}
-                        bookmarked={post.bookmarked}
-                        content={content}
-                        image_id={image_id}
-                        poll={poll}
-                    ></Post>
+                    <Link to={postLink} className="transition-all duration-300 hover:-translate-y-1">
+                        <Post
+                            key={post.id}
+                            id={post.id}
+                            author_id={post.author_id}
+                            comments={post.comments}
+                            likes={post.likes}
+                            liked={post.liked}
+                            bookmarks={post.bookmarks}
+                            bookmarked={post.bookmarked}
+                            content={content}
+                            image_id={image_id}
+                            poll={poll}
+                        ></Post>                    
+                    </Link>
                 );
             })}
         </div>

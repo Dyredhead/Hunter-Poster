@@ -80,6 +80,10 @@ export default function App() {
                             path="create"
                             element={<pages.PostCreationPage />}
                         />
+                        <Route
+                            path=":id"
+                            element={<pages.PostIdPage />}
+                        />
                     </Route>
                 </Route>
             </Route>
