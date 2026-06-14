@@ -11,10 +11,11 @@ export default function Page() {
     useEffect(() => {
         getById(postId!).then((newPost) => {
             setPost(newPost);
+            console.log(newPost);
         } )
     }, [])
 
-    if (post) {
+    if (post !== undefined && post !== null) {
         return (
             <div>
                 <Post post={post}/>

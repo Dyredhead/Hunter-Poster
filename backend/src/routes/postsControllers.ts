@@ -63,7 +63,7 @@ export const postGetByIdController: RequestHandler = async (req, res) => {
         : null;
 
     if (!formattedRes) res.sendStatus(Post.getById.response.status.failed);
-    else res.status(Post.getById.response.status.success).json(Post.getById.response.body.parse(formattedRes));
+    else res.status(Post.getById.response.status.success).json(formattedRes);
 };
 
 export const postGetByForYouController: RequestHandler = async (req, res) => {

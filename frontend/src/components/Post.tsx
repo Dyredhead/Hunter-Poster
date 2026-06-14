@@ -365,7 +365,7 @@ export function PostFeed({ posts }: PostFeedProps) {
                 const postLink = `/post/${post.id}`
 
                 return (
-                    <Link to={postLink} className="transition-all duration-300 hover:-translate-y-1">
+                    <Link to={postLink} className="transition-all duration-300 hover:-translate-y-1" key={post.id}>
                         <Post post={post}></Post>                    
                     </Link>
                 );

@@ -33,7 +33,7 @@ router.get(
     requireAuth,
     postGetByFollowingController,
 );
-router.get(postContract.routes.getById.backend_path(), postGetByIdController);
+router.get(postContract.routes.getById.backend_path(), requireAuth, postGetByIdController);
 
 // Like
 router.get(

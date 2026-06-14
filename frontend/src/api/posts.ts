@@ -53,13 +53,18 @@ export async function getByFollowing(): Promise<PostGetByFollowingResponse> {
     }
 }
 
-export async function getById(post_id: string): Promise<PostGetByIdResponse> {
+export async function getById(post_id: string): Promise<PostGetByIdResponse | undefined> {
     const response = await apiFetch(
         post.getById.frontend_path(post_id),
         post.getById.method,
     );
 
-    return post.getById.response.body.parse(response.body);
+    try {
+        return response.json();
+    } catch (err) {
+        console.log({ err });
+        return undefined;
+    }
 }
 
 // Like

@@ -211,7 +211,7 @@ const PostGetByIdContract = {
             success: 200,
             failed: 404,
         },
-        body: PostSchema.nullish(),
+        body: PostSchema,
     },
 };
 
