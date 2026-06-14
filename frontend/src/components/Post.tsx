@@ -10,7 +10,7 @@ import {
     ImageContract,
     usersContract,
     type ContentPoll,
-    type Post,
+    type Post as PostType,
     type User,
 } from "@my-app/shared";
 import { useEffect, useState } from "react";
@@ -52,7 +52,8 @@ const HeartIcon = ({ post_id, likes, liked }: HeartIconProps) => {
     return (
         <button
             className="post-action-btn"
-            onClick={async () => {
+            onClick={async (e) => {
+                e.preventDefault();
                 if (isLiked) {
                     if (
                         (await unlikePost({ post_id: post_id })).status === 200
@@ -102,7 +103,8 @@ const BookmarkIcon = ({ post_id, bookmarks, bookmarked }: BookmarkIconProps) => 
     return (
         <button
             className="post-action-btn"
-            onClick={async () => {
+            onClick={async (e) => {
+                e.preventDefault();
                 if (isBookmarked) {
                     if (
                         (await unbookmarkPost({ post_id: post_id })).status ===
@@ -239,31 +241,7 @@ function Poll({
     );
 }
 
-type PostProps = {
-    id: string;
-    author_id: string;
-    comments: number;
-    likes: number;
-    liked: boolean;
-    bookmarks: number;
-    bookmarked: boolean;
-    image_id: string | null;
-    content: string | null;
-    poll: ContentPoll | null;
-};
-
-export function Post({
-    id,
-    author_id,
-    content,
-    image_id,
-    poll,
-    comments,
-    likes,
-    liked,
-    bookmarks,
-    bookmarked,
-}: PostProps) {
+export function Post({post}: {post: PostType;}) {
     const [user, setUser] = useState<User>();
     const [imageUrl, setImageUrl] = useState<string | null>();
 
@@ -273,14 +251,14 @@ export function Post({
             try {
                 const user =
                     usersContract.routes.getById.responses[200].body.parse(
-                        await (await userGetById({ id: author_id })).json(),
+                        await (await userGetById({ id: post.author_id })).json(),
                     );
                 setUser(user);
 
-                if (image_id != null) {
+                if (post.content.type === "image" || post.content.type === "text_image") {
                     const image =
                         ImageContract.routes.getById.responses[200].body.parse(
-                            await (await getImage({ id: image_id })).json(),
+                            await (await getImage({ id: post.content.image_id })).json(),
                         );
                     setImageUrl(
                         `data:${image.image_mime};base64,${image.image_data}`,
@@ -296,7 +274,7 @@ export function Post({
         };
 
         fetchData();
-    }, [author_id, id, image_id]);
+    }, []);
 
     if (user == undefined) {
         return;
@@ -315,7 +293,7 @@ export function Post({
                 </button>
                 <div className="post-header-right">
                     <span className="post-date">
-                        {DateTimeToString(getDateFromUUIDv7(id))}
+                        {DateTimeToString(getDateFromUUIDv7(post.id))}
                     </span>
                 </div>
             </header>
@@ -330,24 +308,25 @@ export function Post({
                 </button>
             )}
 
-            {content !== null && content.trim() !== "" && (
+            {post.content.type !== "poll" && post.content.type !== "image" && (
                 <>
                     <button className="post-body" onClick={onContentClick}>
-                        <p className="post-content">{content}</p>
+                        <p className="post-content">{post.content.content}</p>
                     </button>
                 </>
             )}
 
-            {poll && (
-                <Poll
+            {post.content.type === "poll" 
+            ? (<Poll
                     type="poll"
-                    question={poll.question}
-                    closes_at={poll.closes_at}
-                    options={poll.options}
-                    vote={poll.vote}
-                    current_votes={poll.current_votes}
-                />
-            )}
+                    question={post.content.question}
+                    closes_at={post.content.closes_at}
+                    options={post.content.options}
+                    vote={post.content.vote}
+                    current_votes={post.content.current_votes}
+            />)
+            : <div></div>
+            }
 
             <footer className="post-actions">
                 <button
@@ -356,12 +335,12 @@ export function Post({
                     aria-label="Comment"
                 >
                     <CommentIcon />
-                    <p className="post-action-text">{comments}</p>
+                    <p className="post-action-text">{post.comments}</p>
                 </button>
 
-                <HeartIcon post_id={id} likes={likes} liked={liked} />
+                <HeartIcon post_id={post.id} likes={post.likes} liked={post.liked} />
 
-                <BookmarkIcon post_id={id} bookmarks={bookmarks} bookmarked={bookmarked} />
+                <BookmarkIcon post_id={post.id} bookmarks={post.bookmarks} bookmarked={post.bookmarked} />
                 <button
                     className="post-action-btn"
                     onClick={onShare}
@@ -375,50 +354,19 @@ export function Post({
 }
 
 type PostFeedProps = {
-    posts: Post[];
+    posts: PostType[];
 };
 
 export function PostFeed({ posts }: PostFeedProps) {
     return (
         <div className="posts-feed">
             {posts?.map((post) => {
-                let content = null;
-                let image_id = null;
-                let poll = null;
-
-                switch (post.content.type) {
-                    case "text":
-                        content = post.content.content;
-                        break;
-                    case "image":
-                        image_id = post.content.image_id;
-                        break;
-                    case "text_image":
-                        content = post.content.content;
-                        image_id = post.content.image_id;
-                        break;
-                    case "poll":
-                        poll = post.content;
-                        break;
-                }
 
                 const postLink = `/post/${post.id}`
 
                 return (
                     <Link to={postLink} className="transition-all duration-300 hover:-translate-y-1">
-                        <Post
-                            key={post.id}
-                            id={post.id}
-                            author_id={post.author_id}
-                            comments={post.comments}
-                            likes={post.likes}
-                            liked={post.liked}
-                            bookmarks={post.bookmarks}
-                            bookmarked={post.bookmarked}
-                            content={content}
-                            image_id={image_id}
-                            poll={poll}
-                        ></Post>                    
+                        <Post post={post}></Post>                    
                     </Link>
                 );
             })}
