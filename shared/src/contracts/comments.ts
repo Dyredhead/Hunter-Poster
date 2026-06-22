@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { API_MOUNT as _API_MOUNT } from "./api.js";
+import { ProfilePreview } from "./users.js";
 const API_MOUNT = _API_MOUNT + "/comment";
 
 export type CommentSchema = {
     id: string;
-    user_id: string;
-    username: string;
+    profile: ProfilePreview
     comment_id: string | null | undefined;
     post_id: string;
     content: string;
@@ -27,7 +27,7 @@ const CommentGetByPostContract = {
 
     request: {
         params: z.object({
-            post_id: z.uuidv7(),
+            id: z.uuidv7(),
         }),
     },
 
@@ -42,7 +42,7 @@ const CommentGetByPostContract = {
 export type CommentGetByPostRequest = z.infer<
     typeof CommentGetByPostContract.request.params
 >;
-export type CommentGetByPostResponse = CommentSchema;
+export type CommentGetByPostResponse = CommentSchema[];
 
 
 const CommentGetRepliesContract = {

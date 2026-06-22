@@ -6,12 +6,15 @@ export async function FormatCommentResponse(
     comment: CommentRow,
     user_id?: string,
 ) {
-    const username = findUserById(comment.user_id);
+    const user = await findUserById(comment.user_id);
 
     const formattedComment: CommentSchema = {
         id: comment.id,
-        user_id: comment.user_id,
-        username: (await username)?.username ?? "",
+        profile: {
+            id: comment.user_id,
+            pfp_id: user!.pfp_id,
+            username: user!.username,
+        },
         post_id: comment.post_id,
         content: comment.content,
         likes: 0,

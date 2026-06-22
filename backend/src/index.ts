@@ -4,6 +4,7 @@ import morgan from "morgan";
 import { env } from "./env.js";
 
 import {
+    commentRouter,
     imagesRouter,
     loginRouter,
     postRouter,
@@ -24,6 +25,7 @@ app.use(postRouter);
 app.use(usersRouter);
 app.use(imagesRouter);
 app.use(settingsRouter);
+app.use(commentRouter);
 
 app.listen(env.express_port, () => {
     console.log(`Backend running at http://localhost:${env.express_port}`);

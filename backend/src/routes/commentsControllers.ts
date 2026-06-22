@@ -13,7 +13,7 @@ const comment = commentContract.routes;
 export const getByPostController: RequestHandler = async (req, res) => {
     const params = comment.getByPost.request.params.parse(req.params);
 
-    const result = await commentGetPostImm(params.post_id);
+    const result = await commentGetPostImm(params.id);
 
     const formattedResult = await Promise.all(
         result.map(async (comment) => {

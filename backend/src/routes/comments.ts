@@ -11,3 +11,5 @@ router.get(comment.getByPost.backend_path(), requireAuth, getByPostController);
 router.get(comment.getByReplies.backend_path(), requireAuth, getByPostRepliesController);
 router.get(comment.getById.backend_path(), requireAuth, CommentGetByIdController);
 router.post(comment.create.backend_path(), requireAuth, CommentCreateController);
+
+export default router;

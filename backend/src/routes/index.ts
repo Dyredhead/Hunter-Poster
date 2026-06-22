@@ -4,3 +4,4 @@ export { default as imagesRouter } from "./images.js";
 export { default as postRouter } from "./posts.js";
 export { default as settingsRouter } from "./settings.js";
 export { default as usersRouter } from "./users.js";
+export { default as commentRouter} from "./comments.js"
