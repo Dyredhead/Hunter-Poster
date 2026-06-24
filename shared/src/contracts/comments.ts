@@ -17,7 +17,7 @@ const CommentSchema = z.object({
 })
 
 const CommentCreateSchema = z.object({
-    parent_id: z.uuidv7().optional(),
+    parent_id: z.uuidv7().nullable(),
     post_id: z.uuidv7(),
     content: z.string(),
 });
@@ -47,11 +47,11 @@ export type CommentGetByPostResponse = z.Infer<typeof CommentGetByPostContract.r
 const CommentGetRepliesContract = {
     method: "GET",
     backend_path: () => `${COMMENT_MOUNT}/:id/replies`,
-    frontend_path: (comment_id: string) => `${COMMENT_MOUNT}/${comment_id}/replies`,
+    frontend_path: (parent_id: string) => `${COMMENT_MOUNT}/${parent_id}/replies`,
 
     request: {
         path_params: z.object({
-            comment_id: z.uuidv7(),
+            parent_id: z.uuidv7(),
         }),
         query_params: z.object({
             cursor: z.uuidv7(),
