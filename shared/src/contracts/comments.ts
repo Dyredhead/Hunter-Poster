@@ -1,125 +1,105 @@
-import { z } from "zod";
+import { uuidv7, z } from "zod";
 import { API_MOUNT as _API_MOUNT } from "./api.js";
-import { ProfilePreview } from "./users.js";
-const API_MOUNT = _API_MOUNT + "/comment";
+import { ProfilePreviewSchema } from "./users.js";
+const POST_MOUNT = _API_MOUNT + "/post";
+const COMMENT_MOUNT = _API_MOUNT + "/comment";
 
-export type CommentSchema = {
-    id: string;
-    profile: ProfilePreview
-    comment_id: string | null | undefined;
-    post_id: string;
-    content: string;
-    likes: number;
-    liked: boolean;
-    replies: CommentSchema[];
-}
 
-export const ConmmentCreateSchema = z.object({
-    comment_id: z.uuidv7().nullish(),
+const CommentSchema = z.object({
+    id: z.uuidv7(),
+    profile: ProfilePreviewSchema,
+    parent_id: z.uuidv7().nullable(),
+    post_id: z.uuidv7(),
+    content: z.string(),
+    likes: z.number(),
+    liked: z.boolean(),
+    total_replies: z.number(),
+})
+
+const CommentCreateSchema = z.object({
+    parent_id: z.uuidv7().optional(),
     post_id: z.uuidv7(),
     content: z.string(),
 });
 
 const CommentGetByPostContract = {
     method: "GET",
-    backend_path: () => `${API_MOUNT}/post/:id`,
-    frontend_path: (id: string) => `${API_MOUNT}/post/${id}`,
+    backend_path: () => `${POST_MOUNT}/:id/comments`,
+    frontend_path: (post_id: string) => `${POST_MOUNT}/${post_id}/comments`,
 
     request: {
-        params: z.object({
-            id: z.uuidv7(),
+        path_params: z.object({
+            post_id: z.uuidv7(),
+        }),
+        query_params: z.object({
+            cursor: z.uuidv7(),
+            page_size: z.number(),
         }),
     },
 
-    response: {
-        status: {
-            success: 200,
-            failed: 404,
-        },
-    },
+    response: z.array(CommentSchema)
 };
 
-export type CommentGetByPostRequest = z.infer<
-    typeof CommentGetByPostContract.request.params
->;
-export type CommentGetByPostResponse = CommentSchema[];
+export type CommentGetByPostRequest = z.Infer<typeof CommentGetByPostContract.request.query_params>;
+export type CommentGetByPostResponse = z.Infer<typeof CommentGetByPostContract.response>;
 
 
 const CommentGetRepliesContract = {
     method: "GET",
-    backend_path: () => `${API_MOUNT}/replies/:id`,
-    frontend_path: (id: string) => `${API_MOUNT}/replies/${id}`,
+    backend_path: () => `${COMMENT_MOUNT}/:id/replies`,
+    frontend_path: (comment_id: string) => `${COMMENT_MOUNT}/${comment_id}/replies`,
 
     request: {
-        params: z.object({
+        path_params: z.object({
             comment_id: z.uuidv7(),
+        }),
+        query_params: z.object({
+            cursor: z.uuidv7(),
+            page_size: z.number(),
         }),
     },
 
-    response: {
-        status: {
-            success: 200,
-            failed: 404,
-        },
-    },
+    response: z.array(CommentSchema)
 };
 
-export type CommentGetRepliesRequest = z.infer<
-    typeof CommentGetRepliesContract.request.params
->;
-export type CommentGetRepliesResponse = CommentSchema;
+export type CommentGetRepliesRequest = z.infer<typeof CommentGetRepliesContract.request.query_params>;
+export type CommentGetRepliesResponse = z.infer<typeof CommentGetRepliesContract.response>;
 
 
 const CommentGetByIdContract = {
     method: "GET",
-    backend_path: () => `${API_MOUNT}/:id`,
-    frontend_path: (id: string) => `${API_MOUNT}/${id}`,
+    backend_path: () => `${COMMENT_MOUNT}/:id`,
+    frontend_path: (id: string) => `${COMMENT_MOUNT}/${id}`,
 
     request: {
-        params: z.object({
+        path_params: z.object({
             comment_id: z.uuidv7(),
         }),
     },
 
-    response: {
-        status: {
-            success: 200,
-            failed: 404,
-        },
-    },
+    response: CommentSchema
 };
 
-export type CommentGetByIdRequest = z.infer<
-    typeof CommentGetByIdContract.request.params
->;
-export type CommentGetByIdResponse = CommentSchema;
+export type CommentGetByIdResponse = z.infer<typeof CommentGetByIdContract.response>;
 
 
 const CommentCreateContract = {
     method: "POST",
-    backend_path: () => `${API_MOUNT}/create`,
-    frontend_path: () => `${API_MOUNT}/create`,
+    backend_path: () => `${POST_MOUNT}/:post_id/create`,
+    frontend_path: (post_id: string) => `${POST_MOUNT}/${post_id}/create`,
 
     request: {
-        body: ConmmentCreateSchema,
+        body: CommentCreateSchema,
     },
 
-    response: {
-        status: {
-            success: 200,
-            failed: 400,
-        },
-    },
+    response: CommentSchema
 };
 
-export type CommentCreateRequest = z.infer<
-    typeof CommentCreateContract.request.body
->;
-export type CommentCreateResponse = CommentSchema;
+export type CommentCreateRequest = z.infer<typeof CommentCreateContract.request.body>;
+export type CommentCreateResponse = z.infer<typeof CommentCreateContract.response>;
 
 
 export const commentContract = {
-    mount: API_MOUNT,
     routes: {
         getByPost: CommentGetByPostContract,
         getByReplies: CommentGetRepliesContract,

@@ -4,12 +4,12 @@ import { CommentCreateRequest } from "@my-app/shared";
 export type CommentRow = {
     id: string;
     user_id: string;
-    comment_id?: string;
+    parent_id?: string;
     post_id: string;
     content: string;
 };
 
-export async function commentGetPostImm(
+export async function commentGetRoot(
     post_id: string,
 ): Promise<CommentRow[]> {
     const query = `
@@ -47,14 +47,14 @@ export async function commentGetById(id: string): Promise<CommentRow | null> {
 
 export async function commentCreate(
     user_id: string,
-    { comment_id, post_id, content }: CommentCreateRequest,
+    { parent_id, post_id, content }: CommentCreateRequest,
 ): Promise<CommentRow | null> {
     const query = `
-        INSERT INTO comments (user_id, comment_id, post_id, content)
+        INSERT INTO comments (user_id, parent_id, post_id, content)
         VALUES ($1, $2, $3, $4)
         RETURNING *
     `;
-    const values = [user_id, comment_id, post_id, content];
+    const values = [user_id, parent_id, post_id, content];
 
     const result = await database
         .query<CommentRow>(query, values)

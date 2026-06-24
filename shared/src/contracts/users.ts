@@ -4,11 +4,11 @@ import { PostSchema } from "./posts.js";
 
 const API_MOUNT = _API_MOUNT + "/users";
 
-export type ProfilePreview = {
-    id: string;
-    pfp_id: string | null;
-    username: string;
-}
+export const ProfilePreviewSchema = z.object({
+    id: z.string(),
+    pfp_id: z.string().nullable(),
+    username: z.string(),
+})
 
 const UserSchema = z.object({
     id: z.uuidv7(),
