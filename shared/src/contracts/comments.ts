@@ -16,6 +16,8 @@ const CommentSchema = z.object({
     total_replies: z.number(),
 })
 
+export type Comment = z.infer<typeof CommentSchema>;
+
 const CommentCreateSchema = z.object({
     parent_id: z.uuidv7().nullable(),
     post_id: z.uuidv7(),
@@ -55,7 +57,6 @@ const CommentGetRepliesContract = {
         }),
         query_params: z.object({
             cursor: z.uuidv7(),
-            page_size: z.number(),
         }),
     },
 

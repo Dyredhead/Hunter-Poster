@@ -123,6 +123,8 @@ CREATE TABLE
         content TEXT NOT NULL
     );
 
+CREATE INDEX comment_parent_id ON comments(parent_ID);
+
 CREATE TABLE
     IF NOT EXISTS comment_likes (
         id UUID PRIMARY KEY DEFAULT uuidv7 (),

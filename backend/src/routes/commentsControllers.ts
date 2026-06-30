@@ -1,86 +1,105 @@
 import {
     commentCreate,
     commentGetById,
-    commentGetPostImm,
+    commentGetByPost,
     commentGetReplies,
 } from "@/repositories/comments.js";
 import { commentContract, CommentCreateRequest } from "@my-app/shared";
 import { RequestHandler } from "express";
-import { FormatCommentResponse, FormatCommentWithReplies } from "./commentsServices.js";
+import { FormatCommentResponse } from "./commentsServices.js";
 
 const comment = commentContract.routes;
 
 export const getByPostController: RequestHandler = async (req, res) => {
-    const params = comment.getByPost.request.params.parse(req.params);
+    const reqContract = comment.getByPost.request;
 
-    const result = await commentGetPostImm(params.id);
+    const parsedPath = reqContract.path_params.safeParse(req.params);
+    const parsedQuery = reqContract.query_params.safeParse(req.query);
 
-    const formattedResult = await Promise.all(
-        result.map(async (comment) => {
-            return FormatCommentWithReplies(comment);
-        }),
-    );
+    if (!parsedPath.success) {
+        res.status(400).json(parsedPath.error.flatten())
+    }
 
-    formattedResult.length >= 0
-        ? res
-              .status(comment.getByPost.response.status.success)
-              .json(formattedResult)
-        : res.sendStatus(comment.getByPost.response.status.failed);
-};
+    const pathParams = parsedPath.data!;
 
-export const getByPostRepliesController: RequestHandler = async (req, res) => {
-    const params = comment.getByReplies.request.params.parse(req.params);
+    const commentList = parsedQuery.success
+        ? await commentGetByPost(pathParams.post_id, parsedQuery.data.page_size, parsedQuery.data.cursor)
+        : await commentGetByPost(pathParams.post_id, 20);
 
-    const result = await commentGetReplies(params.comment_id);
-
-    const formattedResult = await Promise.all(
-        result.map(async (comment) => {
+    
+    const formattedComments = await Promise.all(
+        commentList.map(async (comment) => {
             return FormatCommentResponse(comment);
         }),
     );
 
-    formattedResult.length >= 0
-        ? res
-              .status(comment.getByReplies.response.status.success)
-              .json(formattedResult)
-        : res.sendStatus(comment.getByReplies.response.status.failed);
+    res.status(200).json(formattedComments);
 };
+
+
+export const getByPostRepliesController: RequestHandler = async (req, res) => {
+    const reqContract = comment.getByReplies.request;
+
+    const parsedPath = reqContract.path_params.safeParse(req.params);
+    const parsedQuery = reqContract.query_params.safeParse(req.query);
+
+    if (!parsedPath.success) {
+        res.status(400).json(parsedPath.error.flatten())
+    }
+
+    const pathParams = parsedPath.data!;
+
+    const commentList = parsedQuery.success
+        ? await commentGetReplies(pathParams.parent_id, parsedQuery.data.cursor)
+        : await commentGetReplies(pathParams.parent_id);
+
+    const formattedComments = await Promise.all(
+        commentList.map(async (comment) => {
+            return FormatCommentResponse(comment);
+        }),
+    );
+
+    res.status(200).json(formattedComments);
+};
+
 
 export const CommentGetByIdController: RequestHandler = async (req, res) => {
-    const params = comment.getById.request.params.parse(req.params);
+    const reqContract = comment.getById.request;
 
-    const result = await commentGetById(params.comment_id);
+    const params = reqContract.path_params.safeParse(req.params);
+
+    if (!params.success) {
+        res.status(400).json(params.error.flatten())
+    }
+
+    const result = await commentGetById(params.data!.comment_id);
 
     if (!result) {
-        res.sendStatus(comment.getById.response.status.failed);
+        res.sendStatus(404);
     } else {
         const formattedResult = await FormatCommentResponse(result);
 
-        res.status(comment.getById.response.status.success).json(
-            formattedResult,
-        );
+        res.status(200).json(formattedResult);
     }
 };
 
+
 export const CommentCreateController: RequestHandler = async (req, res) => {
-    try {
-        comment.create.request.body.parse(req.body);
-    } catch {
-        res.sendStatus(comment.create.response.status.failed);
+    const parsedBody = comment.create.request.body.safeParse(req.body)
+
+    if(!parsedBody.success) {
+        res.status(400).json(parsedBody.error.flatten())
     }
 
-    const body: CommentCreateRequest = req.body;
     const user_id = req.auth!.sub;
 
-    const result = await commentCreate(user_id, body);
+    const result = await commentCreate(user_id, parsedBody.data!);
 
     if (!result) {
-        res.sendStatus(comment.create.response.status.failed);
+        res.sendStatus(400);
     } else {
         const formattedResult = await FormatCommentResponse(result);
 
-        res.status(comment.create.response.status.success).json(
-            formattedResult,
-        );
+        res.status(200).json(formattedResult);
     }
 };
