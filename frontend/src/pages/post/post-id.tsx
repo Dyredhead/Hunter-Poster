@@ -1,22 +1,22 @@
-import { GetCommentsByPost } from "@/api/comments";
+import { getCommentsByPost } from "@/api/comments";
 import { getById } from "@/api/posts";
 import { Post } from "@/components/Post";
 import { UserPreview } from "@/components/UserPreview";
-import { type CommentCreateRequest, type CommentSchema, type Post as PostType } from "@my-app/shared";
+import { type CommentCreateRequest, type Comment, type Post as PostType } from "@my-app/shared";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 export default function Page() {
     const postId = useParams().id;
     const [post, setPost] = useState<PostType | null | undefined>();
-    const [comments, setcomments] = useState<CommentSchema[] | undefined>();
+    const [comments, setcomments] = useState<Comment[] | undefined>();
 
     useEffect(() => {
         getById(postId!).then((newPost) => {
             setPost(newPost);
             console.log(newPost);
 
-            GetCommentsByPost(postId!).then((newComments) => {
+            getCommentsByPost(postId!).then((newComments) => {
                 setcomments(newComments);
             })
         } )
@@ -43,7 +43,7 @@ export default function Page() {
     }
 }
 
-const Comment = ({comment}: {comment: CommentSchema}) => {
+const Comment = ({comment}: {comment: Comment}) => {
     
     return(
         <div>
