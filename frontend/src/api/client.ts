@@ -1,8 +1,8 @@
-export async function apiFetch<TRequest, TQuery = undefined>(
+export async function apiFetch<TRequest>(
     url: string,
     method: string,
     body?: TRequest,
-    query?: TQuery,
+    query?: Record<string, string | number | boolean>,
     headers?: Record<string, string>,
 ): Promise<Response> {
     const accessToken = localStorage.getItem("token");
@@ -10,7 +10,7 @@ export async function apiFetch<TRequest, TQuery = undefined>(
 
     if (query != undefined) {
         const tempURL = new URL(url);
-        tempURL.search = new URLSearchParams(query).toString();
+        tempURL.search = new URLSearchParams(query as any).toString();
 
         url = tempURL.toString();
     }

@@ -1,9 +1,9 @@
-import { getCommentsByPost } from "@/api/comments";
+import { createComment, getCommentsByPost } from "@/api/comments";
 import { getById } from "@/api/posts";
 import { Post } from "@/components/Post";
 import { UserPreview } from "@/components/UserPreview";
 import { type CommentCreateRequest, type Comment, type Post as PostType } from "@my-app/shared";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 interface CommentNode extends Comment {
@@ -73,6 +73,14 @@ export default function Page() {
                     />
                 )}
 
+                <form onSubmit={submitComment} className="fixed bottom-20 left-0 w-full h-20 bg-white rounded-lg focus:h-40 transition-all duration-300 ease-in-out">
+                    <textarea
+                        value={commentCreate.content}
+                        onChange={(e) => setCommentCreate({...commentCreate, content: e.target.value})}
+                        placeholder="reply"
+                    />
+                    <input type="submit"/>
+                </form>
             </div>
         )
     } else {
@@ -81,6 +89,15 @@ export default function Page() {
                 404 NOT FOUND
             </div>
         )
+    }
+
+    async function submitComment(e: React.SubmitEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        createComment(commentCreate).then((newComment) => {
+            if (newComment)
+                setComments([...(comments ?? []), newComment])
+        })
     }
 }
 
@@ -112,9 +129,3 @@ const Comment = ({comment, onContentClick}: {
     )
 }
 
-
-const CommentCreate = ({createRequest}: {createRequest: CommentCreateRequest}) => {
-    return(
-        <div></div>
-    )
-}

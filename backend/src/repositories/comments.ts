@@ -36,7 +36,7 @@ export async function commentGetReplies(
         WITH RECURSIVE replies AS (
             SELECT * FROM comments
             WHERE parent_id = $1
-            AND ($2 IS NULL OR id < $2)
+            AND ($2::uuid IS NULL OR id < $2::uuid)
             ORDER BY id DESC
             LIMIT 10
         )

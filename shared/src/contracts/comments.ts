@@ -86,8 +86,8 @@ export type CommentGetByIdResponse = z.infer<typeof CommentGetByIdContract.respo
 
 const CommentCreateContract = {
     method: "POST",
-    backend_path: () => `${POST_MOUNT}/:post_id/create`,
-    frontend_path: (post_id: string) => `${POST_MOUNT}/${post_id}/create`,
+    backend_path: () => `${POST_MOUNT}/:post_id/create_comment`,
+    frontend_path: (post_id: string) => `${POST_MOUNT}/${post_id}/create_comment`,
 
     request: {
         body: CommentCreateSchema,

@@ -4,7 +4,7 @@ import { apiFetch } from "./client";
 const comment = commentContract.routes;
 
 export async function getCommentsByPost(postId: string, query?: CommentGetByPostRequest): Promise<CommentGetByPostResponse | undefined> {
-    const response = await apiFetch<undefined, typeof query>(
+    const response = await apiFetch<undefined>(
         comment.getByPost.frontend_path(postId),
         comment.getByPost.method,
         undefined,
@@ -31,7 +31,7 @@ export async function getCommentsByPost(postId: string, query?: CommentGetByPost
 
 
 export async function getCommentReplies(parentId: string, query?: CommentGetRepliesRequest): Promise<CommentGetRepliesResponse | undefined> {
-    const response = await apiFetch<undefined, typeof query>(
+    const response = await apiFetch<undefined>(
         comment.getByReplies.frontend_path(parentId),
         comment.getByReplies.method,
         undefined,
@@ -46,6 +46,7 @@ export async function getCommentReplies(parentId: string, query?: CommentGetRepl
             return parsedComments.data;
         } else {
             console.log(parsedComments.error);
+            console.log(temp);
             return undefined;
         }
 
@@ -55,21 +56,22 @@ export async function getCommentReplies(parentId: string, query?: CommentGetRepl
     }
 }
 
-export async function createComment(postId: string, commentRequest: CommentCreateRequest) {
+export async function createComment(commentRequest: CommentCreateRequest) {
     const response = await apiFetch<typeof commentRequest>(
-        comment.create.frontend_path(postId),
+        comment.create.frontend_path(commentRequest.post_id),
         comment.create.method,
         commentRequest
     )
 
     try {
-        const temp = response.json();
+        const temp = await response.json();
         const parsedComments = comment.create.response.safeParse(temp);
 
         if (parsedComments.success) {
             return parsedComments.data;
         } else {
             console.log(parsedComments.error);
+            console.log(temp);
             return undefined;
         }
 
