@@ -31,7 +31,7 @@ const CommentGetByPostContract = {
 
     request: {
         path_params: z.object({
-            post_id: z.uuidv7(),
+            id: z.uuidv7(),
         }),
         query_params: z.object({
             cursor: z.uuidv7(),
@@ -53,7 +53,7 @@ const CommentGetRepliesContract = {
 
     request: {
         path_params: z.object({
-            parent_id: z.uuidv7(),
+            id: z.uuidv7(),
         }),
         query_params: z.object({
             cursor: z.uuidv7(),
@@ -74,7 +74,7 @@ const CommentGetByIdContract = {
 
     request: {
         path_params: z.object({
-            comment_id: z.uuidv7(),
+            id: z.uuidv7(),
         }),
     },
 

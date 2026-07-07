@@ -12,13 +12,14 @@ export async function getCommentsByPost(postId: string, query?: CommentGetByPost
     )
 
     try {
-        const temp = response.json();
+        const temp = await response.json();
         const parsedComments = comment.getByPost.response.safeParse(temp);
 
         if (parsedComments.success) {
             return parsedComments.data;
         } else {
             console.log(parsedComments.error);
+            console.log(temp);
             return undefined;
         }
 
@@ -38,7 +39,7 @@ export async function getCommentReplies(parentId: string, query?: CommentGetRepl
     )
 
     try {
-        const temp = response.json();
+        const temp = await response.json();
         const parsedComments = comment.getByReplies.response.safeParse(temp);
 
         if (parsedComments.success) {

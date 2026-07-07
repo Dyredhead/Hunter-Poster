@@ -10,6 +10,8 @@ export const ProfilePreviewSchema = z.object({
     username: z.string(),
 })
 
+export type ProfilePreview = z.infer<typeof ProfilePreviewSchema>
+
 const UserSchema = z.object({
     id: z.uuidv7(),
     username: z.string(),

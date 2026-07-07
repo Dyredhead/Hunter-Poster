@@ -23,8 +23,8 @@ export const getByPostController: RequestHandler = async (req, res) => {
     const pathParams = parsedPath.data!;
 
     const commentList = parsedQuery.success
-        ? await commentGetByPost(pathParams.post_id, parsedQuery.data.page_size, parsedQuery.data.cursor)
-        : await commentGetByPost(pathParams.post_id, 20);
+        ? await commentGetByPost(pathParams.id, parsedQuery.data.page_size, parsedQuery.data.cursor)
+        : await commentGetByPost(pathParams.id, 20);
 
     
     const formattedComments = await Promise.all(
@@ -50,8 +50,8 @@ export const getByPostRepliesController: RequestHandler = async (req, res) => {
     const pathParams = parsedPath.data!;
 
     const commentList = parsedQuery.success
-        ? await commentGetReplies(pathParams.parent_id, parsedQuery.data.cursor)
-        : await commentGetReplies(pathParams.parent_id);
+        ? await commentGetReplies(pathParams.id, parsedQuery.data.cursor)
+        : await commentGetReplies(pathParams.id);
 
     const formattedComments = await Promise.all(
         commentList.map(async (comment) => {
@@ -72,7 +72,7 @@ export const CommentGetByIdController: RequestHandler = async (req, res) => {
         res.status(400).json(params.error.flatten())
     }
 
-    const result = await commentGetById(params.data!.comment_id);
+    const result = await commentGetById(params.data!.id);
 
     if (!result) {
         res.sendStatus(404);
