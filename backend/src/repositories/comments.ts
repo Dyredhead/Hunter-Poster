@@ -1,5 +1,6 @@
 import { database } from "@/database/client.js";
 import { CommentCreateRequest } from "@my-app/shared";
+import { config } from "dotenv";
 
 export type CommentRow = {
     id: string;
@@ -19,6 +20,7 @@ export async function commentGetByPost(
     `
         SELECT * FROM comments
         WHERE post_id = $1
+        AND parent_id IS NULL
         AND ($2::uuid IS NULL OR id < $2::uuid)
         ORDER BY id DESC
         LIMIT $3

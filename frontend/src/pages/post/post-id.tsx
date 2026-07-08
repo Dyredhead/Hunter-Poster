@@ -14,7 +14,7 @@ export default function Page() {
     const postId = useParams().id;
     const [post, setPost] = useState<PostType | null | undefined>();
     const [comments, setComments] = useState<Comment[] | undefined>();
-    const [commentCreate, setCommentCreate] = useState<CommentCreateRequest>({parent_id: null, post_id: "", content: ""});
+    const [commentCreate, setCommentCreate] = useState<CommentCreateRequest & {parent_user?: string}>({parent_id: null, post_id: "", content: ""});
 
     // initial page load
     useEffect(() => {
@@ -69,17 +69,40 @@ export default function Page() {
                     <Comment 
                         key={comment.id}
                         comment={comment}
-                        onContentClick={() => {setCommentCreate({...commentCreate, parent_id: comment.id})}}
+                        onContentClick={(id, user) => {
+                            setCommentCreate({...commentCreate, parent_id: id, parent_user: user})
+                        }}
                     />
                 )}
+                <div className="h-60"></div>
 
-                <form onSubmit={submitComment} className="fixed bottom-20 left-0 w-full h-20 bg-white rounded-lg focus:h-40 transition-all duration-300 ease-in-out">
-                    <textarea
-                        value={commentCreate.content}
-                        onChange={(e) => setCommentCreate({...commentCreate, content: e.target.value})}
-                        placeholder="reply"
-                    />
-                    <input type="submit"/>
+                <form 
+                    onSubmit={submitComment} 
+                    className="flex-col justify-start fixed bottom-20 left-0 w-full bg-white rounded-lg"
+                >
+                    {commentCreate.parent_id && <div 
+                        className="h-5 w-full bg-white rounded-lg"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            setCommentCreate({...commentCreate, parent_id: null, parent_user: ""})}
+                        }
+                    >
+                        <p className="bg-gray-200 hover:bg-gray-300">
+                            Replying to: {commentCreate.parent_user}
+                        </p>
+                    </div>}
+
+                    <div className="flex">
+                        <textarea
+                            className="w-full p-3 h-12 focus:h-25 transition-all duration-300 ease-in-out"
+                            value={commentCreate.content}
+                            onChange={(e) => setCommentCreate({...commentCreate, content: e.target.value})}
+                            placeholder="reply"
+                        />
+                        <input type="submit"/>
+                    </div>
+                    
                 </form>
             </div>
         )
@@ -93,8 +116,9 @@ export default function Page() {
 
     async function submitComment(e: React.SubmitEvent<HTMLFormElement>) {
         e.preventDefault();
+        e.stopPropagation();
 
-        createComment(commentCreate).then((newComment) => {
+        createComment(commentCreate as CommentCreateRequest).then((newComment) => {
             if (newComment)
                 setComments([...(comments ?? []), newComment])
         })
@@ -104,19 +128,28 @@ export default function Page() {
 
 const Comment = ({comment, onContentClick}: {
     comment: CommentNode,
-    onContentClick: (id: string)=>void,
+    onContentClick: (id: string, user: string)=>void,
 }) => {
     return(
         <div>
-            <UserPreview 
-                id={comment.profile.id}
-                pfp_id={comment.profile.pfp_id}
-                username={comment.profile.username}
-            />
+            <div className="relative transition-all duration-300 bg-white hover:bg-gray-300 rounded-lg border-2 border-gray-400">
+                <div className="absolute">
+                    <UserPreview
+                        id={comment.profile.id}
+                        pfp_id={comment.profile.pfp_id}
+                        username={comment.profile.username}
+                    />
+                </div>
+                
+                <div onClick={() => onContentClick(comment.id, comment.profile.username)}>
+                    <div className="h-10"/>
+                    <p> {comment.content} </p>
+                </div>
+                
+            </div>
             
-            <p onClick={() => onContentClick(comment.id)}> {comment.content} </p>
 
-            <div className="translate-x-6 transition-all duration-300 hover:bg-gray-400">
+            <div className="translate-x-6">
                 {comment.replies.map((reply) => {
                     return <Comment
                         key={reply.id} 
