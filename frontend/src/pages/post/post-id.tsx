@@ -1,8 +1,8 @@
-import { createComment, getCommentsByPost } from "@/api/comments";
+import { createComment, getCommentReplies, getCommentsByPost } from "@/api/comments";
 import { getById } from "@/api/posts";
 import { Post } from "@/components/Post";
 import { UserPreview } from "@/components/UserPreview";
-import { type CommentCreateRequest, type Comment, type Post as PostType } from "@my-app/shared";
+import { type CommentCreateRequest, type Comment, type Post as PostType, type CommentGetRepliesRequest } from "@my-app/shared";
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -72,6 +72,7 @@ export default function Page() {
                         onContentClick={(id, user) => {
                             setCommentCreate({...commentCreate, parent_id: id, parent_user: user})
                         }}
+                        onRepliesClick={loadReplies}
                     />
                 )}
                 <div className="h-60"></div>
@@ -123,13 +124,26 @@ export default function Page() {
                 setComments([...(comments ?? []), newComment])
         })
     }
+
+    async function loadReplies(parent_id: string, query?: CommentGetRepliesRequest) {
+        const newReplies = await getCommentReplies(parent_id, query);
+        if (newReplies) {
+            setComments([...(comments ?? []), ...(newReplies ?? [])])
+        }
+    }
 }
 
 
-const Comment = ({comment, onContentClick}: {
+const Comment = ({comment, onContentClick, onRepliesClick}: {
     comment: CommentNode,
     onContentClick: (id: string, user: string)=>void,
+    onRepliesClick: (parent_id: string, query?: CommentGetRepliesRequest)=>void,
 }) => {
+    const remainingReplies = comment.total_replies - comment.replies.length;
+    const query: CommentGetRepliesRequest | undefined = comment.replies.length > 0
+        ? {cursor: comment.replies[comment.replies.length - 1].id}
+        : undefined;
+    
     return(
         <div>
             <div className="relative transition-all duration-300 bg-white hover:bg-gray-300 rounded-lg border-2 border-gray-400">
@@ -148,16 +162,22 @@ const Comment = ({comment, onContentClick}: {
                 
             </div>
             
-
+        
             <div className="translate-x-6">
                 {comment.replies.map((reply) => {
                     return <Comment
                         key={reply.id} 
                         comment={reply} 
-                        onContentClick={onContentClick} 
+                        onContentClick={onContentClick}
+                        onRepliesClick={onRepliesClick}
                     />
                 })}
             </div>
+
+            
+            {remainingReplies > 0 && <div onClick={() => onRepliesClick(comment.id, query)}>
+                Show Replies ({remainingReplies})
+            </div>}
         </div>
     )
 }

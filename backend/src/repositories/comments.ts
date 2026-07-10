@@ -15,9 +15,7 @@ export async function commentGetByPost(
     page_size: number,
     cursor?: string,
 ): Promise<CommentRow[]> {
-    const query = 
-    
-    `
+    const query = `
         SELECT * FROM comments
         WHERE post_id = $1
         AND parent_id IS NULL
@@ -35,14 +33,11 @@ export async function commentGetReplies(
     cursor?: string,
 ): Promise<CommentRow[]> {
     const query = `
-        WITH RECURSIVE replies AS (
-            SELECT * FROM comments
-            WHERE parent_id = $1
-            AND ($2::uuid IS NULL OR id < $2::uuid)
-            ORDER BY id DESC
-            LIMIT 10
-        )
-        SELECT * FROM replies
+        SELECT * FROM comments
+        WHERE parent_id = $1
+        AND ($2::uuid IS NULL OR id < $2::uuid)
+        ORDER BY id DESC
+        LIMIT 10
     `;
     const values = [parent_id, cursor];
 
