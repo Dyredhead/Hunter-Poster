@@ -9,7 +9,7 @@ export async function apiFetch<TRequest>(
     console.log("JWT: ", accessToken);
 
     if (query != undefined) {
-        const tempURL = new URL(url);
+        const tempURL = new URL(url, window.location.origin);
         tempURL.search = new URLSearchParams(query as any).toString();
 
         url = tempURL.toString();

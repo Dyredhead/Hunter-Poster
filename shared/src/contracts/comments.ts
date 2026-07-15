@@ -35,7 +35,7 @@ const CommentGetByPostContract = {
         }),
         query_params: z.object({
             cursor: z.uuidv7(),
-            page_size: z.number(),
+            page_size: z.coerce.number(),
         }),
     },
 

@@ -1,9 +1,10 @@
 import { createComment, getCommentReplies, getCommentsByPost } from "@/api/comments";
 import { getById } from "@/api/posts";
+import { EndOfPage } from "@/components/EndOfPage";
 import { Post } from "@/components/Post";
 import { UserPreview } from "@/components/UserPreview";
-import { type CommentCreateRequest, type Comment, type Post as PostType, type CommentGetRepliesRequest } from "@my-app/shared";
-import React, { useEffect, useMemo, useState } from "react";
+import { type CommentCreateRequest, type Comment, type Post as PostType, type CommentGetRepliesRequest, type CommentGetByPostRequest } from "@my-app/shared";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
 interface CommentNode extends Comment {
@@ -15,6 +16,64 @@ export default function Page() {
     const [post, setPost] = useState<PostType | null | undefined>();
     const [comments, setComments] = useState<Comment[] | undefined>();
     const [commentCreate, setCommentCreate] = useState<CommentCreateRequest & {parent_user?: string}>({parent_id: null, post_id: "", content: ""});
+    const nextCursor = useRef<string>(null);
+
+    const submitComment: React.SubmitEventHandler<HTMLFormElement> = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        createComment(commentCreate as CommentCreateRequest).then((newComment) => {
+            if (newComment)
+                setComments([newComment, ...(comments ?? [])])
+        })
+    }
+
+    const loadReplies = async (parent_id: string, query?: CommentGetRepliesRequest) => {
+        const newReplies = await getCommentReplies(parent_id, query);
+        if (newReplies) {
+            setComments([...(comments ?? []), ...(newReplies ?? [])]);
+        }
+    }
+
+    const loadRootComments = async () => {
+        const query: CommentGetByPostRequest | undefined = nextCursor.current
+            ? { cursor: nextCursor.current, page_size: 10}
+            : undefined;
+        
+        const newRoots = await getCommentsByPost(postId!, query);
+        if (newRoots) {
+            setComments([...(comments ?? []), ...(newRoots)]);
+        }
+    }
+
+        // creates tree structure if new comments come in
+    const commentRoots = useMemo(() => {
+        const commentMap = new Map<string, CommentNode>();
+        let roots: CommentNode[] = [];
+        
+        const commentNodes = comments?.map<CommentNode>((comment) => {
+            return {...comment, replies:[]};
+        })
+
+        commentNodes?.forEach((comment) => {
+            commentMap.set(comment.id, comment)
+        });
+
+        commentNodes?.forEach((comment) => {
+            if (comment.parent_id === null) {
+                roots.push(comment)
+            } else {
+                const parentNode = commentMap.get(comment.parent_id);
+                if (parentNode) parentNode.replies.push(comment);
+            }
+        });
+
+        if (roots.length > 0)
+            nextCursor.current = roots[roots.length - 1].id;
+
+        return roots;
+    }, [comments]);
+
 
     // initial page load
     useEffect(() => {
@@ -36,28 +95,6 @@ export default function Page() {
         } )
     }, [])
 
-    // creates tree structure if new comments come in
-    const commentRoots = useMemo(() => {
-        const commentMap = new Map<string, CommentNode>();
-        let roots: CommentNode[] = [];
-        
-        comments?.forEach((comment) => {
-            commentMap.set(comment.id, {...comment, replies: []})
-        });
-
-        comments?.forEach((comment) => {
-            const mappedNode = commentMap.get(comment.id)!;
-
-            if (comment.parent_id === null) {
-                roots.push(mappedNode)
-            } else {
-                const parentNode = commentMap.get(comment.parent_id);
-                if (parentNode) parentNode.replies.push(mappedNode);
-            }
-        });
-
-        return roots;
-    }, [comments]);
 
     // checks if post exists
     if (post !== undefined && post !== null) {
@@ -76,6 +113,8 @@ export default function Page() {
                     />
                 )}
                 <div className="h-60"></div>
+
+                {comments && comments.length > 0 && <EndOfPage callback={loadRootComments}/>}
 
                 <form 
                     onSubmit={submitComment} 
@@ -115,22 +154,6 @@ export default function Page() {
         )
     }
 
-    async function submitComment(e: React.SubmitEvent<HTMLFormElement>) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        createComment(commentCreate as CommentCreateRequest).then((newComment) => {
-            if (newComment)
-                setComments([...(comments ?? []), newComment])
-        })
-    }
-
-    async function loadReplies(parent_id: string, query?: CommentGetRepliesRequest) {
-        const newReplies = await getCommentReplies(parent_id, query);
-        if (newReplies) {
-            setComments([...(comments ?? []), ...(newReplies ?? [])])
-        }
-    }
 }
 
 
