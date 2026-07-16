@@ -14,7 +14,7 @@ interface CommentNode extends Comment {
 export default function Page() {
     const postId = useParams().id;
     const [post, setPost] = useState<PostType | null | undefined>();
-    const [comments, setComments] = useState<Comment[] | undefined>();
+    const [comments, setComments] = useState<Comment[]>([]);
     const [commentCreate, setCommentCreate] = useState<CommentCreateRequest & {parent_user?: string}>({parent_id: null, post_id: "", content: ""});
     const nextCursor = useRef<string>(null);
 
@@ -24,14 +24,24 @@ export default function Page() {
 
         createComment(commentCreate as CommentCreateRequest).then((newComment) => {
             if (newComment)
-                setComments([newComment, ...(comments ?? [])])
+                setComments([newComment, ...comments])
+        })
+    }
+
+    const filterDupes = (newComments: Comment[], existing: Comment[]) => {
+        const existingIds = new Set(existing.map((comment) => comment.id))
+
+        return newComments.filter((comment) => {
+            if (existingIds.has(comment.id))
+                return false;
+            return true;
         })
     }
 
     const loadReplies = async (parent_id: string, query?: CommentGetRepliesRequest) => {
         const newReplies = await getCommentReplies(parent_id, query);
         if (newReplies) {
-            setComments([...(comments ?? []), ...(newReplies ?? [])]);
+            setComments([...comments, ...filterDupes(newReplies, comments)]);
         }
     }
 
@@ -42,7 +52,7 @@ export default function Page() {
         
         const newRoots = await getCommentsByPost(postId!, query);
         if (newRoots) {
-            setComments([...(comments ?? []), ...(newRoots)]);
+            setComments([...comments, ...filterDupes(newRoots, comments)]);
         }
     }
 
@@ -51,15 +61,15 @@ export default function Page() {
         const commentMap = new Map<string, CommentNode>();
         let roots: CommentNode[] = [];
         
-        const commentNodes = comments?.map<CommentNode>((comment) => {
+        const commentNodes = comments.map<CommentNode>((comment) => {
             return {...comment, replies:[]};
         })
 
-        commentNodes?.forEach((comment) => {
+        commentNodes.forEach((comment) => {
             commentMap.set(comment.id, comment)
         });
 
-        commentNodes?.forEach((comment) => {
+        commentNodes.forEach((comment) => {
             if (comment.parent_id === null) {
                 roots.push(comment)
             } else {
@@ -90,7 +100,7 @@ export default function Page() {
             }
 
             getCommentsByPost(postId!).then((newComments) => {
-                setComments(newComments);
+                setComments(newComments ?? []);
             })
         } )
     }, [])

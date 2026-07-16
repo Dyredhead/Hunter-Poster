@@ -10,16 +10,14 @@ export const EndOfPage = ({callback}: {callback: ()=>void}) => {
     })
 
     useEffect(() => {
-        const target = endOfPage.current;
-
         const observer = new IntersectionObserver(([entry]) => {
             if (entry.isIntersecting) callbackRef.current!();
         });
 
-        observer.observe(target!)
+        observer.observe(endOfPage.current!)
 
         return () => {
-            if (target) observer.unobserve(target!)
+            if (endOfPage.current) observer.unobserve(endOfPage.current!)
         }
     }, [])
     
